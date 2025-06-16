@@ -25,10 +25,14 @@ export default function RootLayout({
 	return (
 		<html data-theme="light" lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} h-screen w-screen  antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} bg-base-300 h-screen w-screen antialiased flex flex-col`}
 			>
-				<main className="w-full h-full">{children}</main>
-				{/* <footer /> */}
+				<main className="flex-1 ">{children}</main>
+				<footer>
+					<p className="text-center text-sm text-gray-600 dark:text-gray-400 pb-5 ">
+						© {new Date().getFullYear()} roomvibe. All rights reserved.
+					</p>
+				</footer>
 			</body>
 		</html>
 	);

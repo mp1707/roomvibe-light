@@ -1,35 +1,27 @@
 "use client";
-
-import { Images } from "@/app/components/images";
-import UploadForm from "@/app/components/UploadForm";
 import { motion } from "motion/react";
+
+import UploadForm from "@/app/components/UploadForm";
+import Image from "next/image";
+import heroImage from "@/assets/images/hero.png";
 import { useState } from "react";
 
 export default function Home() {
-  const [showText, setShowText] = useState(false);
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-base-200">
-      <motion.div
-        className="card w-full max-w-md bg-base-100 shadow-xl p-6"
-        initial={{ borderRadius: "0.5rem" }}
-        animate={{ borderRadius: showText ? "1rem" : "0.5rem" }}
-        layout
-      >
-        {showText && (
-          <motion.div
-            animate={{ opacity: 1 }}
-            initial={{ opacity: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <UploadForm />
-          </motion.div>
-        )}
-        {!showText && (
-          <button onClick={() => setShowText(true)} className="btn btn-primary btn-lg w-full">
-            Upload Avatar
-          </button>
-        )}
-      </motion.div>
-    </main>
-  );
+	return (
+		<main className="w-full h-full flex flex-col p-10">
+			<motion.h1
+				initial={{ opacity: 0, y: -160, scale: 0.9 }}
+				animate={{ opacity: 1, y: 0, scale: 1 }}
+				transition={{ type: "spring", delay: 0.5 }}
+				className="self-start text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-400 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent drop-shadow-lg tracking-tight mb-8"
+			>
+				roomvibe
+			</motion.h1>
+			<UploadForm />
+			{/* <div className="w-full flex gap-20">
+				<Image src={heroImage} alt="Hero Image" className="w-1/2" />
+				<h2 className="font-bold text-2xl">Design-Vorschläge</h2>
+			</div> */}
+		</main>
+	);
 }

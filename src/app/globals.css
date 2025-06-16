@@ -26,3 +26,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+
+/* Hide scrollbars during animation */
+/* html, body {
+  overflow: hidden;
+} */
+
+/* Restore overflow after animation */
+/* .animation-complete html, .animation-complete body {
+  overflow: auto;
+} */
