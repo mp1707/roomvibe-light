@@ -26,7 +26,7 @@ const cardMockData: CardData[] = [
 	},
 	{
 		title: "Farbgestaltung",
-		text: "Verwende helle, harmonische Farben, um eine entspannte Atmosphäre zu erschaffen.",
+		text: "Verwende hellere, harmonische Farben, um eine entspannte Atmosphäre zu erschaffen.",
 		defaultChecked: false,
 	},
 ];
