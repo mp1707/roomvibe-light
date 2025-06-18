@@ -2,14 +2,16 @@ import { create } from "zustand";
 
 type Suggestion = Record<string, string>;
 
-interface ImageState {
+interface AppState {
 	localImageUrl: string | null;
 	hostedImageUrl: string | null;
 	suggestions: Suggestion[];
+	suggestionsToApply: Set<string>;
 
 	setLocalImageUrl: (file: File | null) => void;
 	setHostedImageUrl: (url: string | null) => void;
 	setSuggestions: (suggestions: Suggestion[]) => void;
+	setSuggestionsToApply: (suggestions: Set<string>) => void;
 	reset: () => void;
 }
 
@@ -17,9 +19,10 @@ const initialState = {
 	localImageUrl: null,
 	hostedImageUrl: null,
 	suggestions: [],
+	suggestionsToApply: new Set<string>(),
 };
 
-export const useImageStore = create<ImageState>((set, get) => ({
+export const useAppState = create<AppState>((set, get) => ({
 	...initialState,
 
 	setLocalImageUrl: (file) => {
@@ -43,6 +46,10 @@ export const useImageStore = create<ImageState>((set, get) => ({
 
 	setSuggestions: (newSuggestions) => {
 		set({ suggestions: newSuggestions });
+	},
+
+	setSuggestionsToApply: (suggestions) => {
+		set({ suggestionsToApply: suggestions });
 	},
 
 	reset: () => {

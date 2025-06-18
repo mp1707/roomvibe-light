@@ -1,10 +1,10 @@
-import { useImageStore } from "@/utils/store";
+import { useAppState } from "@/utils/store";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useCallback, type ChangeEvent, type DragEvent } from "react";
 
 const UploadForm = () => {
-	const { setLocalImageUrl } = useImageStore();
+	const { setLocalImageUrl } = useAppState();
 	const router = useRouter();
 	const [isDragging, setIsDragging] = useState(false);
 

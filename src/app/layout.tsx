@@ -32,7 +32,7 @@ export default function RootLayout({
 						roomvibe
 					</h1>
 
-					<div className=" md:w-2/3 lg:w-1/2 mx-auto">{children}</div>
+					<div className=" sm:w-3/4 md:w-2/3 lg:w-3/5 mx-auto">{children}</div>
 				</main>
 				<footer>
 					<p className="text-center text-sm text-gray-600 dark:text-gray-400 pb-5 ">

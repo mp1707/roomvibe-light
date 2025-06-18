@@ -1,20 +1,21 @@
 "use client";
 
-import { useImageStore } from "@/utils/store";
+import { useAppState } from "@/utils/store";
 import Image from "next/image";
 import React from "react";
 
 const page = () => {
-	const { localImageUrl } = useImageStore();
+	const { localImageUrl } = useAppState();
 	return (
 		<div className="flex flex-col gap-10 md:gap-5 items-center justify-center mt-10 md:mt-20">
 			<div>
 				<h2 className="text-3xl md:text-5xl font-bold tracking-tight">
 					Dein Raum, neu erfunden.
 				</h2>
-				<p className="text-base-content/60 text-center mt-2">Bewege den Regler!</p>
+				<p className="text-base-content/60 text-center mt-2">
+					Bewege den Regler!
+				</p>
 			</div>
-			{/*  diff image  */}
 			{localImageUrl && (
 				<figure className="diff aspect-16/9 rounded-xl">
 					<div className="diff-item-1" role="img">
