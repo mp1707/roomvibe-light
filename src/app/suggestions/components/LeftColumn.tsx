@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { ResetIcon, BackIcon } from "./Icons";
+import { ResetIcon, BackIcon } from "../../components/Icons";
 import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
 

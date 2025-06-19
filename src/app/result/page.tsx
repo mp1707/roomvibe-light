@@ -8,7 +8,7 @@ import { motion } from "motion/react";
 import ReusableButton from "@/app/components/AnimatedButton";
 import { useImageModalStore } from "@/utils/useImageModalStore";
 import { useRef } from "react";
-import { DownloadIcon, EditIcon, StartOverIcon } from "@/app/suggestions/Icons";
+import { DownloadIcon, EditIcon, StartOverIcon } from "@/app/components/Icons";
 
 
 

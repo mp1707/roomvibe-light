@@ -1,8 +1,8 @@
 import React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import Card from "../components/Card";
-import AnimatedButton from "../components/AnimatedButton";
-import { ContinueIcon } from "./Icons";
+import Card from "../../components/Card";
+import AnimatedButton from "../../components/AnimatedButton";
+import { ContinueIcon } from "../../components/Icons";
 import { useAppState } from "@/utils/store";
 import { useRouter } from "next/navigation";
 

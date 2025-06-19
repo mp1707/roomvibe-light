@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import LeftColumn from "./LeftColumn";
-import RightColumn from "./RightColumn";
+import LeftColumn from "./components/LeftColumn";
+import RightColumn from "./components/RightColumn";
 
 export default function SuggestionsPage() {
 	const containerVariants = {
