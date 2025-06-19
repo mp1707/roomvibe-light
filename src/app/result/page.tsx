@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { motion } from "motion/react";
+import ReusableButton from "@/app/components/AnimatedButton";
 
 const DownloadIcon = () => (
 	<svg
@@ -115,18 +116,18 @@ const ResultPage = () => {
 			)}
 
 			<motion.div
-				className="flex flex-col md:flex-row gap-4"
+				className="flex flex-col md:flex-row gap-4 items-evenly justify-center"
 				variants={itemVariants}
 			>
-				<button type="button" className="btn btn-primary rounded-lg">
+				<ReusableButton color={"blue"}>
 					<DownloadIcon />
 					Bild herunterladen
-				</button>
-				<Link href="/suggestions" className="btn btn-ghost rounded-lg">
+				</ReusableButton>
+				<Link href="/suggestions" className="btn btn-ghost rounded-lg h-14">
 					<EditIcon />
 					Vorschläge bearbeiten
 				</Link>
-				<Link href="/" className="btn btn-ghost rounded-lg">
+				<Link href="/" className="btn btn-ghost rounded-lg h-14">
 					<StartOverIcon />
 					Neu beginnen
 				</Link>

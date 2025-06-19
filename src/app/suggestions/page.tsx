@@ -4,8 +4,9 @@ import { useAppState } from "@/utils/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Card from "../components/Card";
+import AnimatedButton from "@/app/components/AnimatedButton";
 
 type CardData = {
 	title: string;
@@ -64,6 +65,8 @@ const ContinueIcon = () => (
 
 export default function SuggestionsPage() {
 	const { localImageUrl, suggestionsToApply } = useAppState();
+	const selectionCount = suggestionsToApply.size;
+	const isActionActive = selectionCount > 0;
 	const router = useRouter();
 
 	const onAccept = () => router.push("/result");
@@ -130,24 +133,35 @@ export default function SuggestionsPage() {
 						</motion.div>
 					))}
 				</div>
-				<motion.div
-					initial={{ y: 50, opacity: 0 }}
-					animate={{
-						y: showContinueButton ? 0 : 50,
-						opacity: showContinueButton ? 1 : 0,
-					}}
-					transition={{ stiffness: 200, damping: 20 }}
-				>
-					<button
-						type="button"
-						className="btn btn-primary w-full rounded-xl"
-						onClick={onAccept}
-					>
-						{suggestionsToApply.size} Vorschl
-						{suggestionsToApply.size === 1 ? "ag" : "äge"} übernehmen
-						<ContinueIcon />
-					</button>
-				</motion.div>
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="h-14 flex items-center justify-center"> {/* Feste Höhe für die Leiste, um Sprünge zu vermeiden */}
+                        <AnimatePresence mode="wait">
+                            {!isActionActive ? (
+                                // Zustand 1: Inaktiver Zustand mit Hilfetext
+                                <motion.p
+                                    key="text-prompt"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                                    className="text-gray-500 text-center"
+                                >
+                                    Wähle Vorschläge zur Anwendung aus.
+                                </motion.p>
+                            ) : (
+                                // Zustand 2: Aktiver Button
+                                <AnimatedButton
+                                    
+                                    color="blue"
+                                    onClick={onAccept}
+                                >
+                                    {selectionCount} Vorschl{selectionCount === 1 ? 'ag' : 'äge'} übernehmen
+                                    <ContinueIcon />
+                                </AnimatedButton>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
 			</motion.div>
 		</motion.div>
 	);
