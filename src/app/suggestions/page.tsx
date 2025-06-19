@@ -69,22 +69,35 @@ export default function SuggestionsPage() {
 	const onAccept = () => router.push("/result");
 	const showContinueButton = suggestionsToApply.size > 0;
 
+	// Container-Varianten für die Kaskaden-Animation der Inhalte
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
-			transition: { staggerChildren: 0.15 },
+			transition: {
+				delayChildren: 0.2, // Beginnt, nachdem die Seiten-Animation fast fertig ist
+				staggerChildren: 0.15,
+			},
 		},
 	};
 
 	const itemVariants = {
-		hidden: { opacity: 0, y: 20 },
+		hidden: { opacity: 0, y: 15 },
 		visible: { opacity: 1, y: 0, transition: { stiffness: 100 } },
 	};
 
 	return (
-		<div className="flex-1 w-full flex flex-col md:flex-row gap-10 p-2 md:p-4">
-			<div className="w-full md:w-1/2 flex flex-col gap-4">
+		<motion.div
+			className="flex-1 w-full flex flex-col md:flex-row gap-10 p-2 md:p-4"
+			variants={containerVariants}
+			initial="hidden"
+			animate="visible"
+		>
+			{/* Linke Spalte */}
+			<motion.div
+				className="w-full md:w-1/2 flex flex-col gap-4"
+				variants={itemVariants}
+			>
 				<h2 className="font-bold text-2xl text-center">Ihr Originalbild</h2>
 				<Image
 					src={localImageUrl || "/placeholder.png"}
@@ -102,12 +115,12 @@ export default function SuggestionsPage() {
 						Anderes Bild hochladen
 					</span>
 				</Link>
-			</div>
+			</motion.div>
+
+			{/* Rechte Spalte */}
 			<motion.div
 				className="w-full md:w-1/2 flex flex-col gap-4"
-				variants={containerVariants}
-				initial="hidden"
-				animate="visible"
+				variants={itemVariants}
 			>
 				<h2 className="font-bold text-2xl text-center">Design-Vorschläge</h2>
 				<div className="flex flex-col gap-4">
@@ -118,12 +131,12 @@ export default function SuggestionsPage() {
 					))}
 				</div>
 				<motion.div
-					initial={false}
+					initial={{ y: 50, opacity: 0 }}
 					animate={{
 						y: showContinueButton ? 0 : 50,
 						opacity: showContinueButton ? 1 : 0,
 					}}
-					transition={{ type: "spring", stiffness: 200, damping: 20 }}
+					transition={{ stiffness: 200, damping: 20 }}
 				>
 					<button
 						type="button"
@@ -136,6 +149,6 @@ export default function SuggestionsPage() {
 					</button>
 				</motion.div>
 			</motion.div>
-		</div>
+		</motion.div>
 	);
 }
