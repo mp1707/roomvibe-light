@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { PageTransitionWrapper } from "@/app/components/PageTransitionWrapper";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -32,7 +33,7 @@ export default function RootLayout({
 						roomvibe
 					</h1>
 
-					<div className=" sm:w-3/4 md:w-2/3 lg:w-3/5 mx-auto">{children}</div>
+					<PageTransitionWrapper>{children}</PageTransitionWrapper>
 				</main>
 				<footer>
 					<p className="text-center text-sm text-gray-600 dark:text-gray-400 pb-5 ">

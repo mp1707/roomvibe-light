@@ -2,10 +2,10 @@
 
 import { useAppState } from "@/utils/store";
 import Image from "next/image";
-import Card from "../components/Card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
+import Card from "../components/Card"; // Angenommener Pfad
 
 type CardData = {
 	title: string;
@@ -30,7 +30,6 @@ const cardMockData: CardData[] = [
 		defaultChecked: false,
 	},
 ];
-
 const BackIcon = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -67,14 +66,16 @@ const ContinueIcon = () => (
 	</svg>
 );
 
-export default function Page() {
+export default function SuggestionsPage() {
+	// Umbenannt zu SuggestionsPage für Klarheit
 	const { localImageUrl, suggestionsToApply } = useAppState();
 	const router = useRouter();
 
-	const onAccept = () => {
-		router.push("/result");
-	};
+	// Die Logik hier bleibt unverändert
+	const onAccept = () => router.push("/result");
+	const showContinueButton = suggestionsToApply.size > 0;
 
+	// Die Varianten für die Karten bleiben, das ist eine Animation *innerhalb* der Seite.
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
@@ -84,16 +85,16 @@ export default function Page() {
 			},
 		},
 	};
-
 	const cardVariants = {
 		hidden: { opacity: 0, y: 20 },
 		visible: { opacity: 1, y: 0 },
 	};
 
-	const showContinueButton = suggestionsToApply.size > 0;
-
 	return (
-		<main className="flex-1 flex flex-col md:flex-row gap-10">
+		// Der äußere Wrapper mit `initial` und `animate` wird entfernt.
+		// Das übernimmt jetzt der PageTransitionWrapper.
+		<div className="flex-1 flex flex-col md:flex-row gap-10 p-4 md:p-6">
+			{/* Linke Spalte */}
 			<div className="flex-1 flex flex-col gap-4">
 				<h2 className="font-bold text-2xl text-center">Ihr Originalbild</h2>
 				<Image
@@ -105,12 +106,12 @@ export default function Page() {
 				/>
 				<Link href={"/"} className="flex justify-center items-center gap-1.5">
 					<BackIcon />
-
 					<p className="text-base-content/40 text-center">
 						anderes Bild hochladen
 					</p>
 				</Link>
 			</div>
+			{/* Rechte Spalte mit den inneren Animationen */}
 			<div className="flex-1 flex flex-col gap-4">
 				<h2 className="font-bold text-2xl text-center">Design-Vorschläge</h2>
 				<motion.div
@@ -147,6 +148,6 @@ export default function Page() {
 					</motion.p>
 				</motion.button>
 			</div>
-		</main>
+		</div>
 	);
 }
