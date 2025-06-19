@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { StateGuard } from "@/app/components/StateGuard";
+import RoomVibeLogo from "@/app/components/RoomVibeLogo";
 
 const inter = Inter({
 	subsets: ["latin"],
@@ -20,14 +22,12 @@ export default function RootLayout({
 	return (
 		<html data-theme="light" lang="de">
 			<body
-				className={`${inter.variable} font-sans bg-base-100 h-screen w-screen antialiased flex flex-col`}
+				className={`${inter.variable} font-sans bg-base-300 h-screen w-screen antialiased flex flex-col`}
 			>
-				<main className="flex-1 p-5 flex flex-col items-center w-full">
-					<h1 className="self-start text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-500 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent mb-8">
-						roomvibe
-					</h1>
+				<main className="flex-1 p-5 flex flex-col items-start w-full">
+					<RoomVibeLogo />
 					<div className="flex-1 flex flex-col w-full sm:w-3/4 md:w-2/3 lg:w-3/5 mx-auto">
-						{children}
+						<StateGuard>{children}</StateGuard>
 					</div>
 				</main>
 				<footer className="w-full">
