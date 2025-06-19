@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import type {
 	TargetAndTransition,
 	VariantLabels,
 	Transition,
-} from "framer-motion";
+} from "motion/react";
 import type { ReactNode } from "react";
 
 type Props = {
