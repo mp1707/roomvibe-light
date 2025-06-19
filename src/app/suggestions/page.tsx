@@ -4,30 +4,26 @@ import { useAppState } from "@/utils/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import Card from "../components/Card"; // Angenommener Pfad
+import { motion } from "motion/react";
+import Card from "../components/Card";
 
 type CardData = {
 	title: string;
 	text: string;
-	defaultChecked: boolean;
 };
 
 const cardMockData: CardData[] = [
 	{
 		title: "Beleuchtung",
 		text: "Bringe mehr Licht in deinen Raum mit warmen, einladenden Farben.",
-		defaultChecked: true,
 	},
 	{
 		title: "Möbel",
 		text: "Optimiere den Raum mit multifunktionalen Möbeln für mehr Platz.",
-		defaultChecked: false,
 	},
 	{
 		title: "Farbgestaltung",
 		text: "Verwende hellere, harmonische Farben, um eine entspannte Atmosphäre zu erschaffen.",
-		defaultChecked: false,
 	},
 ];
 const BackIcon = () => (
@@ -37,7 +33,7 @@ const BackIcon = () => (
 		viewBox="0 0 24 24"
 		strokeWidth={2}
 		stroke="currentColor"
-		className="size-4 mt-0.5 text-base-content/40"
+		className="size-4 mt-0.5"
 	>
 		<title>back</title>
 		<path
@@ -67,87 +63,79 @@ const ContinueIcon = () => (
 );
 
 export default function SuggestionsPage() {
-	// Umbenannt zu SuggestionsPage für Klarheit
 	const { localImageUrl, suggestionsToApply } = useAppState();
 	const router = useRouter();
 
-	// Die Logik hier bleibt unverändert
 	const onAccept = () => router.push("/result");
 	const showContinueButton = suggestionsToApply.size > 0;
 
-	// Die Varianten für die Karten bleiben, das ist eine Animation *innerhalb* der Seite.
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
-			transition: {
-				staggerChildren: 0.2,
-			},
+			transition: { staggerChildren: 0.15 },
 		},
 	};
-	const cardVariants = {
+
+	const itemVariants = {
 		hidden: { opacity: 0, y: 20 },
-		visible: { opacity: 1, y: 0 },
+		visible: { opacity: 1, y: 0, transition: { stiffness: 100 } },
 	};
 
 	return (
-		// Der äußere Wrapper mit `initial` und `animate` wird entfernt.
-		// Das übernimmt jetzt der PageTransitionWrapper.
-		<div className="flex-1 flex flex-col md:flex-row gap-10 p-4 md:p-6">
-			{/* Linke Spalte */}
-			<div className="flex-1 flex flex-col gap-4">
+		<div className="flex-1 w-full flex flex-col md:flex-row gap-10 p-2 md:p-4">
+			<div className="w-full md:w-1/2 flex flex-col gap-4">
 				<h2 className="font-bold text-2xl text-center">Ihr Originalbild</h2>
 				<Image
 					src={localImageUrl || "/placeholder.png"}
-					className="w-full h-64 object-cover rounded-lg shadow-xl"
+					className="w-full h-auto object-cover rounded-lg shadow-xl aspect-[4/3]"
 					width={800}
-					height={800}
+					height={600}
 					alt="Original uploaded image"
 				/>
-				<Link href={"/"} className="flex justify-center items-center gap-1.5">
+				<Link
+					href="/"
+					className="flex justify-center items-center gap-1.5 group"
+				>
 					<BackIcon />
-					<p className="text-base-content/40 text-center">
-						anderes Bild hochladen
-					</p>
+					<span className="text-gray-500 group-hover:text-gray-800 transition-colors">
+						Anderes Bild hochladen
+					</span>
 				</Link>
 			</div>
-			{/* Rechte Spalte mit den inneren Animationen */}
-			<div className="flex-1 flex flex-col gap-4">
+			<motion.div
+				className="w-full md:w-1/2 flex flex-col gap-4"
+				variants={containerVariants}
+				initial="hidden"
+				animate="visible"
+			>
 				<h2 className="font-bold text-2xl text-center">Design-Vorschläge</h2>
-				<motion.div
-					className="flex flex-col gap-4 flex-1"
-					variants={containerVariants}
-					initial="hidden"
-					animate="visible"
-				>
+				<div className="flex flex-col gap-4">
 					{cardMockData.map((card) => (
-						<motion.div key={card.title + card.text} variants={cardVariants}>
-							<Card title={card.title} text={card.text} className="w-full" />
+						<motion.div key={card.title} variants={itemVariants}>
+							<Card title={card.title} text={card.text} />
 						</motion.div>
 					))}
-				</motion.div>
-				<motion.button
-					type="button"
-					className="btn btn-primary rounded-xl join-item"
-					onClick={onAccept}
+				</div>
+				<motion.div
 					initial={false}
-					animate={{ opacity: showContinueButton ? 1 : 0 }}
-					transition={{ duration: 0.3 }}
+					animate={{
+						y: showContinueButton ? 0 : 50,
+						opacity: showContinueButton ? 1 : 0,
+					}}
+					transition={{ type: "spring", stiffness: 200, damping: 20 }}
 				>
-					<motion.p
-						initial={false}
-						animate={{
-							x: showContinueButton ? 0 : -20,
-							opacity: showContinueButton ? 1 : 0,
-						}}
-						transition={{ duration: 0.3 }}
-						className="flex items-center gap-1"
+					<button
+						type="button"
+						className="btn btn-primary w-full rounded-xl"
+						onClick={onAccept}
 					>
-						Vorschläge übernehmen
+						{suggestionsToApply.size} Vorschl
+						{suggestionsToApply.size === 1 ? "ag" : "äge"} übernehmen
 						<ContinueIcon />
-					</motion.p>
-				</motion.button>
-			</div>
+					</button>
+				</motion.div>
+			</motion.div>
 		</div>
 	);
 }
