@@ -15,7 +15,7 @@ export default function SuggestionsPage() {
 
 	return (
 		<motion.div
-			className="flex-1 w-full flex flex-col md:flex-row gap-10 p-2 md:p-4"
+			className="flex-1 w-full flex flex-col md:flex-row gap-10"
 			variants={containerVariants}
 			initial="hidden"
 			animate="visible"
