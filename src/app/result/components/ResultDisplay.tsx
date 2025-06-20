@@ -41,7 +41,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
         <EnlargeIcon />
         Nachher
       </motion.div>
-      <div className="diff-item-1" role="img">
+      <div className="diff-item-1" tabIndex={0} role="img">
         <Image width={800} height={800} alt="daisy" src={localImageUrl} />
       </div>
       <div className="diff-item-2" role="img">

@@ -59,7 +59,6 @@ body {
   padding: 0;
 }
 
-
 ::-webkit-scrollbar {
   width: 8px;
   background: transparent;
@@ -79,4 +78,14 @@ body {
 .btn-primary,
 .btn-outline {
   box-shadow: none !important;
+}
+
+@supports (-webkit-overflow-scrolling: touch) {
+  .diff-item-2::after {
+    content: "" !important;
+  }
+
+  .diff-resizer {
+    opacity: 1 !important;
+  }
 }
