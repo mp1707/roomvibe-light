@@ -5,6 +5,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { StateGuard } from "@/app/components/StateGuard";
 import { ImageModal } from "@/app/components/ImageModal"; // <-- Importieren
+import Link from "next/link";
+import Logo from "./components/Logo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,9 +31,9 @@ export default function RootLayout({
         >
           <div className="flex-1 flex flex-col items-center w-full justify-center">
             <header className="w-full flex items-center justify-start py-4 px-8">
-            <h1 className="self-start text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-500 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent mb-8">
-							roomvibe
-						</h1>
+              <Link href="/">
+                <Logo />
+              </Link>
             </header>
             <div className="flex-1 flex flex-col w-full sm:w-3/4 md:w-2/3 lg:w-3/5 mx-auto justify-center p-2 md:p-4">
               <StateGuard>{children}</StateGuard>
