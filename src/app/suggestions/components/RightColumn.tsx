@@ -111,7 +111,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
   return (
     <div className="flex flex-col h-full overflow-visible">
       {/* Header - Only sticky on large screens */}
-      <div className="lg:sticky lg:top-24 bg-base-100 lg:z-20 pb-4 sm:pb-6 border-b border-base-300 lg:-mx-4 lg:px-4">
+      <div className="lg:sticky lg:top-16 bg-base-100 lg:z-20 pb-4 sm:pb-6 border-b border-base-300 lg:-mx-4 lg:px-4">
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
           className="pt-2 sm:pt-4"

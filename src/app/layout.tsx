@@ -56,7 +56,7 @@ export default function RootLayout({
             {/* Desktop: Full viewport layout */}
             <div className="hidden lg:block overflow-visible">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
-                <div className="py-8 overflow-visible">
+                <div className=" overflow-visible">
                   <StateGuard>{children}</StateGuard>
                 </div>
               </div>

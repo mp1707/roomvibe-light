@@ -42,7 +42,7 @@ export default function SuggestionsPage() {
   };
 
   return (
-    <div className="flex-1 w-full flex flex-col relative min-h-screen pb-24 sm:pb-28 lg:pb-32">
+    <div className="flex-1 w-full flex flex-col relative min-h-screen pb-24 sm:pb-28 lg:pb-0">
       {/* Main content area with sticky columns */}
       <motion.div
         className="flex-1 flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8"
@@ -51,7 +51,7 @@ export default function SuggestionsPage() {
         animate="visible"
       >
         {/* Left Column - Sticky only on large screens */}
-        <div className="w-full lg:w-1/2 lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:self-start">
+        <div className="w-full lg:w-1/2 lg:sticky lg:top-16 lg:h-[calc(100vh-8rem)] lg:self-start">
           <LeftColumn />
         </div>
 
