@@ -8,6 +8,7 @@ import { ImageModal } from "@/app/components/ImageModal";
 import Link from "next/link";
 import Logo from "./components/Logo";
 import ThemeToggle from "./components/ThemeToggle";
+import AuthButton from "@/components/AuthButton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,7 +38,10 @@ export default function RootLayout({
                 <Link href="/" className="flex-shrink-0">
                   <Logo />
                 </Link>
-                <ThemeToggle className="ml-auto" />
+                <div className="flex items-center gap-4 ml-auto">
+                  <AuthButton />
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </header>
