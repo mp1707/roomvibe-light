@@ -201,12 +201,6 @@ input[type="file"] {
   z-index: 1;
 }
 
-/* Drag and drop styling with theming */
-.drag-active {
-  background: hsl(var(--p) / 0.05);
-  border-color: hsl(var(--p));
-}
-
 /* Loading shimmer effect with theming */
 @keyframes shimmer {
   0% {

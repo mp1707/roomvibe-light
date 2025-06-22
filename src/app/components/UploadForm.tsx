@@ -227,7 +227,11 @@ const UploadForm = () => {
             onDragEnter={handleDragEvents}
             onDragOver={handleDragEvents}
             onDragLeave={handleDragEvents}
-            className="relative min-h-[380px] md:min-h-[420px] flex flex-col items-center justify-center border-2 border-dashed rounded-3xl cursor-pointer select-none group transition-all duration-300 hover:shadow-lg"
+            className={`relative min-h-[380px] md:min-h-[420px] flex flex-col items-center justify-center border-2 border-dashed rounded-3xl cursor-pointer select-none group transition-all duration-300 hover:shadow-lg ${
+              isDragging
+                ? "border-primary bg-primary/5 shadow-lg"
+                : "border-base-content/20 hover:border-base-content/30 hover:bg-base-200/50"
+            }`}
             onClick={handleClick}
             role="button"
             tabIndex={0}
