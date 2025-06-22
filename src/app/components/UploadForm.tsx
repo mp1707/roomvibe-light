@@ -51,7 +51,7 @@ const ProgressIndicator = ({ progress }: { progress: number }) => (
     initial={{ opacity: 0, scale: 0.8 }}
     animate={{ opacity: 1, scale: 1 }}
     exit={{ opacity: 0, scale: 0.8 }}
-    className="absolute inset-0 flex flex-col items-center justify-center bg-base-100/95 backdrop-blur-sm rounded-2xl"
+    className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm rounded-3xl "
   >
     <motion.div
       className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full"
