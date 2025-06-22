@@ -12,6 +12,101 @@ import {
   useMotionPreference,
 } from "@/utils/animations";
 
+const ErrorModal = ({
+  isOpen,
+  onClose,
+  title,
+  message,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  message: string;
+}) => {
+  const reducedMotion = useMotionPreference();
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        />
+
+        {/* Modal */}
+        <motion.div
+          initial={
+            reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 20 }
+          }
+          animate={
+            reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }
+          }
+          exit={
+            reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 20 }
+          }
+          transition={{ type: "spring", duration: 0.3 }}
+          className="relative w-full max-w-md mx-auto"
+        >
+          <div className="bg-base-100 rounded-3xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-error/10 to-warning/10 px-6 py-4 border-b border-base-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-error/20 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-error"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-base-content">
+                  {title}
+                </h3>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="px-6 py-6">
+              <p className="text-base-content/70 leading-relaxed">{message}</p>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 bg-base-50 border-t border-base-200">
+              <motion.button
+                variants={reducedMotion ? {} : buttonVariants}
+                whileHover={reducedMotion ? {} : "hover"}
+                whileTap={reducedMotion ? {} : "tap"}
+                onClick={onClose}
+                className="w-full px-4 py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                Zurück
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
 const SkeletonLoader = () => {
   const reducedMotion = useMotionPreference();
 
@@ -220,8 +315,36 @@ export default function AnalyzePage() {
   const { localImageUrl, hostedImageUrl } = useAppState();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+
+  // Helper function to show error modal
+  const showErrorModal = useCallback((title: string, message: string) => {
+    setErrorModal({
+      isOpen: true,
+      title,
+      message,
+    });
+  }, []);
+
+  // Helper function to close error modal and navigate back
+  const closeErrorModal = useCallback(() => {
+    setErrorModal({
+      isOpen: false,
+      title: "",
+      message: "",
+    });
+    router.push("/");
+  }, [router]);
 
   // Redirect if no image
   useEffect(() => {
@@ -295,7 +418,8 @@ export default function AnalyzePage() {
         setTimeout(() => {
           setIsAnalyzing(false);
           setAnalysisProgress(0);
-          alert(
+          showErrorModal(
+            "Kein Innenraum erkannt",
             "Es konnten keine Vorschläge generiert werden. Bitte laden Sie ein Bild eines Innenraums hoch (Wohnzimmer, Schlafzimmer, Küche, etc.)."
           );
         }, 500);
@@ -316,27 +440,31 @@ export default function AnalyzePage() {
       setAnalysisProgress(0);
 
       // Show user-friendly error message
+      let errorTitle = "Analyse fehlgeschlagen";
       let errorMessage =
-        "Fehler bei der Analyse. Bitte versuchen Sie es erneut.";
+        "Es ist ein Fehler bei der Analyse aufgetreten. Versuchen Sie es mit einem anderen Bild erneut.";
 
       if (error instanceof Error) {
         if (error.message.includes("OpenAI API")) {
+          errorTitle = "KI-Service nicht verfügbar";
           errorMessage =
-            "Problem mit der KI-Analyse. Bitte versuchen Sie es in einem Moment erneut.";
+            "Die KI-Analyse ist momentan nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.";
         } else if (error.message.includes("Validierung")) {
+          errorTitle = "Verarbeitungsfehler";
           errorMessage =
-            "Die KI-Antwort konnte nicht verarbeitet werden. Bitte versuchen Sie es erneut.";
+            "Die KI-Antwort konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild erneut.";
         } else if (error.message.includes("Kein Bild")) {
+          errorTitle = "Bild nicht gefunden";
           errorMessage =
-            "Kein Bild zum Analysieren gefunden. Bitte laden Sie ein neues Bild hoch.";
+            "Das Bild konnte nicht gefunden werden. Bitte laden Sie ein neues Bild hoch.";
         } else {
           errorMessage = error.message;
         }
       }
 
-      alert(errorMessage);
+      showErrorModal(errorTitle, errorMessage);
     }
-  }, [localImageUrl, hostedImageUrl, router]);
+  }, [localImageUrl, hostedImageUrl, router, showErrorModal]);
 
   const handleGoBack = useCallback(() => {
     router.push("/");
@@ -349,126 +477,136 @@ export default function AnalyzePage() {
   const imageUrl = localImageUrl || hostedImageUrl;
 
   return (
-    <div className="w-full flex items-center justify-center min-h-screen py-8">
-      <motion.div
-        variants={reducedMotion ? {} : staggerContainer}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-4xl flex flex-col items-center text-center px-4 sm:px-6"
-      >
-        {/* Header */}
+    <>
+      <div className="w-full flex items-center justify-center min-h-screen py-8">
         <motion.div
-          variants={reducedMotion ? {} : staggerItem}
-          className="mb-8 md:mb-12"
+          variants={reducedMotion ? {} : staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-4xl flex flex-col items-center text-center px-4 sm:px-6"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
-            {isAnalyzing ? "KI-Analyse läuft" : "Bereit für die Analyse?"}
-          </h1>
-          <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
-            {isAnalyzing
-              ? "Ihre Raumgestaltungsvorschläge werden gerade erstellt. Bitte haben Sie einen Moment Geduld."
-              : "Ihr Bild ist hochgeladen. Starten Sie jetzt die KI-Analyse für personalisierte Raumgestaltungsvorschläge."}
-          </p>
-        </motion.div>
-
-        {/* Image Preview or Loading Animation */}
-        <motion.div
-          variants={reducedMotion ? {} : staggerItem}
-          className="relative w-full max-w-2xl mb-8 md:mb-12"
-        >
-          <AnimatePresence mode="wait">
-            {isAnalyzing ? (
-              <AnalyzeLoader progress={analysisProgress} />
-            ) : (
-              <motion.div
-                key="image-preview"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
-                  {imageUrl && (
-                    <Image
-                      src={imageUrl}
-                      alt="Hochgeladenes Bild"
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  )}
-
-                  {/* Image info overlay */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="absolute bottom-4 left-4 right-4"
-                  >
-                    <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl px-4 py-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                          <span className="text-sm font-medium text-base-content">
-                            Bild erfolgreich hochgeladen
-                          </span>
-                        </div>
-                        <div className="text-xs text-base-content/50">
-                          Bereit für Analyse
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Action Buttons */}
-        {!isAnalyzing && (
+          {/* Header */}
           <motion.div
             variants={reducedMotion ? {} : staggerItem}
-            className="flex flex-col sm:flex-row gap-4 w-full max-w-md"
+            className="mb-8 md:mb-12"
           >
-            {/* Back Button */}
-            <motion.button
-              variants={reducedMotion ? {} : buttonVariants}
-              whileHover={reducedMotion ? {} : "hover"}
-              whileTap={reducedMotion ? {} : "tap"}
-              onClick={handleGoBack}
-              className="flex-1 px-6 py-3 sm:py-4 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
-              Anderes Bild wählen
-            </motion.button>
-
-            {/* Start Analysis Button */}
-            <motion.button
-              variants={reducedMotion ? {} : buttonVariants}
-              whileHover={reducedMotion ? {} : "hover"}
-              whileTap={reducedMotion ? {} : "tap"}
-              onClick={handleStartAnalysis}
-              className="flex-1 px-6 py-3 sm:py-4 bg-primary hover:bg-primary-focus text-primary-content font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transform hover:scale-105 active:scale-95"
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-                <span>Analyse starten</span>
-              </span>
-            </motion.button>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
+              {isAnalyzing ? "KI-Analyse läuft" : "Bereit für die Analyse?"}
+            </h1>
+            <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
+              {isAnalyzing
+                ? "Ihre Raumgestaltungsvorschläge werden gerade erstellt. Bitte haben Sie einen Moment Geduld."
+                : "Ihr Bild ist hochgeladen. Starten Sie jetzt die KI-Analyse für personalisierte Raumgestaltungsvorschläge."}
+            </p>
           </motion.div>
-        )}
-      </motion.div>
-    </div>
+
+          {/* Image Preview or Loading Animation */}
+          <motion.div
+            variants={reducedMotion ? {} : staggerItem}
+            className="relative w-full max-w-2xl mb-8 md:mb-12"
+          >
+            <AnimatePresence mode="wait">
+              {isAnalyzing ? (
+                <AnalyzeLoader progress={analysisProgress} />
+              ) : (
+                <motion.div
+                  key="image-preview"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+                    {imageUrl && (
+                      <Image
+                        src={imageUrl}
+                        alt="Hochgeladenes Bild"
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    )}
+
+                    {/* Image info overlay */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute bottom-4 left-4 right-4"
+                    >
+                      <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl px-4 py-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium text-base-content">
+                              Bild erfolgreich hochgeladen
+                            </span>
+                          </div>
+                          <div className="text-xs text-base-content/50">
+                            Bereit für Analyse
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Action Buttons */}
+          {!isAnalyzing && (
+            <motion.div
+              variants={reducedMotion ? {} : staggerItem}
+              className="flex flex-col sm:flex-row gap-4 w-full max-w-md"
+            >
+              {/* Back Button */}
+              <motion.button
+                variants={reducedMotion ? {} : buttonVariants}
+                whileHover={reducedMotion ? {} : "hover"}
+                whileTap={reducedMotion ? {} : "tap"}
+                onClick={handleGoBack}
+                className="flex-1 px-6 py-3 sm:py-4 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                Anderes Bild wählen
+              </motion.button>
+
+              {/* Start Analysis Button */}
+              <motion.button
+                variants={reducedMotion ? {} : buttonVariants}
+                whileHover={reducedMotion ? {} : "hover"}
+                whileTap={reducedMotion ? {} : "tap"}
+                onClick={handleStartAnalysis}
+                className="flex-1 px-6 py-3 sm:py-4 bg-primary hover:bg-primary-focus text-primary-content font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transform hover:scale-105 active:scale-95"
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                  <span>Analyse starten</span>
+                </span>
+              </motion.button>
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={closeErrorModal}
+        title={errorModal.title}
+        message={errorModal.message}
+      />
+    </>
   );
 }
