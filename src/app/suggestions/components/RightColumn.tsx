@@ -2,92 +2,73 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import SuggestionCard from "../../components/SuggestionCard";
 import {
   staggerContainer,
   staggerItem,
   useMotionPreference,
+  buttonVariants,
 } from "@/utils/animations";
+import { useAppState } from "@/utils/store";
 
-// Enhanced suggestions with AI explanations (XAI)
-const suggestionCategories = [
-  {
-    category: "Wandfarbe",
-    suggestions: [
-      {
-        id: "sage-green-walls",
-        title: "Wandfarbe",
-        suggestion: "Wände in Salbeigrün streichen",
-        explanation:
-          "Salbeigrün ergänzt das natürliche Licht aus dem Fenster und schafft eine beruhigende Atmosphäre, die die Raumtiefe optisch vergrößert.",
-      },
-      {
-        id: "sand-accent-wall",
-        title: "Akzentwand",
-        suggestion: "Akzentwand in Sandbeige gestalten",
-        explanation:
-          "Ein warmer Sandbeigeton als Akzentwand verleiht dem Raum Tiefe und Wärme, ohne zu dominant zu wirken.",
-      },
-    ],
-  },
-  {
-    category: "Möbel",
-    suggestions: [
-      {
-        id: "minimalist-bookshelf",
-        title: "Bücherregal",
-        suggestion: "Ein minimalistisches Bücherregal hinzufügen",
-        explanation:
-          "Ein schlichtes Bücherregal bietet Stauraum und schafft visuelle Struktur, ohne den Raum zu überladen.",
-      },
-      {
-        id: "multifunctional-sofa",
-        title: "Sofa",
-        suggestion: "Multifunktionales Sofa integrieren",
-        explanation:
-          "Ein Sofa mit Stauraum maximiert die Funktionalität in kleineren Räumen und bietet gleichzeitig Komfort.",
-      },
-    ],
-  },
-  {
-    category: "Beleuchtung",
-    suggestions: [
-      {
-        id: "dimmable-floor-lamp",
-        title: "Stehlampe",
-        suggestion: "Dimmbare Stehlampe platzieren",
-        explanation:
-          "Dimmbare Beleuchtung ermöglicht es, die Stimmung je nach Tageszeit anzepassen und schafft gemütliche Akzente.",
-      },
-      {
-        id: "led-spots",
-        title: "LED-Spots",
-        suggestion: "LED-Spots für indirektes Licht installieren",
-        explanation:
-          "Indirektes Licht von LED-Spots sorgt für eine gleichmäßige Ausleuchtung ohne harte Schatten und spart Energie.",
-      },
-    ],
-  },
-  {
-    category: "Dekoration",
-    suggestions: [
-      {
-        id: "large-wall-art",
-        title: "Wandbild",
-        suggestion: "Großes Wandbild aufhängen",
-        explanation:
-          "Ein großes Kunstwerk fungiert als Blickfang und kann die Farbpalette des Raumes harmonisch zusammenführen.",
-      },
-      {
-        id: "plants",
-        title: "Pflanzen",
-        suggestion: "Pflanzen für mehr Frische aufstellen",
-        explanation:
-          "Pflanzen verbessern die Luftqualität und bringen Leben in den Raum, während sie natürliche Akzente setzen.",
-      },
-    ],
-  },
-];
+// Empty state component
+const EmptyState = () => {
+  const router = useRouter();
+  const reducedMotion = useMotionPreference();
+
+  const handleGoBack = () => {
+    router.push("/");
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md"
+      >
+        <div className="mb-6">
+          <div className="w-16 h-16 mx-auto mb-4 bg-base-300 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-base-content/50"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.562M15 6.5a7.966 7.966 0 00-6-.5 7.966 7.966 0 00-6 .5v.5a8 8 0 0012 0V6.5z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <h3 className="text-xl sm:text-2xl font-bold text-base-content mb-3">
+          Keine Vorschläge verfügbar
+        </h3>
+
+        <p className="text-base-content/70 mb-6 leading-relaxed">
+          Es konnten keine Design-Vorschläge generiert werden. Bitte versuchen
+          Sie es mit einem anderen Bild eines Innenraums.
+        </p>
+
+        <motion.button
+          variants={reducedMotion ? {} : buttonVariants}
+          whileHover={reducedMotion ? {} : "hover"}
+          whileTap={reducedMotion ? {} : "tap"}
+          onClick={handleGoBack}
+          className="px-6 py-3 bg-primary hover:bg-primary-focus text-primary-content font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          Neues Bild hochladen
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+};
 
 interface RightColumnProps {
   selectedSuggestions: Record<string, boolean>;
@@ -99,14 +80,12 @@ const RightColumn: React.FC<RightColumnProps> = ({
   onToggleSuggestion,
 }) => {
   const reducedMotion = useMotionPreference();
+  const { suggestions } = useAppState();
 
-  // Flatten all suggestions for easy rendering
-  const allSuggestions = suggestionCategories.flatMap((category) =>
-    category.suggestions.map((suggestion) => ({
-      ...suggestion,
-      category: category.category,
-    }))
-  );
+  // Show empty state if no suggestions available
+  if (!suggestions || suggestions.length === 0) {
+    return <EmptyState />;
+  }
 
   return (
     <div className="flex flex-col h-full overflow-visible">
@@ -133,7 +112,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
         animate="visible"
         className="flex-1 space-y-3 sm:space-y-4 py-4 sm:py-6 overflow-visible"
       >
-        {allSuggestions.map((suggestion, index) => (
+        {suggestions.map((suggestion, index) => (
           <motion.div
             key={suggestion.id}
             variants={reducedMotion ? {} : staggerItem}

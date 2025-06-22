@@ -230,32 +230,113 @@ export default function AnalyzePage() {
     }
   }, [localImageUrl, hostedImageUrl, router]);
 
-  const handleStartAnalysis = useCallback(() => {
+  const handleStartAnalysis = useCallback(async () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
 
-    // Simulate analysis progress
-    const progressInterval = setInterval(() => {
-      setAnalysisProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + Math.random() * 25;
-      });
-    }, 200);
+    try {
+      // Start progress simulation
+      const progressInterval = setInterval(() => {
+        setAnalysisProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90; // Leave room for completion
+          }
+          return prev + Math.random() * 15;
+        });
+      }, 300);
 
-    // Mock OpenAI API call with 4 second timeout
-    setTimeout(() => {
+      // Get the image file for API call
+      let imageFile: File | null = null;
+
+      if (localImageUrl) {
+        // Convert blob URL back to File if needed
+        const response = await fetch(localImageUrl);
+        const blob = await response.blob();
+        imageFile = new File([blob], "room-image.jpg", { type: "image/jpeg" });
+      } else if (hostedImageUrl) {
+        // For hosted images, we need to fetch and convert to File
+        const response = await fetch(hostedImageUrl);
+        const blob = await response.blob();
+        imageFile = new File([blob], "room-image.jpg", { type: blob.type });
+      }
+
+      if (!imageFile) {
+        throw new Error("Kein Bild zum Analysieren gefunden");
+      }
+
+      // Prepare form data for API call
+      const formData = new FormData();
+      formData.append("file", imageFile);
+
+      // Call our analysis API
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Analyse fehlgeschlagen");
+      }
+
+      const analysisResult = await response.json();
+
+      // Clear progress interval and complete
       clearInterval(progressInterval);
       setAnalysisProgress(100);
+
+      // Check if the image is an interior space
+      if (
+        !analysisResult.isInteriorSpace ||
+        analysisResult.suggestions.length === 0
+      ) {
+        // Show error message for non-interior images
+        setTimeout(() => {
+          setIsAnalyzing(false);
+          setAnalysisProgress(0);
+          alert(
+            "Es konnten keine Vorschläge generiert werden. Bitte laden Sie ein Bild eines Innenraums hoch (Wohnzimmer, Schlafzimmer, Küche, etc.)."
+          );
+        }, 500);
+        return;
+      }
+
+      // Store suggestions in global state
+      const { setSuggestions } = useAppState.getState();
+      setSuggestions(analysisResult.suggestions);
 
       // Small delay to show completion
       setTimeout(() => {
         router.push("/suggestions");
       }, 500);
-    }, 4000);
-  }, [router]);
+    } catch (error) {
+      console.error("Analysis error:", error);
+      setIsAnalyzing(false);
+      setAnalysisProgress(0);
+
+      // Show user-friendly error message
+      let errorMessage =
+        "Fehler bei der Analyse. Bitte versuchen Sie es erneut.";
+
+      if (error instanceof Error) {
+        if (error.message.includes("OpenAI API")) {
+          errorMessage =
+            "Problem mit der KI-Analyse. Bitte versuchen Sie es in einem Moment erneut.";
+        } else if (error.message.includes("Validierung")) {
+          errorMessage =
+            "Die KI-Antwort konnte nicht verarbeitet werden. Bitte versuchen Sie es erneut.";
+        } else if (error.message.includes("Kein Bild")) {
+          errorMessage =
+            "Kein Bild zum Analysieren gefunden. Bitte laden Sie ein neues Bild hoch.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      alert(errorMessage);
+    }
+  }, [localImageUrl, hostedImageUrl, router]);
 
   const handleGoBack = useCallback(() => {
     router.push("/");
