@@ -3,91 +3,242 @@
 import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Loader from "./components/Loader";
 import ResultDisplay from "./components/ResultDisplay";
 import ActionButtons from "./components/ActionButtons";
+import {
+  staggerContainer,
+  staggerItem,
+  loadingVariants,
+  useMotionPreference,
+} from "@/utils/animations";
 
-const inspirationalTexts = [
-  "Ihr neuer Raum wird gestaltet...",
-  "Magie wird gewirkt...",
-  "Die Pinsel werden geschwungen...",
-  "Fast fertig...",
+// Granular progress messages for better UX
+const progressSteps = [
+  "Analysiere Raumlayout und Proportionen...",
+  "Bewerte Beleuchtung und Schattenwurf...",
+  "Wähle komplementäre Möbel aus...",
+  "Generiere Farbpalette und Materialien...",
+  "Rendere das finale Bild...",
+  "Finalisiere die Verbesserungen...",
 ];
 
 const ResultPage = () => {
   const { localImageUrl } = useAppState();
   const { openModal } = useImageModalStore();
   const [loading, setLoading] = useState(true);
-  const [loaderTextIdx, setLoaderTextIdx] = useState(0);
+  const [progressStep, setProgressStep] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const reducedMotion = useMotionPreference();
 
   useEffect(() => {
+    if (!localImageUrl) return;
+
     setLoading(true);
-    setLoaderTextIdx(0);
-    const interval = setInterval(() => {
-      setLoaderTextIdx((idx) => (idx + 1) % inspirationalTexts.length);
-    }, 1200);
+    setProgressStep(0);
+    setProgress(0);
+
+    // Simulate granular progress updates
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        const newProgress = prev + Math.random() * 15;
+        return Math.min(newProgress, 95);
+      });
+    }, 200);
+
+    // Update progress steps
+    const stepInterval = setInterval(() => {
+      setProgressStep((prev) => {
+        if (prev < progressSteps.length - 1) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 1000);
+
+    // Complete the process
     const timeout = setTimeout(() => {
-      setLoading(false);
-      clearInterval(interval);
-    }, 2500);
+      setProgress(100);
+      setTimeout(() => {
+        setLoading(false);
+        clearInterval(progressInterval);
+        clearInterval(stepInterval);
+      }, 500);
+    }, 6000);
+
     return () => {
       clearTimeout(timeout);
-      clearInterval(interval);
+      clearInterval(progressInterval);
+      clearInterval(stepInterval);
     };
   }, [localImageUrl]);
 
-  const generatedImageUrl =
-    "https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a-blur.webp";
+  // Mock generated image variations for better UX
+  const generatedImageVariations = [
+    "https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a-blur.webp",
+    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
+    "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
+  ];
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
+  const [selectedVariation, setSelectedVariation] = useState(0);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
+  if (!localImageUrl) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex flex-col items-center justify-center h-full text-center"
+      >
+        <h2 className="text-2xl font-semibold text-gray-600 mb-4">
+          Kein Bild gefunden
+        </h2>
+        <p className="text-gray-500 mb-6">
+          Bitte laden Sie zunächst ein Bild hoch.
+        </p>
+        <motion.a
+          href="/"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-focus transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          Zurück zum Upload
+        </motion.a>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
-      className="flex flex-col gap-8 items-center justify-center w-full"
-      variants={containerVariants}
+      variants={reducedMotion ? {} : staggerContainer}
       initial="hidden"
       animate="visible"
+      className="flex flex-col gap-8 items-center justify-center w-full"
     >
-      <motion.div className="text-center" variants={itemVariants}>
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-          Dein Raum, neu erfunden.
-        </h2>
-        <p className="text-gray-500 mt-2">
-          Bewege den Regler, um den Zauber zu sehen!
+      {/* Header */}
+      <motion.div
+        variants={reducedMotion ? {} : staggerItem}
+        className="text-center"
+      >
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 mb-4">
+          Ihr Raum, neu erfunden.
+        </h1>
+        <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+          {loading
+            ? "Unsere KI arbeitet an Ihren personalisierten Designvorschlägen..."
+            : "Bewegen Sie den Regler, um die Transformation zu sehen!"}
         </p>
       </motion.div>
 
-      {loading ? (
-        <Loader loaderTextIdx={loaderTextIdx} />
-      ) : (
-        <>
-          {localImageUrl && (
-            <ResultDisplay
-              localImageUrl={localImageUrl}
-              generatedImageUrl={generatedImageUrl}
-              openModal={openModal}
-              itemVariants={itemVariants}
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loading"
+            variants={reducedMotion ? {} : loadingVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full max-w-4xl"
+          >
+            <Loader
+              progressStep={progressStep}
+              progressSteps={progressSteps}
+              progress={progress}
             />
-          )}
-          <ActionButtons itemVariants={itemVariants} />
-        </>
-      )}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="result"
+            variants={reducedMotion ? {} : staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="w-full space-y-8"
+          >
+            {/* Main Result Display */}
+            <motion.div variants={reducedMotion ? {} : staggerItem}>
+              <ResultDisplay
+                localImageUrl={localImageUrl}
+                generatedImageUrl={generatedImageVariations[selectedVariation]}
+                openModal={openModal}
+                itemVariants={staggerItem}
+              />
+            </motion.div>
+
+            {/* Variation Selector */}
+            {generatedImageVariations.length > 1 && (
+              <motion.div
+                variants={reducedMotion ? {} : staggerItem}
+                className="flex flex-col items-center space-y-4"
+              >
+                <h3 className="text-lg font-semibold text-gray-700">
+                  Weitere Variationen
+                </h3>
+                <div className="flex space-x-4 overflow-x-auto pb-2 px-2">
+                  {generatedImageVariations.map((variation, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => setSelectedVariation(index)}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={{ duration: 0.15 }}
+                      className={`relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                        selectedVariation === index
+                          ? "border-primary shadow-lg shadow-primary/25"
+                          : "border-gray-200 hover:border-primary/30 hover:shadow-md"
+                      }`}
+                    >
+                      <img
+                        src={variation}
+                        alt={`Designvariation ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {selectedVariation === index && (
+                        <motion.div
+                          layoutId="selection-indicator"
+                          className="absolute inset-0 bg-primary/20 flex items-center justify-center"
+                        >
+                          <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Action Buttons */}
+            <motion.div variants={reducedMotion ? {} : staggerItem}>
+              <ActionButtons itemVariants={staggerItem} />
+            </motion.div>
+
+            {/* Tips */}
+            <motion.div
+              variants={reducedMotion ? {} : staggerItem}
+              className="text-center space-y-2"
+            >
+              <p className="text-sm text-gray-500">
+                💡 Tipp: Klicken Sie auf das Bild für eine Vollansicht
+              </p>
+              <p className="text-xs text-gray-400">
+                Nicht zufrieden? Gehen Sie zurück und wählen Sie andere
+                Vorschläge aus.
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

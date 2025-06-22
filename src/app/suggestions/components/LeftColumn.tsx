@@ -18,18 +18,22 @@ const LeftColumn = () => {
       openModal(localImageUrl);
     }
   };
+
   return (
     <motion.div
-      className="w-full md:w-1/2 flex flex-col gap-4"
+      className="w-full flex flex-col gap-6 p-4 lg:p-6"
       variants={{
         hidden: { opacity: 0, y: 15 },
         visible: { opacity: 1, y: 0 },
       }}
     >
-      <h2 className="font-bold text-2xl text-center">Ihr Originalbild</h2>
+      <h2 className="font-bold text-3xl lg:text-4xl text-gray-900 text-center mb-2">
+        Ihr Originalbild
+      </h2>
+
       <button
         type="button"
-        className="cursor-pointer relative rounded-2xl shadow-xl overflow-hidden"
+        className="cursor-pointer relative rounded-2xl shadow-xl overflow-hidden w-full"
         onClick={handleImageClick}
       >
         <motion.div
@@ -40,13 +44,15 @@ const LeftColumn = () => {
             scale: isDeleteHovered ? 1.03 : 1,
           }}
           transition={{ duration: 0.3, ease: "easeOut" }}
+          className="w-full"
         >
           <Image
             src={localImageUrl}
-            className="w-full h-auto object-cover aspect-[4/3]"
+            className="w-full h-auto object-cover aspect-[4/3] rounded-2xl"
             width={800}
             height={600}
             alt="Original uploaded image"
+            priority
           />
         </motion.div>
 
@@ -57,7 +63,7 @@ const LeftColumn = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute inset-0 bg-black/40 flex items-center justify-center"
+              className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-2xl"
             >
               <ResetIcon />
             </motion.div>
@@ -69,14 +75,15 @@ const LeftColumn = () => {
         href="/"
         onMouseEnter={() => setIsDeleteHovered(true)}
         onMouseLeave={() => setIsDeleteHovered(false)}
+        className="flex justify-center"
       >
         <motion.span
           animate={{ scale: isDeleteHovered ? 1.05 : 1 }}
           transition={{ duration: 0.2 }}
-          className="flex justify-center items-center gap-1.5 group group-hover:text-error"
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors group"
         >
           <BackIcon />
-          Anderes Bild hochladen
+          <span className="font-medium">Anderes Bild hochladen</span>
         </motion.span>
       </Link>
     </motion.div>
