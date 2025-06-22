@@ -70,7 +70,10 @@ const ToggleSwitch = ({
       role="switch"
       aria-checked={checked}
       aria-label={ariaLabel}
-      onClick={onChange}
+      onClick={(e) => {
+        e.stopPropagation();
+        onChange();
+      }}
       className={`relative inline-flex items-center h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
         checked ? "bg-primary" : "bg-gray-200"
       }`}

@@ -173,7 +173,7 @@ const ResultPage = () => {
                 <h3 className="text-lg font-semibold text-gray-700">
                   Weitere Variationen
                 </h3>
-                <div className="flex space-x-4 overflow-x-auto pb-2 px-2">
+                <div className="flex space-x-4 overflow-visible pb-2 px-2">
                   {generatedImageVariations.map((variation, index) => (
                     <motion.button
                       key={index}
@@ -195,7 +195,7 @@ const ResultPage = () => {
                       {selectedVariation === index && (
                         <motion.div
                           layoutId="selection-indicator"
-                          className="absolute inset-0 bg-primary/20 flex items-center justify-center"
+                          className="absolute inset-0 flex items-center justify-center"
                         >
                           <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
                             <svg
