@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // German prompt for room analysis
     const prompt = `
-Du bist ein professioneller Innenarchitekt. Analysiere dieses Bild auf Innenräume und Raumgestaltung.
+Du bist ein professioneller Innenarchitekt mit über 15 Jahren Erfahrung. Analysiere dieses Bild eines Innenraums und erstelle präzise, umsetzbare Verbesserungsvorschläge.
 
 WICHTIGE REGEL: Analysiere NUR Bilder von Innenräumen (Wohnzimmer, Schlafzimmer, Küche, Bad, Büro, etc.).
 
@@ -53,27 +53,44 @@ Wenn das Bild einen Innenraum zeigt:
   "suggestions": [
     {
       "id": "eindeutige-id-mit-bindestrichen",
-      "title": "Kurzer Titel (z.B. 'Wandfarbe', 'Beleuchtung')",
-      "suggestion": "Konkreter Vorschlag (z.B. 'Wände in warmem Beige streichen')",
-      "explanation": "Ausführliche Erklärung warum dieser Vorschlag den Raum verbessert",
-      "category": "Kategorie (Wandfarbe, Möbel, Beleuchtung, Dekoration, etc.)"
+      "title": "Prägnanter Titel (max. 3 Wörter)",
+      "suggestion": "Sehr spezifischer, umsetzbarer Vorschlag mit konkreten Details (z.B. 'Wände in warmem Salbeigrün (RAL 6021) streichen für beruhigende Atmosphäre')",
+      "explanation": "Detaillierte 2-3 Sätze Erklärung WARUM dieser Vorschlag funktioniert und WIE er den Raum visuell/funktional verbessert",
+      "category": "Exakte Kategorie"
     }
   ]
 }
 
-Wenn das Bild KEINEN Innenraum zeigt (Außenbereich, Personen, Objekte, etc.):
+Wenn das Bild KEINEN Innenraum zeigt:
 {
   "isInteriorSpace": false,
   "suggestions": []
 }
 
-REGELN für Innenräume:
-- Erstelle 6-10 spezifische, professionelle Verbesserungsvorschläge
-- Jede Erklärung soll mindestens 2 Sätze haben
-- Alle Texte auf Deutsch
-- Fokus auf: Wandfarben, Möbelanordnung, Beleuchtung, Dekoration, Raumaufteilung
+WICHTIGE ANALYSE-KRITERIEN für Innenräume:
+1. Erkenne den Raumtyp (Wohnzimmer, Schlafzimmer, Küche, etc.)
+2. Bewerte Beleuchtung, Farbschema, Raumaufteilung, Möbelstellung
+3. Identifiziere Stil-Potentiale und Problembereiche
 
-Antworte NUR mit dem JSON-Format, keine zusätzlichen Erklärungen!
+VORSCHLAG-KATEGORIEN (verwende genau diese):
+- "Wandgestaltung" (Farbe, Tapeten, Wandkunst)
+- "Beleuchtung" (Lampen, Lichtquellen, Atmosphäre)
+- "Möbelanordnung" (Platzierung, Ergonomie)
+- "Farbkonzept" (Harmonie, Akzente)
+- "Dekoration" (Accessoires, Pflanzen, Textilien)
+- "Raumaufteilung" (Zonierung, Verkehrswege)
+- "Materialien" (Oberflächen, Texturen)
+- "Aufbewahrung" (Organisation, Stauraum)
+
+QUALITÄTS-ANFORDERUNGEN:
+- 8-12 Vorschläge je nach Raum-Komplexität
+- Jeder Vorschlag muss SEHR spezifisch und umsetzbar sein
+- Berücksichtige bestehenden Stil und Budget-Realismus
+- Fokus auf visuell wahrnehmbare Veränderungen
+- Verwende konkrete Farbnamen, Materialien, Maße wenn möglich
+- Erklärungen müssen Design-Prinzipien (Proportionen, Kontrast, Balance) erwähnen
+
+Antworte NUR mit dem JSON-Format!
 `;
 
     // Call OpenAI Vision API
@@ -83,7 +100,7 @@ Antworte NUR mit dem JSON-Format, keine zusätzlichen Erklärungen!
         {
           role: "system",
           content:
-            "Du bist ein professioneller Innenarchitekt. Antworte immer im angeforderten JSON-Format, niemals in normalem Text. Wenn das Bild keinen Innenraum zeigt, setze isInteriorSpace auf false und suggestions als leeres Array.",
+            "Du bist ein erfahrener Innenarchitekt und Design-Experte. Analysiere Bilder präzise und erstelle nur umsetzbare, spezifische Verbesserungsvorschläge. Antworte AUSSCHLIESSLICH im angeforderten JSON-Format ohne zusätzlichen Text. Bei Nicht-Innenräumen: isInteriorSpace=false, suggestions=[]. Fokussiere auf visuell wahrnehmbare, realistische Veränderungen mit konkreten Details.",
         },
         {
           role: "user",

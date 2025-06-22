@@ -69,6 +69,53 @@ function isReadableStream(obj: any): obj is ReadableStream {
   return obj && typeof obj === "object" && typeof obj.getReader === "function";
 }
 
+// Function to create a detailed prompt from suggestions
+function createDetailedPrompt(
+  suggestions: Array<{
+    id: string;
+    title: string;
+    suggestion: string;
+    explanation: string;
+    category: string;
+  }>
+): string {
+  // Group suggestions by category for better organization
+  const suggestionsByCategory = suggestions.reduce((acc, suggestion) => {
+    if (!acc[suggestion.category]) {
+      acc[suggestion.category] = [];
+    }
+    acc[suggestion.category].push(suggestion);
+    return acc;
+  }, {} as Record<string, typeof suggestions>);
+
+  // Create detailed prompt sections
+  const promptSections = Object.entries(suggestionsByCategory).map(
+    ([category, categorySuggestions]) => {
+      const categoryPrompts = categorySuggestions
+        .map((s) => `${s.suggestion} (${s.explanation.split(".")[0]})`)
+        .join("; ");
+
+      return `${category}: ${categoryPrompts}`;
+    }
+  );
+
+  // Build the complete prompt
+  const detailedPrompt = `Transform this interior space by implementing the following specific improvements while maintaining the original room layout and overall style:
+
+${promptSections.join("\n\n")}
+
+Requirements:
+- Keep the same room layout, furniture positioning, and architectural elements
+- Maintain the current lighting conditions and perspective
+- Apply changes realistically and tastefully
+- Ensure all modifications blend naturally with the existing interior design
+- Focus on enhancing the space while preserving its character and functionality
+
+The result should show a refined version of the same room with these specific improvements applied.`;
+
+  return detailedPrompt;
+}
+
 export async function POST(req: Request) {
   if (!process.env.REPLICATE_API_TOKEN) {
     return NextResponse.json(
@@ -78,26 +125,41 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { imageUrl, prompt } = await req.json();
+    const body = await req.json();
 
-    if (!imageUrl || !prompt) {
-      return NextResponse.json(
-        { error: "imageUrl und prompt sind erforderlich." },
-        { status: 400 }
-      );
-    }
+    // Validate the input
+    const validatedData = generateImageSchema.parse(body);
+    const { imageUrl, suggestions } = validatedData;
+
+    // Create a detailed prompt based on the suggestions
+    const detailedPrompt = createDetailedPrompt(suggestions);
+
+    console.log("Generated detailed prompt:", detailedPrompt);
 
     const prediction = await replicate.predictions.create({
       model: "black-forest-labs/flux-kontext-pro",
       input: {
         input_image: imageUrl,
-        prompt: `Verbessere dieses Bild basierend auf den folgenden Vorschlägen: ${prompt}. Halte den Stil des Originalbildes bei, aber wende die Vorschläge kreativ an.`,
+        prompt: detailedPrompt,
       },
     });
 
     return NextResponse.json(prediction, { status: 201 });
   } catch (error) {
     console.error("Fehler beim Aufruf der Replicate API:", error);
+
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: "Ungültige Eingabedaten.",
+          details: error.errors.map(
+            (err) => `${err.path.join(".")}: ${err.message}`
+          ),
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Bildgenerierung konnte nicht gestartet werden." },
       { status: 500 }

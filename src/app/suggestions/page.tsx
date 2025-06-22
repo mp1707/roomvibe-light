@@ -49,7 +49,6 @@ export default function SuggestionsPage() {
     setGenerationError(null);
 
     const selected = suggestions.filter((s) => selectedSuggestions[s.id]);
-    const prompt = selected.map((s) => s.title).join(", ");
 
     try {
       const response = await fetch("/api/generate-image", {
@@ -57,7 +56,7 @@ export default function SuggestionsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageUrl: hostedImageUrl,
-          prompt: prompt,
+          suggestions: selected,
         }),
       });
 
