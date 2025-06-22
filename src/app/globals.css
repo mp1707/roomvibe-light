@@ -81,29 +81,9 @@ body {
 }
 
 /* Remove button shadows for clean aesthetic */
-.btn,
-.btn-primary,
-.btn-outline {
+.btn {
   box-shadow: none !important;
-  border: none;
   text-transform: none;
-}
-
-/* Enhanced button styles with theming */
-.btn-primary {
-  background: linear-gradient(135deg, hsl(var(--p)) 0%, hsl(var(--pf)) 100%);
-  color: hsl(var(--pc));
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--pf)) 0%,
-    hsl(var(--pf) / 0.8) 100%
-  );
-  transform: translateY(-1px);
 }
 
 /* Liquid Glass effect utility classes with theming */
