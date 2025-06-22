@@ -42,10 +42,10 @@ export default function SuggestionsPage() {
   };
 
   return (
-    <div className="flex-1 w-full flex flex-col relative min-h-screen">
+    <div className="flex-1 w-full flex flex-col relative min-h-screen pb-24 sm:pb-28 lg:pb-32">
       {/* Main content area with sticky columns */}
       <motion.div
-        className="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-8"
+        className="flex-1 flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"

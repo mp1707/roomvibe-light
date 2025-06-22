@@ -111,15 +111,15 @@ const RightColumn: React.FC<RightColumnProps> = ({
   return (
     <div className="flex flex-col h-full overflow-visible">
       {/* Header - Only sticky on large screens */}
-      <div className="lg:sticky lg:top-24 bg-base-100 lg:z-20 pb-6 border-b border-base-300 lg:-mx-4 lg:px-4">
+      <div className="lg:sticky lg:top-24 bg-base-100 lg:z-20 pb-4 sm:pb-6 border-b border-base-300 lg:-mx-4 lg:px-4">
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="pt-4"
+          className="pt-2 sm:pt-4"
         >
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-base-content mb-3 text-center">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-base-content mb-2 sm:mb-3 text-center">
             Design-Vorschläge
           </h2>
-          <p className="text-lg text-base-content/60 max-w-md mx-auto text-center">
+          <p className="text-base sm:text-lg text-base-content/60 max-w-md mx-auto text-center px-4 sm:px-0">
             Wählen Sie die Verbesserungen aus, die Ihnen gefallen. Unsere KI
             erklärt Ihnen gerne das Warum.
           </p>
@@ -131,7 +131,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
         variants={reducedMotion ? {} : staggerContainer}
         initial="hidden"
         animate="visible"
-        className="flex-1 space-y-4 py-6 overflow-visible"
+        className="flex-1 space-y-3 sm:space-y-4 py-4 sm:py-6 overflow-visible"
       >
         {allSuggestions.map((suggestion, index) => (
           <motion.div

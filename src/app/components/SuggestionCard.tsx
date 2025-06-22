@@ -142,7 +142,7 @@ const ExplanationTooltip = ({
               damping: 25,
               duration: 0.2,
             }}
-            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[9999] w-72 max-w-xs"
+            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[9999] w-64 sm:w-72 max-w-xs"
           >
             <div className="bg-base-100/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-base-300/50">
               <div className="flex items-start space-x-3">
@@ -201,7 +201,7 @@ const SuggestionCard = ({
       whileHover={reducedMotion ? {} : "hover"}
       whileTap={reducedMotion ? {} : "tap"}
       transition={{ delay }}
-      className={`relative group p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 ease-out ${
+      className={`relative group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 ease-out ${
         selected
           ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
           : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
@@ -212,11 +212,11 @@ const SuggestionCard = ({
       aria-describedby={`${cardId}-description`}
     >
       {/* Header */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-3 sm:mb-4">
         <div className="flex-1 min-w-0">
           <h3
             id={`${cardId}-title`}
-            className="text-lg font-semibold text-base-content mb-1"
+            className="text-base sm:text-lg font-semibold text-base-content mb-1"
           >
             {title}
           </h3>
@@ -229,7 +229,7 @@ const SuggestionCard = ({
         </div>
 
         {/* Toggle Switch */}
-        <div className="ml-4 flex-shrink-0">
+        <div className="ml-3 sm:ml-4 flex-shrink-0">
           <ToggleSwitch
             checked={selected}
             onChange={handleToggle}

@@ -120,10 +120,10 @@ const ResultPage = () => {
         variants={reducedMotion ? {} : staggerItem}
         className="text-center"
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
           Ihr Raum, neu erfunden.
         </h1>
-        <p className="text-xl text-base-content/60 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-base-content/60 max-w-2xl mx-auto px-4">
           {loading
             ? "Unsere KI arbeitet an Ihren personalisierten Designvorschlägen..."
             : "Bewegen Sie den Regler, um die Transformation zu sehen!"}

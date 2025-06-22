@@ -26,7 +26,7 @@ const UploadIcon = ({ isDragging }: { isDragging: boolean }) => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="size-16 md:size-20 text-base-content/40"
+    className="size-12 sm:size-16 md:size-20 text-base-content/40"
     animate={isDragging ? "dragging" : "initial"}
     variants={{
       initial: { scale: 1, y: 0 },
@@ -199,17 +199,17 @@ const UploadForm = () => {
         variants={reducedMotion ? {} : staggerContainer}
         initial="hidden"
         animate="visible"
-        className="w-full max-w-3xl flex flex-col items-center text-center px-6 py-12 md:py-20"
+        className="w-full max-w-3xl flex flex-col items-center text-center px-4 sm:px-6 py-8 sm:py-12 md:py-20"
       >
         {/* Hero Section */}
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="mb-16"
+          className="mb-8 md:mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-4 md:mb-6 leading-tight">
             Verwandeln Sie Ihren Raum.
           </h1>
-          <p className="text-xl md:text-2xl text-base-content/60 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-base-content/60 max-w-2xl mx-auto leading-relaxed">
             Laden Sie ein Foto hoch und lassen Sie sich von KI-gestützten
             Designvorschlägen inspirieren.
           </p>
@@ -218,7 +218,7 @@ const UploadForm = () => {
         {/* Upload Section */}
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="w-full max-w-2xl mb-12"
+          className="w-full max-w-2xl mb-8 md:mb-12"
         >
           <motion.div
             variants={dragVariants}
@@ -227,7 +227,7 @@ const UploadForm = () => {
             onDragEnter={handleDragEvents}
             onDragOver={handleDragEvents}
             onDragLeave={handleDragEvents}
-            className={`relative min-h-[380px] md:min-h-[420px] flex flex-col items-center justify-center border-2 border-dashed rounded-3xl cursor-pointer select-none group transition-all duration-300 hover:shadow-lg ${
+            className={`relative min-h-[280px] sm:min-h-[320px] md:min-h-[420px] flex flex-col items-center justify-center border-2 border-dashed rounded-3xl cursor-pointer select-none group transition-all duration-300 hover:shadow-lg ${
               isDragging
                 ? "border-primary bg-primary/5 shadow-lg"
                 : "border-base-content/20 hover:border-base-content/30 hover:bg-base-200/50"
@@ -261,12 +261,12 @@ const UploadForm = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center space-y-8"
+                  className="flex flex-col items-center justify-center p-4 space-y-6 md:space-y-8"
                 >
                   <UploadIcon isDragging={isDragging} />
 
-                  <div className="space-y-4">
-                    <p className="font-semibold text-2xl text-base-content">
+                  <div className="space-y-2 md:space-y-4">
+                    <p className="font-semibold text-xl sm:text-2xl text-base-content">
                       <span className="text-primary">Foto auswählen</span> oder
                       hierher ziehen
                     </p>
@@ -286,12 +286,12 @@ const UploadForm = () => {
         {/* Inspiration CTA */}
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="flex flex-col items-center space-y-6"
+          className="flex flex-col items-center space-y-4 md:space-y-6"
         >
           <div className="flex items-center space-x-4 text-base-content/40">
-            <div className="h-px bg-base-300 w-16"></div>
+            <div className="h-px bg-base-300 w-12 md:w-16"></div>
             <span className="text-sm font-medium">oder</span>
-            <div className="h-px bg-base-300 w-16"></div>
+            <div className="h-px bg-base-300 w-12 md:w-16"></div>
           </div>
 
           <motion.button
@@ -299,7 +299,7 @@ const UploadForm = () => {
             whileHover={reducedMotion ? {} : "hover"}
             whileTap={reducedMotion ? {} : "tap"}
             onClick={toggleInspiration}
-            className="group flex items-center space-x-3 px-8 py-4 bg-base-100/60 hover:bg-base-100/80 backdrop-blur-sm rounded-2xl border border-base-300/50 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="group flex items-center space-x-3 px-6 md:px-8 py-3 md:py-4 bg-base-100/60 hover:bg-base-100/80 backdrop-blur-sm rounded-xl md:rounded-2xl border border-base-300/50 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             <svg
               className="w-5 h-5 text-base-content/60 group-hover:text-primary transition-colors"
@@ -315,7 +315,7 @@ const UploadForm = () => {
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span className="font-semibold text-base-content/70 group-hover:text-primary transition-colors">
+            <span className="font-semibold text-sm md:text-base text-base-content/70 group-hover:text-primary transition-colors">
               Inspiration-Galerie durchsuchen
             </span>
           </motion.button>

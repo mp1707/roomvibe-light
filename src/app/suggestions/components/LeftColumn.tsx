@@ -21,13 +21,13 @@ const LeftColumn = () => {
 
   return (
     <motion.div
-      className="w-full flex flex-col gap-6 p-4 lg:p-6"
+      className="w-full flex flex-col gap-4 sm:gap-6 p-4 lg:p-6"
       variants={{
         hidden: { opacity: 0, y: 15 },
         visible: { opacity: 1, y: 0 },
       }}
     >
-      <h2 className="font-bold text-3xl lg:text-4xl text-base-content text-center mb-2">
+      <h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl text-base-content text-center mb-2">
         Ihr Originalbild
       </h2>
 

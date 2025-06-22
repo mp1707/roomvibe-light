@@ -126,10 +126,10 @@ const Loader: React.FC<LoaderProps> = ({
           transition={{ duration: 0.4 }}
           className="mb-6"
         >
-          <h3 className="text-xl font-semibold text-base-content mb-2">
+          <h3 className="text-lg sm:text-xl font-semibold text-base-content mb-2 px-4">
             {progressSteps[progressStep]}
           </h3>
-          <p className="text-base-content/60 text-sm">
+          <p className="text-base-content/60 text-sm px-4">
             Einen Moment Geduld, während unsere KI Ihre perfekte Raumgestaltung
             erstellt.
           </p>
