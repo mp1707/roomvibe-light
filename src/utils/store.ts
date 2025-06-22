@@ -4,11 +4,13 @@ import { Suggestion } from "@/types/suggestions";
 interface AppState {
   localImageUrl: string | null;
   hostedImageUrl: string | null;
+  generatedImageUrl: string | null;
   suggestions: Suggestion[];
   suggestionsToApply: Set<string>;
 
   setLocalImageUrl: (file: File | null) => void;
   setHostedImageUrl: (url: string | null) => void;
+  setGeneratedImageUrl: (url: string | null) => void;
   setSuggestions: (suggestions: Suggestion[]) => void;
   setSuggestionsToApply: (suggestions: Set<string>) => void;
   reset: () => void;
@@ -17,6 +19,7 @@ interface AppState {
 const initialState = {
   localImageUrl: null,
   hostedImageUrl: null,
+  generatedImageUrl: null,
   suggestions: [],
   suggestionsToApply: new Set<string>(),
 };
@@ -41,6 +44,10 @@ export const useAppState = create<AppState>((set, get) => ({
 
   setHostedImageUrl: (url) => {
     set({ hostedImageUrl: url });
+  },
+
+  setGeneratedImageUrl: (url) => {
+    set({ generatedImageUrl: url });
   },
 
   setSuggestions: (newSuggestions) => {
