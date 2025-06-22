@@ -35,6 +35,7 @@ const ResultPage = () => {
     ? generatedImageUrls
     : [];
 
+
   const checkStatus = useCallback(async () => {
     if (!prediction?.id) return;
 
@@ -159,12 +160,25 @@ const ResultPage = () => {
           >
             {/* Main Result Display */}
             <motion.div variants={reducedMotion ? {} : staggerItem}>
-              <ResultDisplay
-                localImageUrl={hostedImageUrl}
-                generatedImageUrl={safeGeneratedImageUrls[selectedVariation]}
-                openModal={openModal}
-                itemVariants={staggerItem}
-              />
+              {hostedImageUrl && safeGeneratedImageUrls[selectedVariation] ? (
+                <ResultDisplay
+                  localImageUrl={hostedImageUrl}
+                  generatedImageUrl={safeGeneratedImageUrls[selectedVariation]}
+                  openModal={openModal}
+                  itemVariants={staggerItem}
+                />
+              ) : (
+                <div className="text-center p-8 bg-base-200 rounded-xl">
+                  <p className="text-base-content/60">
+                    {!hostedImageUrl
+                      ? "Original image not available"
+                      : "Generated image not available"}
+                  </p>
+                  <p className="text-sm text-base-content/40 mt-2">
+                    Please make sure both images have been loaded properly.
+                  </p>
+                </div>
+              )}
             </motion.div>
 
             {/* Variation Selector */}

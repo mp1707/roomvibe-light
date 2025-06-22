@@ -17,10 +17,16 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
   openModal,
   itemVariants,
 }) => {
+  console.log("ResultDisplay props:", { localImageUrl, generatedImageUrl });
+
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  // Add safety checks for image URLs
+  const safeLocalImageUrl = localImageUrl || "";
+  const safeGeneratedImageUrl = generatedImageUrl || "";
 
   const updateSliderPosition = useCallback((clientX: number) => {
     if (!containerRef.current) return;
@@ -111,7 +117,15 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
       {/* Before/After Labels */}
       <motion.div
         className="absolute left-4 top-4 z-20 cursor-pointer select-none rounded-full bg-base-100/80 px-3 py-1.5 text-xs font-medium text-base-content/70 shadow-sm flex items-center gap-1"
-        onClick={() => localImageUrl && openModal(localImageUrl)}
+        onClick={() => {
+          console.log("Vorher clicked, safeLocalImageUrl:", safeLocalImageUrl);
+          if (safeLocalImageUrl && safeLocalImageUrl.trim() !== "") {
+            console.log("Opening modal with safeLocalImageUrl");
+            openModal(safeLocalImageUrl);
+          } else {
+            console.log("safeLocalImageUrl is falsy or empty");
+          }
+        }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         transition={{ duration: 0.2 }}
@@ -121,7 +135,18 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
       </motion.div>
       <motion.div
         className="absolute right-4 top-4 z-20 cursor-pointer select-none rounded-full bg-base-100/80 px-3 py-1.5 text-xs font-medium text-base-content/70 shadow-sm flex items-center gap-1"
-        onClick={() => openModal(generatedImageUrl)}
+        onClick={() => {
+          console.log(
+            "Nachher clicked, safeGeneratedImageUrl:",
+            safeGeneratedImageUrl
+          );
+          if (safeGeneratedImageUrl && safeGeneratedImageUrl.trim() !== "") {
+            console.log("Opening modal with safeGeneratedImageUrl");
+            openModal(safeGeneratedImageUrl);
+          } else {
+            console.log("safeGeneratedImageUrl is falsy or empty");
+          }
+        }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         transition={{ duration: 0.2 }}
@@ -133,7 +158,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
       {/* Base Image (After) */}
       <div className="absolute inset-0">
         <img
-          src={generatedImageUrl}
+          src={safeGeneratedImageUrl}
           alt="Nach der Bearbeitung"
           className="w-full h-full object-cover"
           draggable={false}
@@ -148,7 +173,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
         }}
       >
         <Image
-          src={localImageUrl}
+          src={safeLocalImageUrl}
           alt="Vor der Bearbeitung"
           width={800}
           height={800}

@@ -29,10 +29,17 @@ export const ImageModal = () => {
   const { imageUrl, closeModal } = useImageModalStore();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  console.log("ImageModal render: imageUrl =", imageUrl);
+
   useEffect(() => {
     const dialog = dialogRef.current;
+
     if (dialog) {
-      imageUrl ? dialog.showModal() : dialog.close();
+      if (imageUrl) {
+        dialog.showModal();
+      } else {
+        dialog.close();
+      }
     }
   }, [imageUrl]);
 
