@@ -8,14 +8,6 @@ module.exports = {
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
       },
-      colors: {
-        // Apple-inspired custom colors
-        "apple-gray": {
-          50: "#F5F5F7",
-          900: "#1D1D1F",
-        },
-        "apple-blue": "#007AFF",
-      },
       backdropBlur: {
         xs: "2px",
       },
@@ -46,7 +38,8 @@ module.exports = {
   daisyui: {
     themes: [
       {
-        aura: {
+        // Light theme - Professional and clean
+        light: {
           primary: "#007AFF",
           "primary-focus": "#0056CC",
           "primary-content": "#FFFFFF",
@@ -56,17 +49,18 @@ module.exports = {
           accent: "#FF9500",
           "accent-focus": "#CC7700",
           "accent-content": "#FFFFFF",
-          neutral: "#6B7280",
-          "neutral-focus": "#4B5563",
+          neutral: "#8E8E93",
+          "neutral-focus": "#6D6D70",
           "neutral-content": "#FFFFFF",
           "base-100": "#FFFFFF",
-          "base-200": "#F9FAFB",
-          "base-300": "#F3F4F6",
-          "base-content": "#111827",
+          "base-200": "#F2F2F7",
+          "base-300": "#E5E5EA",
+          "base-content": "#1C1C1E",
           info: "#007AFF",
-          success: "#34D399",
-          warning: "#FBBF24",
-          error: "#EF4444",
+          success: "#30D158",
+          warning: "#FF9F0A",
+          error: "#FF3B30",
+          // Custom CSS properties for enhanced theming
           "--rounded-box": "16px",
           "--rounded-btn": "12px",
           "--rounded-badge": "8px",
@@ -77,8 +71,59 @@ module.exports = {
           "--border-btn": "1px",
           "--tab-border": "1px",
           "--tab-radius": "8px",
+          // Custom Apple-like color variables
+          "--glass-bg": "rgba(255, 255, 255, 0.7)",
+          "--glass-border": "rgba(255, 255, 255, 0.2)",
+          "--shadow-color": "rgba(0, 0, 0, 0.1)",
+          "--text-muted": "#8E8E93",
+          "--border-color": "#E5E5EA",
+        },
+      },
+      {
+        // Dark theme - Professional Apple-like dark theme
+        dark: {
+          primary: "#0A84FF",
+          "primary-focus": "#0051D5",
+          "primary-content": "#FFFFFF",
+          secondary: "#5E5CE6",
+          "secondary-focus": "#4C4ADB",
+          "secondary-content": "#FFFFFF",
+          accent: "#FF9F0A",
+          "accent-focus": "#FF8C00",
+          "accent-content": "#000000",
+          neutral: "#8E8E93",
+          "neutral-focus": "#AEAEB2",
+          "neutral-content": "#FFFFFF",
+          "base-100": "#1C1C1E",
+          "base-200": "#2C2C2E",
+          "base-300": "#3A3A3C",
+          "base-content": "#FFFFFF",
+          info: "#0A84FF",
+          success: "#30D158",
+          warning: "#FF9F0A",
+          error: "#FF453A",
+          // Custom CSS properties
+          "--rounded-box": "16px",
+          "--rounded-btn": "12px",
+          "--rounded-badge": "8px",
+          "--animation-btn": "0.2s",
+          "--animation-input": "0.2s",
+          "--btn-text-case": "none",
+          "--btn-focus-scale": "0.98",
+          "--border-btn": "1px",
+          "--tab-border": "1px",
+          "--tab-radius": "8px",
+          // Custom Apple-like dark color variables
+          "--glass-bg": "rgba(28, 28, 30, 0.7)",
+          "--glass-border": "rgba(255, 255, 255, 0.1)",
+          "--shadow-color": "rgba(0, 0, 0, 0.3)",
+          "--text-muted": "#8E8E93",
+          "--border-color": "#3A3A3C",
         },
       },
     ],
+    base: true,
+    styled: true,
+    utils: true,
   },
 };

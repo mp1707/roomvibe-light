@@ -27,7 +27,7 @@ const LeftColumn = () => {
         visible: { opacity: 1, y: 0 },
       }}
     >
-      <h2 className="font-bold text-3xl lg:text-4xl text-gray-900 text-center mb-2">
+      <h2 className="font-bold text-3xl lg:text-4xl text-base-content text-center mb-2">
         Ihr Originalbild
       </h2>
 
@@ -80,7 +80,7 @@ const LeftColumn = () => {
         <motion.span
           animate={{ scale: isDeleteHovered ? 1.05 : 1 }}
           transition={{ duration: 0.2 }}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors group"
+          className="flex items-center gap-2 text-base-content/60 hover:text-base-content transition-colors group"
         >
           <BackIcon />
           <span className="font-medium">Anderes Bild hochladen</span>

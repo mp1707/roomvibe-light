@@ -22,7 +22,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
       variants={itemVariants}
     >
       <motion.div
-        className="absolute left-4 top-4 z-10 cursor-pointer select-none rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm flex items-center gap-1"
+        className="absolute left-4 top-4 z-10 cursor-pointer select-none rounded-full bg-base-100/80 px-3 py-1.5 text-xs font-medium text-base-content/70 shadow-sm flex items-center gap-1"
         onClick={() => localImageUrl && openModal(localImageUrl)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -32,7 +32,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
         Vorher
       </motion.div>
       <motion.div
-        className="absolute right-4 top-4 z-10 cursor-pointer select-none rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm flex items-center gap-1"
+        className="absolute right-4 top-4 z-10 cursor-pointer select-none rounded-full bg-base-100/80 px-3 py-1.5 text-xs font-medium text-base-content/70 shadow-sm flex items-center gap-1"
         onClick={() => openModal(generatedImageUrl)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

@@ -10,13 +10,13 @@ interface LoaderProps {
 }
 
 const SkeletonLoader = () => (
-  <div className="w-full aspect-[4/3] rounded-2xl bg-gray-200 overflow-hidden relative">
+  <div className="w-full aspect-[4/3] rounded-2xl bg-base-200 overflow-hidden relative">
     {/* Skeleton base */}
-    <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
+    <div className="absolute inset-0 bg-gradient-to-r from-base-200 via-base-100 to-base-200 animate-pulse" />
 
     {/* Shimmer effect */}
     <motion.div
-      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12"
+      className="absolute inset-0 bg-gradient-to-r from-transparent via-base-100/40 to-transparent transform -skew-x-12"
       animate={{
         x: [-200, 800],
       }}
@@ -28,10 +28,10 @@ const SkeletonLoader = () => (
     />
 
     {/* Room outline sketch */}
-    <div className="absolute inset-4 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center">
+    <div className="absolute inset-4 border-2 border-dashed border-base-300 rounded-xl flex items-center justify-center">
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gray-300 rounded-lg animate-pulse" />
-        <div className="w-24 h-3 bg-gray-300 rounded animate-pulse" />
+        <div className="w-16 h-16 mx-auto mb-4 bg-base-300 rounded-lg animate-pulse" />
+        <div className="w-24 h-3 bg-base-300 rounded animate-pulse" />
       </div>
     </div>
   </div>
@@ -39,7 +39,7 @@ const SkeletonLoader = () => (
 
 const ProgressBar = ({ progress }: { progress: number }) => (
   <div className="w-full max-w-md mx-auto mb-6">
-    <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+    <div className="w-full bg-base-200 rounded-full h-2 overflow-hidden">
       <motion.div
         className="h-full bg-gradient-to-r from-primary to-primary-focus"
         initial={{ width: 0 }}
@@ -47,7 +47,7 @@ const ProgressBar = ({ progress }: { progress: number }) => (
         transition={{ duration: 0.5, ease: "easeInOut" }}
       />
     </div>
-    <div className="flex justify-between text-xs text-gray-500 mt-2">
+    <div className="flex justify-between text-xs text-base-content/50 mt-2">
       <span>0%</span>
       <span className="font-medium">{Math.round(progress)}%</span>
       <span>100%</span>
@@ -126,10 +126,10 @@ const Loader: React.FC<LoaderProps> = ({
           transition={{ duration: 0.4 }}
           className="mb-6"
         >
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-base-content mb-2">
             {progressSteps[progressStep]}
           </h3>
-          <p className="text-gray-500 text-sm">
+          <p className="text-base-content/60 text-sm">
             Einen Moment Geduld, während unsere KI Ihre perfekte Raumgestaltung
             erstellt.
           </p>
@@ -142,7 +142,7 @@ const Loader: React.FC<LoaderProps> = ({
           <motion.div
             key={index}
             className={`w-2 h-2 rounded-full ${
-              index <= progressStep ? "bg-primary" : "bg-gray-300"
+              index <= progressStep ? "bg-primary" : "bg-base-300"
             }`}
             animate={{
               scale: index === progressStep ? [1, 1.3, 1] : 1,

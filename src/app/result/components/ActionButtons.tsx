@@ -20,14 +20,14 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ itemVariants }) => {
       </AnimatedButton>
       <Link
         href="/suggestions"
-        className="btn btn-ghost text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg h-14"
+        className="btn btn-ghost text-base-content/70 hover:text-base-content hover:bg-base-200 rounded-lg h-14"
       >
         <EditIcon />
         Vorschläge bearbeiten
       </Link>
       <Link
         href="/"
-        className="btn btn-ghost text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg h-14"
+        className="btn btn-ghost text-base-content/70 hover:text-base-content hover:bg-base-200 rounded-lg h-14"
       >
         <StartOverIcon />
         Neu beginnen

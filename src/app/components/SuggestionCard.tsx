@@ -75,7 +75,7 @@ const ToggleSwitch = ({
         onChange();
       }}
       className={`relative inline-flex items-center h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-        checked ? "bg-primary" : "bg-gray-200"
+        checked ? "bg-primary" : "bg-base-300"
       }`}
     >
       <span className="sr-only">{ariaLabel}</span>
@@ -144,13 +144,13 @@ const ExplanationTooltip = ({
             }}
             className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[9999] w-72 max-w-xs"
           >
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-200/50">
+            <div className="bg-base-100/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-base-300/50">
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0 w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center mt-0.5">
                   <InfoIcon className="w-3 h-3 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-700 leading-relaxed">
+                  <p className="text-sm text-base-content/70 leading-relaxed">
                     {explanation}
                   </p>
                 </div>
@@ -158,7 +158,7 @@ const ExplanationTooltip = ({
 
               {/* Arrow pointing up */}
               <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                <div className="w-4 h-4 bg-white/95 border border-gray-200/50 transform rotate-45"></div>
+                <div className="w-4 h-4 bg-base-100/95 border border-base-300/50 transform rotate-45"></div>
               </div>
             </div>
           </motion.div>
@@ -204,7 +204,7 @@ const SuggestionCard = ({
       className={`relative group p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 ease-out ${
         selected
           ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
-          : "border-gray-200 bg-white hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
       }`}
       onClick={handleToggle}
       role="article"
@@ -216,13 +216,13 @@ const SuggestionCard = ({
         <div className="flex-1 min-w-0">
           <h3
             id={`${cardId}-title`}
-            className="text-lg font-semibold text-gray-800 mb-1"
+            className="text-lg font-semibold text-base-content mb-1"
           >
             {title}
           </h3>
           <p
             id={`${cardId}-description`}
-            className="text-gray-600 text-sm leading-relaxed"
+            className="text-base-content/60 text-sm leading-relaxed"
           >
             {suggestion}
           </p>
@@ -253,7 +253,7 @@ const SuggestionCard = ({
                 e.stopPropagation();
                 toggleExplanation();
               }}
-              className="flex items-center space-x-2 text-xs text-gray-500 hover:text-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-2 py-1"
+              className="flex items-center space-x-2 text-xs text-base-content/50 hover:text-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-2 py-1"
               aria-label={`Erklärung für ${title} ${
                 showExplanation ? "ausblenden" : "anzeigen"
               }`}

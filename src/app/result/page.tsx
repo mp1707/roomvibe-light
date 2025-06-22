@@ -90,10 +90,10 @@ const ResultPage = () => {
         animate={{ opacity: 1 }}
         className="flex flex-col items-center justify-center h-full text-center"
       >
-        <h2 className="text-2xl font-semibold text-gray-600 mb-4">
+        <h2 className="text-2xl font-semibold text-base-content/60 mb-4">
           Kein Bild gefunden
         </h2>
-        <p className="text-gray-500 mb-6">
+        <p className="text-base-content/50 mb-6">
           Bitte laden Sie zunächst ein Bild hoch.
         </p>
         <motion.a
@@ -120,10 +120,10 @@ const ResultPage = () => {
         variants={reducedMotion ? {} : staggerItem}
         className="text-center"
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 mb-4">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-4">
           Ihr Raum, neu erfunden.
         </h1>
-        <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+        <p className="text-xl text-base-content/60 max-w-2xl mx-auto">
           {loading
             ? "Unsere KI arbeitet an Ihren personalisierten Designvorschlägen..."
             : "Bewegen Sie den Regler, um die Transformation zu sehen!"}
@@ -170,7 +170,7 @@ const ResultPage = () => {
                 variants={reducedMotion ? {} : staggerItem}
                 className="flex flex-col items-center space-y-4"
               >
-                <h3 className="text-lg font-semibold text-gray-700">
+                <h3 className="text-lg font-semibold text-base-content/70">
                   Weitere Variationen
                 </h3>
                 <div className="flex space-x-4 overflow-visible pb-2 px-2">
@@ -184,7 +184,7 @@ const ResultPage = () => {
                       className={`relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                         selectedVariation === index
                           ? "border-primary shadow-lg shadow-primary/25"
-                          : "border-gray-200 hover:border-primary/30 hover:shadow-md"
+                          : "border-base-300 hover:border-primary/30 hover:shadow-md"
                       }`}
                     >
                       <img
@@ -228,10 +228,10 @@ const ResultPage = () => {
               variants={reducedMotion ? {} : staggerItem}
               className="text-center space-y-2"
             >
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-base-content/50">
                 💡 Tipp: Klicken Sie auf das Bild für eine Vollansicht
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-base-content/40">
                 Nicht zufrieden? Gehen Sie zurück und wählen Sie andere
                 Vorschläge aus.
               </p>

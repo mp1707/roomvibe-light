@@ -165,14 +165,14 @@ export const imageReveal: Variants = {
 export const dragVariants: Variants = {
   idle: {
     scale: 1,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#F5F5F7",
+    borderColor: "hsl(var(--b3))",
+    backgroundColor: "hsl(var(--b2))",
     transition: gentleSpring,
   },
   dragging: {
     scale: 1.02,
-    borderColor: "#007AFF",
-    backgroundColor: "rgba(0,122,255,0.04)",
+    borderColor: "hsl(var(--p))",
+    backgroundColor: "hsl(var(--p) / 0.05)",
     transition: gentleSpring,
   },
 };

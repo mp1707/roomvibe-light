@@ -73,7 +73,7 @@ const InspirationCard = ({ image, onSelect }: InspirationCardProps) => {
       whileTap="tap"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="relative group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100 transition-shadow duration-300 hover:shadow-xl"
+      className="relative group cursor-pointer overflow-hidden rounded-2xl bg-base-100 shadow-sm border border-base-300 transition-shadow duration-300 hover:shadow-xl"
       onClick={() => onSelect(image)}
     >
       <div className="aspect-[4/3] relative overflow-hidden">
@@ -104,7 +104,7 @@ const InspirationCard = ({ image, onSelect }: InspirationCardProps) => {
               damping: 25,
               delay: 0.1,
             }}
-            className="px-6 py-3 bg-white/90 backdrop-blur-sm rounded-xl font-semibold text-gray-800 border border-white/20 shadow-lg hover:bg-white/95 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="px-6 py-3 bg-base-100/90 backdrop-blur-sm rounded-xl font-semibold text-base-content border border-base-100/20 shadow-lg hover:bg-base-100/95 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             onClick={(e) => {
               e.stopPropagation();
               onSelect(image);
@@ -117,7 +117,7 @@ const InspirationCard = ({ image, onSelect }: InspirationCardProps) => {
 
       {/* Style Label */}
       <div className="p-4">
-        <h3 className="font-semibold text-gray-800 text-center text-sm">
+        <h3 className="font-semibold text-base-content text-center text-sm">
           {image.style}
         </h3>
       </div>
@@ -159,10 +159,10 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
       className="w-full max-w-5xl mx-auto"
     >
       <motion.div variants={staggerItem} className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-800 mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-4">
           Lassen Sie sich inspirieren
         </h2>
-        <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+        <p className="text-lg text-base-content/60 max-w-2xl mx-auto">
           Wählen Sie einen Stil aus unserer kuratierten Galerie und sehen Sie,
           wie KI Ihren Raum verwandeln kann.
         </p>
@@ -185,7 +185,7 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
         <motion.div variants={staggerItem} className="text-center">
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-4 py-2"
+            className="text-base-content/60 hover:text-base-content font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-4 py-2"
           >
             ← Zurück zum Upload
           </button>

@@ -69,14 +69,14 @@ export default function SuggestionsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200/50 shadow-2xl z-50"
+        className="fixed bottom-0 left-0 right-0 bg-base-100/95 backdrop-blur-sm border-t border-base-300/50 shadow-2xl z-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
           {/* Desktop Layout */}
           <div className="hidden lg:flex items-center justify-between">
             {/* Left: Selection Summary */}
             <div className="flex items-center space-x-4">
-              <div className="text-sm font-medium text-gray-600">
+              <div className="text-sm font-medium text-base-content/60">
                 Ausgewählt:
               </div>
               <motion.div
@@ -90,8 +90,8 @@ export default function SuggestionsPage() {
                 }}
                 className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
                   selectedCount > 0
-                    ? "bg-primary text-white"
-                    : "bg-gray-100 text-gray-500"
+                    ? "bg-primary text-primary-content"
+                    : "bg-base-200 text-base-content/50"
                 }`}
               >
                 {selectedCount}{" "}
@@ -104,7 +104,7 @@ export default function SuggestionsPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 }}
                   onClick={() => setSelectedSuggestions({})}
-                  className="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-3 py-1.5"
+                  className="text-sm text-base-content/50 hover:text-base-content/70 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-3 py-1.5"
                 >
                   Alle abwählen
                 </motion.button>
@@ -122,8 +122,8 @@ export default function SuggestionsPage() {
               whileTap={isActionActive && !reducedMotion ? "tap" : undefined}
               className={`flex items-center gap-3 px-8 py-3 rounded-2xl font-semibold text-base transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isActionActive
-                  ? "bg-primary hover:bg-primary-focus text-white shadow-lg hover:shadow-xl focus:ring-primary transform hover:scale-105 active:scale-95"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  ? "bg-primary hover:bg-primary-focus text-primary-content shadow-lg hover:shadow-xl focus:ring-primary transform hover:scale-105 active:scale-95"
+                  : "bg-base-200 text-base-content/40 cursor-not-allowed"
               }`}
             >
               <span>
@@ -142,7 +142,7 @@ export default function SuggestionsPage() {
             {/* Selection Summary */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="text-sm font-medium text-gray-600">
+                <div className="text-sm font-medium text-base-content/60">
                   Ausgewählt:
                 </div>
                 <motion.div
@@ -156,8 +156,8 @@ export default function SuggestionsPage() {
                   }}
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     selectedCount > 0
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-500"
+                      ? "bg-primary text-primary-content"
+                      : "bg-base-200 text-base-content/50"
                   }`}
                 >
                   {selectedCount}{" "}
@@ -171,7 +171,7 @@ export default function SuggestionsPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 }}
                   onClick={() => setSelectedSuggestions({})}
-                  className="text-xs text-gray-500 hover:text-gray-700 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-2 py-1"
+                  className="text-xs text-base-content/50 hover:text-base-content/70 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-2 py-1"
                 >
                   Alle abwählen
                 </motion.button>
@@ -189,8 +189,8 @@ export default function SuggestionsPage() {
               whileTap={isActionActive && !reducedMotion ? "tap" : undefined}
               className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isActionActive
-                  ? "bg-primary hover:bg-primary-focus text-white shadow-lg hover:shadow-xl focus:ring-primary transform hover:scale-[1.02] active:scale-[0.98]"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  ? "bg-primary hover:bg-primary-focus text-primary-content shadow-lg hover:shadow-xl focus:ring-primary transform hover:scale-[1.02] active:scale-[0.98]"
+                  : "bg-base-200 text-base-content/40 cursor-not-allowed"
               }`}
             >
               <span>
@@ -209,7 +209,7 @@ export default function SuggestionsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-center text-xs text-gray-400 mt-3 lg:hidden"
+            className="text-center text-xs text-base-content/40 mt-3 lg:hidden"
           >
             Sie können Ihre Auswahl später noch anpassen
           </motion.p>
