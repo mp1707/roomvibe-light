@@ -4,24 +4,33 @@ import { Suggestion } from "@/types/suggestions";
 interface AppState {
   localImageUrl: string | null;
   hostedImageUrl: string | null;
-  generatedImageUrl: string | null;
+  generatedImageUrls: string[];
   suggestions: Suggestion[];
   suggestionsToApply: Set<string>;
+  prediction: any | null;
+  isGenerating: boolean;
+  generationError: string | null;
 
   setLocalImageUrl: (file: File | null) => void;
   setHostedImageUrl: (url: string | null) => void;
-  setGeneratedImageUrl: (url: string | null) => void;
+  setGeneratedImageUrls: (urls: string[]) => void;
   setSuggestions: (suggestions: Suggestion[]) => void;
   setSuggestionsToApply: (suggestions: Set<string>) => void;
+  setPrediction: (prediction: any | null) => void;
+  setIsGenerating: (isGenerating: boolean) => void;
+  setGenerationError: (error: string | null) => void;
   reset: () => void;
 }
 
 const initialState = {
   localImageUrl: null,
   hostedImageUrl: null,
-  generatedImageUrl: null,
+  generatedImageUrls: [],
   suggestions: [],
   suggestionsToApply: new Set<string>(),
+  prediction: null,
+  isGenerating: false,
+  generationError: null,
 };
 
 export const useAppState = create<AppState>((set, get) => ({
@@ -46,8 +55,8 @@ export const useAppState = create<AppState>((set, get) => ({
     set({ hostedImageUrl: url });
   },
 
-  setGeneratedImageUrl: (url) => {
-    set({ generatedImageUrl: url });
+  setGeneratedImageUrls: (urls) => {
+    set({ generatedImageUrls: urls });
   },
 
   setSuggestions: (newSuggestions) => {
@@ -56,6 +65,35 @@ export const useAppState = create<AppState>((set, get) => ({
 
   setSuggestionsToApply: (suggestions) => {
     set({ suggestionsToApply: suggestions });
+  },
+
+  setPrediction: (prediction) => {
+    // Ensure generatedImageUrls is always an array
+    let urls: string[] = [];
+    if (prediction?.output) {
+      if (Array.isArray(prediction.output)) {
+        urls = prediction.output;
+      } else if (typeof prediction.output === "string") {
+        urls = [prediction.output];
+      }
+    }
+
+    set({
+      prediction,
+      isGenerating:
+        prediction?.status === "starting" ||
+        prediction?.status === "processing",
+      generationError: prediction?.error ? prediction.error : null,
+      generatedImageUrls: urls,
+    });
+  },
+
+  setIsGenerating: (isGenerating) => {
+    set({ isGenerating });
+  },
+
+  setGenerationError: (error) => {
+    set({ generationError: error });
   },
 
   reset: () => {

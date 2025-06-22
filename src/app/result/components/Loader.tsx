@@ -4,9 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMotionPreference } from "@/utils/animations";
 
 interface LoaderProps {
-  progressStep: number;
-  progressSteps: string[];
-  progress: number;
+  status: string;
+  logs?: string | null;
 }
 
 const SkeletonLoader = () => (
@@ -92,11 +91,9 @@ const GenerativeAnimation = () => {
   );
 };
 
-const Loader: React.FC<LoaderProps> = ({
-  progressStep,
-  progressSteps,
-  progress,
-}) => {
+const Loader: React.FC<LoaderProps> = ({ status, logs }) => {
+  const lastLogLine = logs?.split("\n").filter(Boolean).pop() ?? "";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -113,52 +110,47 @@ const Loader: React.FC<LoaderProps> = ({
       {/* Generative Animation */}
       <GenerativeAnimation />
 
-      {/* Progress Bar */}
-      <ProgressBar progress={progress} />
+      {/* Indeterminate Progress Bar */}
+      <div className="w-full max-w-md mx-auto mb-6">
+        <div className="w-full bg-base-200 rounded-full h-2 overflow-hidden relative">
+          <motion.div
+            className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary-focus"
+            style={{ width: "40%" }}
+            initial={{ x: "-100%" }}
+            animate={{ x: "250%" }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              repeatType: "loop",
+            }}
+          />
+        </div>
+      </div>
 
       {/* Progress Text */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={progressStep}
+          key={status}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.4 }}
           className="mb-6"
         >
-          <h3 className="text-lg sm:text-xl font-semibold text-base-content mb-2 px-4">
-            {progressSteps[progressStep]}
+          <h3 className="text-lg sm:text-xl font-semibold text-base-content mb-2 px-4 capitalize">
+            {status.replace(/_/g, " ")}
           </h3>
-          <p className="text-base-content/60 text-sm px-4">
-            Einen Moment Geduld, während unsere KI Ihre perfekte Raumgestaltung
-            erstellt.
+          <p className="text-base-content/60 text-sm px-4 h-5">
+            {lastLogLine ||
+              "Einen Moment Geduld, Ihre perfekte Raumgestaltung wird erstellt."}
           </p>
         </motion.div>
       </AnimatePresence>
 
-      {/* Processing Steps Indicator */}
-      <div className="flex justify-center space-x-2 mt-8">
-        {progressSteps.map((_, index) => (
-          <motion.div
-            key={index}
-            className={`w-2 h-2 rounded-full ${
-              index <= progressStep ? "bg-primary" : "bg-base-300"
-            }`}
-            animate={{
-              scale: index === progressStep ? [1, 1.3, 1] : 1,
-            }}
-            transition={{
-              duration: 0.6,
-              repeat: index === progressStep ? Infinity : 0,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
       {/* Accessibility */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        Fortschritt: {Math.round(progress)}%. {progressSteps[progressStep]}
+        Status: {status}. {lastLogLine}
       </div>
     </motion.div>
   );

@@ -9,6 +9,7 @@ import Link from "next/link";
 import Logo from "./components/Logo";
 import ThemeToggle from "./components/ThemeToggle";
 import AuthButton from "@/components/AuthButton";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -95,6 +96,16 @@ export default function RootLayout({
         </main>
 
         <ImageModal />
+        <Toaster
+          position="bottom-center"
+          toastOptions={{
+            duration: 5000,
+            style: {
+              background: "#333",
+              color: "#fff",
+            },
+          }}
+        />
       </body>
     </html>
   );

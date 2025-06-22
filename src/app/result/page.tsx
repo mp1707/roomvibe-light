@@ -2,7 +2,7 @@
 
 import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Loader from "./components/Loader";
 import ResultDisplay from "./components/ResultDisplay";
@@ -13,77 +13,74 @@ import {
   loadingVariants,
   useMotionPreference,
 } from "@/utils/animations";
+import toast from "react-hot-toast";
 
-// Granular progress messages for better UX
-const progressSteps = [
-  "Analysiere Raumlayout und Proportionen...",
-  "Bewerte Beleuchtung und Schattenwurf...",
-  "Wähle komplementäre Möbel aus...",
-  "Generiere Farbpalette und Materialien...",
-  "Rendere das finale Bild...",
-  "Finalisiere die Verbesserungen...",
-];
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const ResultPage = () => {
-  const { localImageUrl } = useAppState();
+  const {
+    hostedImageUrl,
+    prediction,
+    setPrediction,
+    isGenerating,
+    generationError,
+    generatedImageUrls,
+  } = useAppState();
   const { openModal } = useImageModalStore();
-  const [loading, setLoading] = useState(true);
-  const [progressStep, setProgressStep] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [selectedVariation, setSelectedVariation] = useState(0);
   const reducedMotion = useMotionPreference();
 
-  useEffect(() => {
-    if (!localImageUrl) return;
+  // Safety check: ensure generatedImageUrls is always an array
+  const safeGeneratedImageUrls = Array.isArray(generatedImageUrls)
+    ? generatedImageUrls
+    : [];
 
-    setLoading(true);
-    setProgressStep(0);
-    setProgress(0);
+  const checkStatus = useCallback(async () => {
+    if (!prediction?.id) return;
 
-    // Simulate granular progress updates
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        const newProgress = prev + Math.random() * 15;
-        return Math.min(newProgress, 95);
-      });
-    }, 200);
+    try {
+      const response = await fetch(`/api/predictions/${prediction.id}`);
+      if (!response.ok) {
+        throw new Error("Netzwerk-Antwort war nicht in Ordnung.");
+      }
+      const newPrediction = await response.json();
 
-    // Update progress steps
-    const stepInterval = setInterval(() => {
-      setProgressStep((prev) => {
-        if (prev < progressSteps.length - 1) {
-          return prev + 1;
+      setPrediction(newPrediction);
+
+      if (
+        newPrediction.status === "failed" ||
+        newPrediction.status === "succeeded"
+      ) {
+        if (newPrediction.status === "failed") {
+          toast.error(`Bildgenerierung fehlgeschlagen: ${newPrediction.error}`);
         }
-        return prev;
+        return; // Stop polling
+      }
+
+      // If still running, poll again after a delay
+      await sleep(2500);
+      checkStatus();
+    } catch (error) {
+      console.error("Fehler beim Abrufen des Prediction-Status:", error);
+      setPrediction({
+        ...prediction,
+        status: "failed",
+        error: error instanceof Error ? error.message : "Unbekannter Fehler",
       });
-    }, 1000);
+      toast.error("Ein Fehler ist beim Abrufen des Ergebnisses aufgetreten.");
+    }
+  }, [prediction, setPrediction]);
 
-    // Complete the process
-    const timeout = setTimeout(() => {
-      setProgress(100);
-      setTimeout(() => {
-        setLoading(false);
-        clearInterval(progressInterval);
-        clearInterval(stepInterval);
-      }, 500);
-    }, 6000);
+  useEffect(() => {
+    if (
+      prediction?.id &&
+      (prediction.status === "starting" || prediction.status === "processing")
+    ) {
+      checkStatus();
+    }
+  }, [prediction, checkStatus]);
 
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(progressInterval);
-      clearInterval(stepInterval);
-    };
-  }, [localImageUrl]);
-
-  // Mock generated image variations for better UX
-  const generatedImageVariations = [
-    "https://img.daisyui.com/images/stock/photo-1560717789-0ac7c58ac90a-blur.webp",
-    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-    "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
-  ];
-
-  const [selectedVariation, setSelectedVariation] = useState(0);
-
-  if (!localImageUrl) {
+  if (!hostedImageUrl) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -94,15 +91,15 @@ const ResultPage = () => {
           Kein Bild gefunden
         </h2>
         <p className="text-base-content/50 mb-6">
-          Bitte laden Sie zunächst ein Bild hoch.
+          Bitte laden Sie zunächst ein Bild hoch und wählen Sie Vorschläge aus.
         </p>
         <motion.a
           href="/"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-focus transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          className="px-6 py-3 bg-primary text-primary-content rounded-xl font-semibold hover:bg-primary-focus transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
-          Zurück zum Upload
+          Zurück zum Start
         </motion.a>
       </motion.div>
     );
@@ -124,14 +121,14 @@ const ResultPage = () => {
           Ihr Raum, neu erfunden.
         </h1>
         <p className="text-lg sm:text-xl text-base-content/60 max-w-2xl mx-auto px-4">
-          {loading
+          {isGenerating
             ? "Unsere KI arbeitet an Ihren personalisierten Designvorschlägen..."
             : "Bewegen Sie den Regler, um die Transformation zu sehen!"}
         </p>
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {loading ? (
+        {isGenerating ? (
           <motion.div
             key="loading"
             variants={reducedMotion ? {} : loadingVariants}
@@ -141,11 +138,17 @@ const ResultPage = () => {
             className="w-full max-w-4xl"
           >
             <Loader
-              progressStep={progressStep}
-              progressSteps={progressSteps}
-              progress={progress}
+              status={prediction?.status ?? "starting"}
+              logs={prediction?.logs}
             />
           </motion.div>
+        ) : generationError ? (
+          <div className="text-center text-error">
+            <h2 className="text-2xl font-semibold mb-2">
+              Ein Fehler ist aufgetreten
+            </h2>
+            <p>{generationError}</p>
+          </div>
         ) : (
           <motion.div
             key="result"
@@ -157,15 +160,15 @@ const ResultPage = () => {
             {/* Main Result Display */}
             <motion.div variants={reducedMotion ? {} : staggerItem}>
               <ResultDisplay
-                localImageUrl={localImageUrl}
-                generatedImageUrl={generatedImageVariations[selectedVariation]}
+                localImageUrl={hostedImageUrl}
+                generatedImageUrl={safeGeneratedImageUrls[selectedVariation]}
                 openModal={openModal}
                 itemVariants={staggerItem}
               />
             </motion.div>
 
             {/* Variation Selector */}
-            {generatedImageVariations.length > 1 && (
+            {safeGeneratedImageUrls.length > 1 && (
               <motion.div
                 variants={reducedMotion ? {} : staggerItem}
                 className="flex flex-col items-center space-y-4"
@@ -174,7 +177,7 @@ const ResultPage = () => {
                   Weitere Variationen
                 </h3>
                 <div className="flex space-x-4 overflow-visible pb-2 px-2">
-                  {generatedImageVariations.map((variation, index) => (
+                  {safeGeneratedImageUrls.map((variation, index) => (
                     <motion.button
                       key={index}
                       onClick={() => setSelectedVariation(index)}
@@ -199,7 +202,7 @@ const ResultPage = () => {
                         >
                           <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
                             <svg
-                              className="w-4 h-4 text-white"
+                              className="w-4 h-4 text-primary-content"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >

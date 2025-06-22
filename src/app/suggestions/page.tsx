@@ -8,13 +8,25 @@ import RightColumn from "./components/RightColumn";
 import AnimatedButton from "../components/AnimatedButton";
 import { ContinueIcon } from "../components/Icons";
 import { buttonVariants, useMotionPreference } from "@/utils/animations";
+import { useAppState } from "@/utils/store";
+import toast from "react-hot-toast";
 
 export default function SuggestionsPage() {
   const [selectedSuggestions, setSelectedSuggestions] = useState<
     Record<string, boolean>
   >({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+
+  const {
+    suggestions,
+    hostedImageUrl,
+    isGenerating,
+    setPrediction,
+    setIsGenerating,
+    setGenerationError,
+  } = useAppState();
 
   const handleToggleSuggestion = useCallback((suggestionId: string) => {
     setSelectedSuggestions((prev) => ({
@@ -27,11 +39,63 @@ export default function SuggestionsPage() {
     Object.values(selectedSuggestions).filter(Boolean).length;
   const isActionActive = selectedCount > 0;
 
-  const handleContinue = useCallback(() => {
-    if (isActionActive) {
-      router.push("/result");
+  const handleContinue = useCallback(async () => {
+    if (!isActionActive || isSubmitting || isGenerating) {
+      return;
     }
-  }, [isActionActive, router]);
+
+    setIsSubmitting(true);
+    setIsGenerating(true);
+    setGenerationError(null);
+
+    const selected = suggestions.filter((s) => selectedSuggestions[s.id]);
+    const prompt = selected.map((s) => s.title).join(", ");
+
+    try {
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageUrl: hostedImageUrl,
+          prompt: prompt,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Die Bildgenerierung ist fehlgeschlagen."
+        );
+      }
+
+      const prediction = await response.json();
+      setPrediction(prediction);
+      toast.success("Dein neues Bild wird generiert...");
+      router.push("/result");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Ein unbekannter Fehler ist aufgetreten.";
+      console.error("Fehler bei der Bildgenerierung:", errorMessage);
+      setGenerationError(errorMessage);
+      toast.error(errorMessage);
+      setIsGenerating(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [
+    isActionActive,
+    isSubmitting,
+    isGenerating,
+    hostedImageUrl,
+    suggestions,
+    selectedSuggestions,
+    router,
+    setPrediction,
+    setIsGenerating,
+    setGenerationError,
+  ]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -114,26 +178,42 @@ export default function SuggestionsPage() {
             {/* Right: Continue Button */}
             <motion.button
               onClick={handleContinue}
-              disabled={!isActionActive}
+              disabled={!isActionActive || isSubmitting || isGenerating}
               variants={reducedMotion ? {} : buttonVariants}
               whileHover={
-                isActionActive && !reducedMotion ? "hover" : undefined
+                isActionActive &&
+                !isSubmitting &&
+                !isGenerating &&
+                !reducedMotion
+                  ? "hover"
+                  : undefined
               }
-              whileTap={isActionActive && !reducedMotion ? "tap" : undefined}
+              whileTap={
+                isActionActive &&
+                !isSubmitting &&
+                !isGenerating &&
+                !reducedMotion
+                  ? "tap"
+                  : undefined
+              }
               className={`flex items-center gap-3 px-8 py-3 rounded-2xl font-semibold text-base transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isActionActive
                   ? "bg-primary hover:bg-primary-focus text-primary-content shadow-lg hover:shadow-xl focus:ring-primary transform hover:scale-105 active:scale-95"
                   : "bg-base-200 text-base-content/40 cursor-not-allowed"
-              }`}
+              } ${isSubmitting || isGenerating ? "cursor-wait" : ""}`}
             >
               <span>
-                {isActionActive
+                {isSubmitting || isGenerating
+                  ? "Wird vorbereitet..."
+                  : isActionActive
                   ? `${selectedCount} ${
                       selectedCount === 1 ? "Vorschlag" : "Vorschläge"
                     } anwenden`
                   : "Vorschlag auswählen"}
               </span>
-              {isActionActive && <ContinueIcon />}
+              {isActionActive && !isSubmitting && !isGenerating && (
+                <ContinueIcon />
+              )}
             </motion.button>
           </div>
 
@@ -181,26 +261,42 @@ export default function SuggestionsPage() {
             {/* Continue Button - Full width on mobile */}
             <motion.button
               onClick={handleContinue}
-              disabled={!isActionActive}
+              disabled={!isActionActive || isSubmitting || isGenerating}
               variants={reducedMotion ? {} : buttonVariants}
               whileHover={
-                isActionActive && !reducedMotion ? "hover" : undefined
+                isActionActive &&
+                !isSubmitting &&
+                !isGenerating &&
+                !reducedMotion
+                  ? "hover"
+                  : undefined
               }
-              whileTap={isActionActive && !reducedMotion ? "tap" : undefined}
+              whileTap={
+                isActionActive &&
+                !isSubmitting &&
+                !isGenerating &&
+                !reducedMotion
+                  ? "tap"
+                  : undefined
+              }
               className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isActionActive
                   ? "bg-primary hover:bg-primary-focus text-primary-content shadow-lg hover:shadow-xl focus:ring-primary transform hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-base-200 text-base-content/40 cursor-not-allowed"
-              }`}
+              } ${isSubmitting || isGenerating ? "cursor-wait" : ""}`}
             >
               <span>
-                {isActionActive
+                {isSubmitting || isGenerating
+                  ? "Wird vorbereitet..."
+                  : isActionActive
                   ? `${selectedCount} ${
                       selectedCount === 1 ? "Vorschlag" : "Vorschläge"
                     } anwenden`
                   : "Wählen Sie mindestens einen Vorschlag aus"}
               </span>
-              {isActionActive && <ContinueIcon />}
+              {isActionActive && !isSubmitting && !isGenerating && (
+                <ContinueIcon />
+              )}
             </motion.button>
           </div>
 
