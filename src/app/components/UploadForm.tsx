@@ -139,7 +139,7 @@ const UploadForm = () => {
 
         // Small delay to show completion
         setTimeout(() => {
-          router.push("/suggestions");
+          router.push("/analyze");
         }, 500);
       } catch (error) {
         console.error("Upload failed:", error);
