@@ -1,12 +1,14 @@
 "use client";
 
 import { useAppState } from "@/utils/store";
+import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
   useState,
   useCallback,
   useRef,
+  useEffect,
   type ChangeEvent,
   type DragEvent,
 } from "react";
@@ -46,18 +48,38 @@ const ProgressIndicator = ({ progress }: { progress: number }) => (
 );
 
 const UploadForm = () => {
-  const { setLocalImageUrl } = useAppState();
+  const { setLocalImageUrl, setHostedImageUrl } = useAppState();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showInspiration, setShowInspiration] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [supabase] = useState(() => createClient());
   const reducedMotion = useMotionPreference();
+
+  // Get current user on component mount
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, [supabase]);
 
   const handleFileSelect = useCallback(
     async (file: File | null) => {
       if (!file) return;
+
+      // Check if user is authenticated
+      if (!user) {
+        alert("Sie müssen angemeldet sein, um Bilder hochzuladen.");
+        router.push("/auth/login");
+        return;
+      }
 
       // Validate file type and size
       if (!file.type.startsWith("image/")) {
@@ -86,11 +108,34 @@ const UploadForm = () => {
       }, 100);
 
       try {
-        // Simulate processing time
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        // Generate unique filename with user ID and timestamp
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${user.id}/${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2)}.${fileExt}`;
+
+        // Upload file to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from("room-images")
+          .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        // Get the public URL for the uploaded file
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("room-images").getPublicUrl(data.path);
 
         setUploadProgress(100);
-        setLocalImageUrl(file);
+
+        // Store both local and hosted URLs
+        setLocalImageUrl(file); // Keep local URL for immediate preview
+        setHostedImageUrl(publicUrl); // Store hosted URL for API calls
 
         // Small delay to show completion
         setTimeout(() => {
@@ -104,7 +149,7 @@ const UploadForm = () => {
         clearInterval(progressInterval);
       }
     },
-    [setLocalImageUrl, router]
+    [setLocalImageUrl, setHostedImageUrl, router, user, supabase]
   );
 
   const handleFileChange = useCallback(
