@@ -11,9 +11,13 @@ const pageVariants = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
+    transition: { type: "spring" as const, stiffness: 400, damping: 30 },
   },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: { type: "spring" as const, stiffness: 400, damping: 30 },
+  },
 };
 
 const cardVariants = {
