@@ -445,11 +445,22 @@ export default function AnalyzePage() {
         "Es ist ein Fehler bei der Analyse aufgetreten. Versuchen Sie es mit einem anderen Bild erneut.";
 
       if (error instanceof Error) {
+        console.error("Error details:", {
+          message: error.message,
+          stack: error.stack,
+          localImageUrl,
+          hostedImageUrl,
+          timestamp: new Date().toISOString(),
+        });
+
         if (error.message.includes("OpenAI API")) {
           errorTitle = "KI-Service nicht verfügbar";
           errorMessage =
             "Die KI-Analyse ist momentan nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.";
-        } else if (error.message.includes("Validierung")) {
+        } else if (
+          error.message.includes("Validierung") ||
+          error.message.includes("erwarteten Format")
+        ) {
           errorTitle = "Verarbeitungsfehler";
           errorMessage =
             "Die KI-Antwort konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild erneut.";
@@ -457,8 +468,22 @@ export default function AnalyzePage() {
           errorTitle = "Bild nicht gefunden";
           errorMessage =
             "Das Bild konnte nicht gefunden werden. Bitte laden Sie ein neues Bild hoch.";
+        } else if (
+          error.message.includes("string did not match") ||
+          error.message.includes("pattern")
+        ) {
+          errorTitle = "Datenformat-Fehler";
+          errorMessage =
+            "Es gab ein Problem mit dem Datenformat. Bitte versuchen Sie es erneut oder laden Sie ein anderes Bild hoch.";
+        } else if (
+          error.message.includes("Failed to fetch") ||
+          error.message.includes("Network")
+        ) {
+          errorTitle = "Verbindungsfehler";
+          errorMessage =
+            "Die Verbindung zum Server ist fehlgeschlagen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
         } else {
-          errorMessage = error.message;
+          errorMessage = `${error.message} (Fehlercode: ANALYZE_${Date.now()})`;
         }
       }
 

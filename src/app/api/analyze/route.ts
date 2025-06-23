@@ -5,11 +5,11 @@ import { AnalysisResponse } from "@/types/suggestions";
 
 // Zod schema for suggestion validation
 const SuggestionSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  suggestion: z.string(),
-  explanation: z.string(),
-  category: z.string(),
+  id: z.string().min(1, "ID cannot be empty"),
+  title: z.string().min(1, "Title cannot be empty"),
+  suggestion: z.string().min(1, "Suggestion cannot be empty"),
+  explanation: z.string().min(1, "Explanation cannot be empty"),
+  category: z.string().min(1, "Category cannot be empty"),
 });
 
 const AnalysisResponseSchema = z.object({
@@ -153,9 +153,28 @@ Antworte NUR mit dem JSON-Format!
       ) {
         throw new Error("Response missing suggestions array");
       }
+
+      // Ensure all suggestions have required fields and generate IDs if missing
+      parsedResponse.suggestions = parsedResponse.suggestions
+        .map((suggestion: any, index: number) => {
+          return {
+            id: suggestion.id || `suggestion-${Date.now()}-${index}`,
+            title: String(suggestion.title || `Vorschlag ${index + 1}`),
+            suggestion: String(suggestion.suggestion || ""),
+            explanation: String(suggestion.explanation || ""),
+            category: String(suggestion.category || "Allgemein"),
+          };
+        })
+        .filter(
+          (suggestion: any) =>
+            suggestion.suggestion.length > 0 &&
+            suggestion.explanation.length > 0 &&
+            suggestion.title.length > 0
+        );
     } catch (parseError) {
       console.error("JSON Parse Error:", parseError);
       console.error("Original response content:", responseContent);
+      console.error("Response content length:", responseContent?.length);
 
       // If JSON parsing completely fails, assume it's not an interior space
       console.log("JSON parsing failed - assuming non-interior image");
@@ -166,7 +185,33 @@ Antworte NUR mit dem JSON-Format!
     }
 
     // Validate with Zod
-    const validatedResponse = AnalysisResponseSchema.parse(parsedResponse);
+    let validatedResponse;
+    try {
+      validatedResponse = AnalysisResponseSchema.parse(parsedResponse);
+    } catch (validationError) {
+      console.error("Zod validation error:", validationError);
+      console.error(
+        "Parsed response:",
+        JSON.stringify(parsedResponse, null, 2)
+      );
+
+      if (validationError instanceof z.ZodError) {
+        const errorDetails = validationError.errors
+          .map((err) => `${err.path.join(".")}: ${err.message}`)
+          .join("; ");
+
+        return NextResponse.json(
+          {
+            error: "Die KI-Antwort entspricht nicht dem erwarteten Format",
+            details: errorDetails,
+            originalResponse: parsedResponse,
+          },
+          { status: 500 }
+        );
+      }
+
+      throw validationError;
+    }
 
     return NextResponse.json(validatedResponse);
   } catch (error) {
@@ -180,10 +225,14 @@ Antworte NUR mit dem JSON-Format!
     }
 
     if (error instanceof z.ZodError) {
+      const errorDetails = error.errors
+        .map((err) => `${err.path.join(".")}: ${err.message}`)
+        .join("; ");
+
       return NextResponse.json(
         {
           error: "Validierungsfehler bei OpenAI Antwort",
-          details: error.errors,
+          details: errorDetails,
         },
         { status: 500 }
       );

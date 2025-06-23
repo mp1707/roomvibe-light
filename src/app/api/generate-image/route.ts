@@ -4,15 +4,32 @@ import { z } from "zod";
 
 // Input validation schema
 const generateImageSchema = z.object({
-  imageUrl: z.string().url("Invalid image URL"),
+  imageUrl: z
+    .string()
+    .min(1, "Image URL is required")
+    .refine((url) => {
+      try {
+        // Check if it's a data URL (base64)
+        if (url.startsWith("data:image/")) {
+          return true;
+        }
+        // Check if it's a valid HTTP/HTTPS URL
+        const urlObj = new URL(url);
+        return urlObj.protocol === "http:" || urlObj.protocol === "https:";
+      } catch {
+        return false;
+      }
+    }, "Must be a valid image URL or data URL"),
   suggestions: z
     .array(
       z.object({
-        id: z.string(),
-        title: z.string(),
-        suggestion: z.string(),
-        explanation: z.string(),
-        category: z.string(),
+        id: z.string().min(1, "Suggestion ID cannot be empty"),
+        title: z.string().min(1, "Suggestion title cannot be empty"),
+        suggestion: z.string().min(1, "Suggestion text cannot be empty"),
+        explanation: z
+          .string()
+          .min(1, "Suggestion explanation cannot be empty"),
+        category: z.string().min(1, "Suggestion category cannot be empty"),
       })
     )
     .min(1, "At least one suggestion is required"),
