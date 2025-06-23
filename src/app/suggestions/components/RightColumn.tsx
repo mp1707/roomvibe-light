@@ -4,6 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import SuggestionCard from "../../components/SuggestionCard";
+import CustomSuggestionCard from "../../components/CustomSuggestionCard";
+import AddSuggestionCard from "../../components/AddSuggestionCard";
 import {
   staggerContainer,
   staggerItem,
@@ -80,11 +82,64 @@ const RightColumn: React.FC<RightColumnProps> = ({
   onToggleSuggestion,
 }) => {
   const reducedMotion = useMotionPreference();
-  const { suggestions } = useAppState();
+  const {
+    suggestions,
+    customSuggestions,
+    addCustomSuggestion,
+    editCustomSuggestion,
+    removeCustomSuggestion,
+    getAllSuggestions,
+  } = useAppState();
 
-  // Show empty state if no suggestions available
-  if (!suggestions || suggestions.length === 0) {
-    return <EmptyState />;
+  const allSuggestions = getAllSuggestions();
+  const hasAnySuggestions = allSuggestions.length > 0;
+
+  const handleAddCustomSuggestion = (data: {
+    title: string;
+    suggestion: string;
+    explanation: string;
+    category: string;
+  }) => {
+    addCustomSuggestion(data);
+  };
+
+  const handleEditCustomSuggestion = (
+    id: string,
+    data: { title: string; suggestion: string; explanation: string }
+  ) => {
+    editCustomSuggestion(id, { ...data, category: "custom" });
+  };
+
+  const handleDeleteCustomSuggestion = (id: string) => {
+    removeCustomSuggestion(id);
+  };
+
+  // Show empty state if no AI suggestions and no custom suggestions
+  if (!hasAnySuggestions) {
+    return (
+      <div className="flex flex-col h-full overflow-visible">
+        {/* Header */}
+        <div className="lg:sticky lg:top-16 bg-base-100 lg:z-20 pb-4 sm:pb-6 border-b border-base-300 lg:-mx-4 lg:px-4">
+          <motion.div
+            variants={reducedMotion ? {} : staggerItem}
+            className="pt-2 sm:pt-4"
+          >
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-base-content mb-2 sm:mb-3 text-center">
+              Design-Vorschläge
+            </h2>
+            <p className="text-base sm:text-lg text-base-content/60 max-w-md mx-auto text-center px-4 sm:px-0">
+              Beginnen Sie mit Ihren eigenen Design-Ideen oder laden Sie ein
+              neues Bild hoch.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Add suggestion card for empty state */}
+        <div className="flex-1 py-4 sm:py-6">
+          <AddSuggestionCard onAdd={handleAddCustomSuggestion} />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -112,11 +167,43 @@ const RightColumn: React.FC<RightColumnProps> = ({
         animate="visible"
         className="flex-1 space-y-3 sm:space-y-4 py-4 sm:py-6 overflow-visible"
       >
+        {/* Add Custom Suggestion Card */}
+        <motion.div
+          variants={reducedMotion ? {} : staggerItem}
+          custom={0}
+          className="overflow-visible"
+        >
+          <AddSuggestionCard onAdd={handleAddCustomSuggestion} delay={0} />
+        </motion.div>
+
+        {/* Custom Suggestions */}
+        {customSuggestions.map((suggestion, index) => (
+          <motion.div
+            key={suggestion.id}
+            variants={reducedMotion ? {} : staggerItem}
+            custom={index + 1}
+            className="overflow-visible"
+          >
+            <CustomSuggestionCard
+              id={suggestion.id}
+              title={suggestion.title}
+              suggestion={suggestion.suggestion}
+              explanation={suggestion.explanation}
+              selected={!!selectedSuggestions[suggestion.id]}
+              onToggle={() => onToggleSuggestion(suggestion.id)}
+              onEdit={handleEditCustomSuggestion}
+              onDelete={handleDeleteCustomSuggestion}
+              delay={(index + 1) * 0.1}
+            />
+          </motion.div>
+        ))}
+
+        {/* AI Suggestions */}
         {suggestions.map((suggestion, index) => (
           <motion.div
             key={suggestion.id}
             variants={reducedMotion ? {} : staggerItem}
-            custom={index}
+            custom={index + customSuggestions.length + 1}
             className="overflow-visible"
           >
             <SuggestionCard
@@ -125,7 +212,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
               explanation={suggestion.explanation}
               selected={!!selectedSuggestions[suggestion.id]}
               onToggle={() => onToggleSuggestion(suggestion.id)}
-              delay={index * 0.1}
+              delay={(index + customSuggestions.length + 1) * 0.1}
             />
           </motion.div>
         ))}

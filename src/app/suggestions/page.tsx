@@ -21,13 +21,15 @@ export default function SuggestionsPage() {
   const reducedMotion = useMotionPreference();
 
   const {
-    suggestions,
+    getAllSuggestions,
     hostedImageUrl,
     isGenerating,
     setPrediction,
     setIsGenerating,
     setGenerationError,
   } = useAppState();
+
+  const allSuggestions = getAllSuggestions();
 
   const handleToggleSuggestion = useCallback((suggestionId: string) => {
     setSelectedSuggestions((prev) => ({
@@ -49,7 +51,7 @@ export default function SuggestionsPage() {
     setIsGenerating(true);
     setGenerationError(null);
 
-    const selected = suggestions.filter((s) => selectedSuggestions[s.id]);
+    const selected = allSuggestions.filter((s) => selectedSuggestions[s.id]);
 
     try {
       const response = await fetch(getGenerateImageEndpoint(), {
@@ -89,7 +91,7 @@ export default function SuggestionsPage() {
     isSubmitting,
     isGenerating,
     hostedImageUrl,
-    suggestions,
+    allSuggestions,
     selectedSuggestions,
     router,
     setPrediction,

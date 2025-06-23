@@ -6,6 +6,7 @@ interface AppState {
   hostedImageUrl: string | null;
   generatedImageUrls: string[];
   suggestions: Suggestion[];
+  customSuggestions: Suggestion[];
   suggestionsToApply: Set<string>;
   prediction: any | null;
   isGenerating: boolean;
@@ -15,6 +16,14 @@ interface AppState {
   setHostedImageUrl: (url: string | null) => void;
   setGeneratedImageUrls: (urls: string[]) => void;
   setSuggestions: (suggestions: Suggestion[]) => void;
+  setCustomSuggestions: (suggestions: Suggestion[]) => void;
+  addCustomSuggestion: (suggestion: Omit<Suggestion, "id">) => void;
+  editCustomSuggestion: (
+    id: string,
+    suggestion: Omit<Suggestion, "id">
+  ) => void;
+  removeCustomSuggestion: (id: string) => void;
+  getAllSuggestions: () => Suggestion[];
   setSuggestionsToApply: (suggestions: Set<string>) => void;
   setPrediction: (prediction: any | null) => void;
   setIsGenerating: (isGenerating: boolean) => void;
@@ -27,6 +36,7 @@ const initialState = {
   hostedImageUrl: null,
   generatedImageUrls: [],
   suggestions: [],
+  customSuggestions: [],
   suggestionsToApply: new Set<string>(),
   prediction: null,
   isGenerating: false,
@@ -61,6 +71,41 @@ export const useAppState = create<AppState>((set, get) => ({
 
   setSuggestions: (newSuggestions) => {
     set({ suggestions: newSuggestions });
+  },
+
+  setCustomSuggestions: (customSuggestions) => {
+    set({ customSuggestions });
+  },
+
+  addCustomSuggestion: (suggestionData) => {
+    const newSuggestion: Suggestion = {
+      ...suggestionData,
+      id: `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+    set((state) => ({
+      customSuggestions: [...state.customSuggestions, newSuggestion],
+    }));
+  },
+
+  editCustomSuggestion: (id, suggestionData) => {
+    set((state) => ({
+      customSuggestions: state.customSuggestions.map((suggestion) =>
+        suggestion.id === id ? { ...suggestionData, id } : suggestion
+      ),
+    }));
+  },
+
+  removeCustomSuggestion: (id) => {
+    set((state) => ({
+      customSuggestions: state.customSuggestions.filter(
+        (suggestion) => suggestion.id !== id
+      ),
+    }));
+  },
+
+  getAllSuggestions: () => {
+    const state = get();
+    return [...state.suggestions, ...state.customSuggestions];
   },
 
   setSuggestionsToApply: (suggestions) => {
