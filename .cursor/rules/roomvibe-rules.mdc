@@ -1,6 +1,6 @@
 ---
 description: 
-globs: 
+globs: *.tsx,*.css
 alwaysApply: false
 ---
 # RoomVibe - AI Interior Design App - Cursor Rules

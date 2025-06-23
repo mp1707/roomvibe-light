@@ -392,8 +392,8 @@ export default function AnalyzePage() {
       const formData = new FormData();
       formData.append("file", imageFile);
 
-      // Call our analysis API
-      const response = await fetch("/api/analyze", {
+      // Call our analysis API (temporarily using test endpoint for debugging)
+      const response = await fetch("/api/test-analyze", {
         method: "POST",
         body: formData,
       });
