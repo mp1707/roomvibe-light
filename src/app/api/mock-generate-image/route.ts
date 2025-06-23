@@ -27,15 +27,21 @@ const generateImageSchema = z.object({
         suggestion: z.string().min(1, "Suggestion text cannot be empty"),
         explanation: z
           .string()
-          .min(1, "Suggestion explanation cannot be empty"),
+          .optional() // Made optional to support custom suggestions without explanation
+          .transform((val) => val || ""), // Transform undefined to empty string for consistency
         category: z.string().min(1, "Suggestion category cannot be empty"),
       })
     )
     .min(1, "At least one suggestion is required"),
 });
 
-// Mock generated images - using mockResult.png
-const mockGeneratedImages = ["/mockResult.png"];
+// Mock generated images - using multiple images from assets for variety
+const mockGeneratedImages = [
+  "/assets/images/mockResult.png",
+  "/assets/images/hero.png",
+  "/assets/images/hero2.png",
+  "/assets/images/hero3.png",
+];
 
 // Generate a unique prediction ID
 function generatePredictionId(): string {

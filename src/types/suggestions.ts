@@ -3,7 +3,7 @@ export interface Suggestion {
   id: string;
   title: string;
   suggestion: string;
-  explanation: string;
+  explanation?: string;
   category: string;
 }
 

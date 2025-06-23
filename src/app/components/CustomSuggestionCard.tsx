@@ -12,13 +12,10 @@ interface CustomSuggestionCardProps {
   id: string;
   title: string;
   suggestion: string;
-  explanation: string;
+  explanation?: string;
   selected: boolean;
   onToggle: (suggestion: string) => void;
-  onEdit: (
-    id: string,
-    data: { title: string; suggestion: string; explanation: string }
-  ) => void;
+  onEdit: (id: string, data: { title: string; suggestion: string }) => void;
   onDelete: (id: string) => void;
   delay?: number;
 }
@@ -132,23 +129,16 @@ const ToggleSwitch = ({
 const EditForm = ({
   initialTitle,
   initialSuggestion,
-  initialExplanation,
   onSave,
   onCancel,
 }: {
   initialTitle: string;
   initialSuggestion: string;
-  initialExplanation: string;
-  onSave: (data: {
-    title: string;
-    suggestion: string;
-    explanation: string;
-  }) => void;
+  onSave: (data: { title: string; suggestion: string }) => void;
   onCancel: () => void;
 }) => {
   const [title, setTitle] = useState(initialTitle);
   const [suggestion, setSuggestion] = useState(initialSuggestion);
-  const [explanation, setExplanation] = useState(initialExplanation);
   const reducedMotion = useMotionPreference();
 
   const handleSave = () => {
@@ -156,7 +146,6 @@ const EditForm = ({
       onSave({
         title: title.trim(),
         suggestion: suggestion.trim(),
-        explanation: explanation.trim(),
       });
     }
   };
@@ -176,7 +165,7 @@ const EditForm = ({
           htmlFor="title"
           className="block text-sm font-medium text-base-content mb-2"
         >
-          Titel
+          Titel <span className="text-error">*</span>
         </label>
         <input
           id="title"
@@ -194,31 +183,14 @@ const EditForm = ({
           htmlFor="suggestion"
           className="block text-sm font-medium text-base-content mb-2"
         >
-          Vorschlag
+          Vorschlag <span className="text-error">*</span>
         </label>
         <textarea
           id="suggestion"
           value={suggestion}
           onChange={(e) => setSuggestion(e.target.value)}
           placeholder="Beschreiben Sie Ihren Design-Vorschlag..."
-          rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200 resize-none"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="explanation"
-          className="block text-sm font-medium text-base-content mb-2"
-        >
-          Begründung (optional)
-        </label>
-        <textarea
-          id="explanation"
-          value={explanation}
-          onChange={(e) => setExplanation(e.target.value)}
-          placeholder="Warum ist diese Änderung sinnvoll?"
-          rows={2}
+          rows={4}
           className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200 resize-none"
         />
       </div>
@@ -277,7 +249,7 @@ const CustomSuggestionCard = ({
   }, []);
 
   const handleSave = useCallback(
-    (data: { title: string; suggestion: string; explanation: string }) => {
+    (data: { title: string; suggestion: string }) => {
       onEdit(id, data);
       setIsEditing(false);
     },
@@ -308,7 +280,6 @@ const CustomSuggestionCard = ({
         <EditForm
           initialTitle={title}
           initialSuggestion={suggestion}
-          initialExplanation={explanation}
           onSave={handleSave}
           onCancel={handleCancel}
         />
@@ -354,11 +325,6 @@ const CustomSuggestionCard = ({
           >
             {suggestion}
           </p>
-          {explanation && (
-            <p className="text-base-content/50 text-xs mt-2 italic">
-              {explanation}
-            </p>
-          )}
         </div>
 
         {/* Toggle Switch */}

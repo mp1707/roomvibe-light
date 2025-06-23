@@ -12,7 +12,6 @@ interface AddSuggestionCardProps {
   onAdd: (data: {
     title: string;
     suggestion: string;
-    explanation: string;
     category: string;
   }) => void;
   delay?: number;
@@ -42,14 +41,12 @@ const AddForm = ({
   onSave: (data: {
     title: string;
     suggestion: string;
-    explanation: string;
     category: string;
   }) => void;
   onCancel: () => void;
 }) => {
   const [title, setTitle] = useState("");
   const [suggestion, setSuggestion] = useState("");
-  const [explanation, setExplanation] = useState("");
   const reducedMotion = useMotionPreference();
 
   const handleSave = () => {
@@ -57,13 +54,11 @@ const AddForm = ({
       onSave({
         title: title.trim(),
         suggestion: suggestion.trim(),
-        explanation: explanation.trim(),
         category: "custom",
       });
       // Reset form
       setTitle("");
       setSuggestion("");
-      setExplanation("");
     }
   };
 
@@ -116,24 +111,7 @@ const AddForm = ({
           value={suggestion}
           onChange={(e) => setSuggestion(e.target.value)}
           placeholder="Beschreiben Sie Ihren Design-Vorschlag detailliert..."
-          rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200 resize-none"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="new-explanation"
-          className="block text-sm font-medium text-base-content mb-2"
-        >
-          Begründung (optional)
-        </label>
-        <textarea
-          id="new-explanation"
-          value={explanation}
-          onChange={(e) => setExplanation(e.target.value)}
-          placeholder="Warum ist diese Änderung sinnvoll? Welche Vorteile bringt sie?"
-          rows={2}
+          rows={4}
           className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200 resize-none"
         />
       </div>
@@ -176,12 +154,7 @@ const AddSuggestionCard = ({ onAdd, delay = 0 }: AddSuggestionCardProps) => {
   }, []);
 
   const handleSave = useCallback(
-    (data: {
-      title: string;
-      suggestion: string;
-      explanation: string;
-      category: string;
-    }) => {
+    (data: { title: string; suggestion: string; category: string }) => {
       onAdd(data);
       setIsAdding(false);
     },

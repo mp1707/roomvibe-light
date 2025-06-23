@@ -28,7 +28,8 @@ const generateImageSchema = z.object({
         suggestion: z.string().min(1, "Suggestion text cannot be empty"),
         explanation: z
           .string()
-          .min(1, "Suggestion explanation cannot be empty"),
+          .optional()
+          .transform((val) => val || ""),
         category: z.string().min(1, "Suggestion category cannot be empty"),
       })
     )

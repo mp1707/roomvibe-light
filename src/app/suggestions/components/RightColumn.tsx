@@ -97,7 +97,6 @@ const RightColumn: React.FC<RightColumnProps> = ({
   const handleAddCustomSuggestion = (data: {
     title: string;
     suggestion: string;
-    explanation: string;
     category: string;
   }) => {
     addCustomSuggestion(data);
@@ -105,7 +104,7 @@ const RightColumn: React.FC<RightColumnProps> = ({
 
   const handleEditCustomSuggestion = (
     id: string,
-    data: { title: string; suggestion: string; explanation: string }
+    data: { title: string; suggestion: string }
   ) => {
     editCustomSuggestion(id, { ...data, category: "custom" });
   };
@@ -188,7 +187,6 @@ const RightColumn: React.FC<RightColumnProps> = ({
               id={suggestion.id}
               title={suggestion.title}
               suggestion={suggestion.suggestion}
-              explanation={suggestion.explanation}
               selected={!!selectedSuggestions[suggestion.id]}
               onToggle={() => onToggleSuggestion(suggestion.id)}
               onEdit={handleEditCustomSuggestion}

@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Mock generated images - using mockResult.png
-const mockGeneratedImages = ["/mockResult.png"];
+// Mock generated images - using multiple images from assets for variety
+const mockGeneratedImages = [
+  "/assets/images/mockResult.png",
+  "/assets/images/hero.png",
+  "/assets/images/hero2.png",
+  "/assets/images/hero3.png",
+];
 
 // In-memory store for mock predictions (in production this would be a database)
 const mockPredictions = new Map<string, any>();
@@ -63,8 +68,9 @@ export async function GET(
       prediction.status = "succeeded";
 
       if (!prediction.output) {
-        // Return single mock result image
-        prediction.output = [mockGeneratedImages[0]];
+        // Return multiple mock result images for variety
+        prediction.output = mockGeneratedImages.slice(0, 2); // Return 2 variations
+        console.log("Mock prediction output set to:", prediction.output);
       }
     }
 

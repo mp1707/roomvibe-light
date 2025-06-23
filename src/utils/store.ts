@@ -80,6 +80,7 @@ export const useAppState = create<AppState>((set, get) => ({
   addCustomSuggestion: (suggestionData) => {
     const newSuggestion: Suggestion = {
       ...suggestionData,
+      explanation: suggestionData.explanation || "",
       id: `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
     set((state) => ({
@@ -90,7 +91,13 @@ export const useAppState = create<AppState>((set, get) => ({
   editCustomSuggestion: (id, suggestionData) => {
     set((state) => ({
       customSuggestions: state.customSuggestions.map((suggestion) =>
-        suggestion.id === id ? { ...suggestionData, id } : suggestion
+        suggestion.id === id
+          ? {
+              ...suggestionData,
+              explanation: suggestionData.explanation || "",
+              id,
+            }
+          : suggestion
       ),
     }));
   },
