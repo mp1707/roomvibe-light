@@ -11,7 +11,7 @@ const pageVariants = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.4, ease: "easeOut" },
   },
   exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
 };
@@ -24,6 +24,13 @@ const cardVariants = {
 
 const containerVariants = {
   visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+};
+
+// Compact preview variants for mock settings
+const previewVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
 };
 
 // Toggle Switch Component following design system
@@ -234,6 +241,53 @@ export default function SettingsPage() {
           }
         />
 
+        {/* Mock Image Generation Preview */}
+        <AnimatePresence>
+          {mockImageGeneration && (
+            <motion.div
+              variants={previewVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.2 }}
+              className="bg-base-200/50 rounded-lg border border-base-300/50 p-3 ml-4"
+            >
+              <h4 className="text-sm font-medium text-base-content mb-2 flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Beispielbilder werden generiert
+              </h4>
+              <div className="flex gap-2">
+                <div className="w-16 h-16 rounded-lg overflow-hidden border border-base-300">
+                  <img
+                    src="/assets/images/mockResult.png"
+                    alt="Mock Ergebnis 1"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="w-16 h-16 rounded-lg overflow-hidden border border-base-300">
+                  <img
+                    src="/assets/images/hero.png"
+                    alt="Mock Ergebnis 2"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <ToggleSwitch
           enabled={mockFileUpload}
           onChange={setMockFileUpload}
@@ -256,17 +310,18 @@ export default function SettingsPage() {
           }
         />
 
-        {/* Mock Image Preview */}
+        {/* Mock File Upload Preview */}
         <AnimatePresence>
           {mockFileUpload && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              variants={previewVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               transition={{ duration: 0.2 }}
-              className="bg-base-200/50 rounded-lg border border-base-300/50 p-4 ml-4"
+              className="bg-base-200/50 rounded-lg border border-base-300/50 p-3 ml-4"
             >
-              <h4 className="text-sm font-medium text-base-content mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-base-content mb-2 flex items-center gap-2">
                 <svg
                   className="w-4 h-4 text-primary"
                   fill="none"
@@ -277,29 +332,17 @@ export default function SettingsPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   />
                 </svg>
-                Beispielbild wird verwendet:
+                Beispielbild wird verwendet
               </h4>
-              <div className="flex items-start gap-3">
-                <div className="w-20 h-20 rounded-lg overflow-hidden border border-base-300 flex-shrink-0">
-                  <img
-                    src="https://media.istockphoto.com/id/2175713816/de/foto/elegantes-wohnzimmer-mit-beigem-sofa-und-kamin.jpg?s=2048x2048&w=is&k=20&c=E9JrU7zYWFLQsEJQf0fXJyiVECM6tsIyKgSNNp-cEkc%3D"
-                    alt="Mock Beispielbild"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-base-content/60 leading-relaxed">
-                    <strong>Elegantes Wohnzimmer</strong>
-                    <br />
-                    Ein helles, minimalistisches Wohnzimmer mit beigem Sofa,
-                    modernem Kamin und abstrakter Kunst. Große Fenster lassen
-                    natürliches Licht herein und schaffen eine gemütliche, aber
-                    elegante Atmosphäre.
-                  </p>
-                </div>
+              <div className="w-16 h-16 rounded-lg overflow-hidden border border-base-300">
+                <img
+                  src="https://media.istockphoto.com/id/2175713816/de/foto/elegantes-wohnzimmer-mit-beigem-sofa-und-kamin.jpg?s=2048x2048&w=is&k=20&c=E9JrU7zYWFLQsEJQf0fXJyiVECM6tsIyKgSNNp-cEkc%3D"
+                  alt="Mock Upload Beispiel"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </motion.div>
           )}

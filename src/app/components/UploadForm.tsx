@@ -393,7 +393,7 @@ const UploadForm = () => {
                           />
                         </svg>
                         <span className="text-xs font-medium text-warning">
-                          Mock-Modus aktiv - Verwendet Beispielbild
+                          Mock-Modus aktiv
                         </span>
                       </div>
                     )}
