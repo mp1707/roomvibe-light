@@ -15,7 +15,7 @@ const SuggestionSchema = z.object({
 const AnalysisResponseSchema = z.object({
   isInteriorSpace: z.boolean(),
   suggestions: z.array(SuggestionSchema),
-}) satisfies z.ZodType<AnalysisResponse & { isInteriorSpace: boolean }>;
+});
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -128,10 +128,8 @@ Antworte NUR mit dem JSON-Format!
 
     // Parse and validate JSON response
     let parsedResponse;
+    let cleanedContent = responseContent.trim(); // Move to broader scope
     try {
-      // Clean the response content
-      let cleanedContent = responseContent.trim();
-
       // Try to extract JSON from response (handles cases where OpenAI adds extra text)
       const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
@@ -189,16 +187,48 @@ Antworte NUR mit dem JSON-Format!
     try {
       validatedResponse = AnalysisResponseSchema.parse(parsedResponse);
     } catch (validationError) {
-      console.error("Zod validation error:", validationError);
+      console.error("=== PRODUCTION DEBUG INFO ===");
+      console.error("Environment:", process.env.NODE_ENV);
+      console.error("Vercel Region:", process.env.VERCEL_REGION);
+      console.error("OpenAI API Key exists:", !!process.env.OPENAI_API_KEY);
+      console.error("Original OpenAI response:", responseContent);
+      console.error("Cleaned content:", cleanedContent);
       console.error(
         "Parsed response:",
         JSON.stringify(parsedResponse, null, 2)
       );
+      console.error("Zod validation error:", validationError);
+      console.error("=== END DEBUG INFO ===");
 
       if (validationError instanceof z.ZodError) {
         const errorDetails = validationError.errors
           .map((err) => `${err.path.join(".")}: ${err.message}`)
           .join("; ");
+
+        // More specific error handling for production debugging
+        const isPatternError = validationError.errors.some(
+          (err) =>
+            err.message.includes("string did not match") ||
+            err.message.includes("pattern")
+        );
+
+        if (isPatternError) {
+          console.error(
+            "PATTERN ERROR DETECTED - this will trigger Datenformat-Fehler"
+          );
+          console.error("Validation error details:", errorDetails);
+
+          return NextResponse.json(
+            {
+              error: `string did not match pattern: ${errorDetails}`,
+              details: errorDetails,
+              originalResponse: parsedResponse,
+              rawResponse: responseContent,
+              environment: process.env.NODE_ENV,
+            },
+            { status: 500 }
+          );
+        }
 
         return NextResponse.json(
           {
