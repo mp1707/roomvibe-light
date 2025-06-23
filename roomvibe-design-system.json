@@ -1,0 +1,430 @@
+{
+  "designSystem": {
+    "meta": {
+      "name": "RoomVibe Design System",
+      "version": "1.0.0",
+      "philosophy": "Apple-inspired Liquid Glass aesthetic with human-centered AI principles",
+      "description": "A comprehensive design system implementing Apple's design principles with Liquid Glass effects, physics-based animations, and premium feel",
+      "techStack": [
+        "Next.js",
+        "Tailwind CSS",
+        "DaisyUI",
+        "Framer Motion",
+        "TypeScript"
+      ]
+    },
+    "corePhilosophy": {
+      "paradigm": "KI-Kollaborateur (AI Collaborator) - from tool to creative partner",
+      "uiPhilosophy": "Unobtrusive but transparent UI - invisible when content focused, elegant when guidance needed",
+      "qualityPrinciples": [
+        "Trust through transparency",
+        "User maintains control",
+        "Explainable AI (XAI)",
+        "Reduced cognitive load",
+        "Sensory coherence"
+      ]
+    },
+    "colorSystem": {
+      "primary": {
+        "light": {
+          "primary": "#007AFF",
+          "primaryFocus": "#0056CC",
+          "primaryContent": "#FFFFFF",
+          "description": "Apple's signature blue for primary actions"
+        },
+        "dark": {
+          "primary": "#0A84FF",
+          "primaryFocus": "#0051D5",
+          "primaryContent": "#FFFFFF",
+          "description": "Adjusted blue for dark mode accessibility"
+        }
+      },
+      "neutrals": {
+        "light": {
+          "baseContent": "#1C1C1E",
+          "base100": "#FFFFFF",
+          "base200": "#F2F2F7",
+          "base300": "#E5E5EA",
+          "textMuted": "#8E8E93",
+          "borderColor": "#E5E5EA"
+        },
+        "dark": {
+          "baseContent": "#FFFFFF",
+          "base100": "#1C1C1E",
+          "base200": "#2C2C2E",
+          "base300": "#3A3A3C",
+          "textMuted": "#8E8E93",
+          "borderColor": "#3A3A3C"
+        }
+      },
+      "semantic": {
+        "success": "#30D158",
+        "warning": "#FF9F0A",
+        "error": "#FF3B30",
+        "info": "#007AFF",
+        "accent": "#FF9500"
+      },
+      "glassEffects": {
+        "light": {
+          "glassBg": "rgba(255, 255, 255, 0.7)",
+          "glassBorder": "rgba(255, 255, 255, 0.2)",
+          "shadowColor": "rgba(0, 0, 0, 0.1)"
+        },
+        "dark": {
+          "glassBg": "rgba(28, 28, 30, 0.7)",
+          "glassBorder": "rgba(255, 255, 255, 0.1)",
+          "shadowColor": "rgba(0, 0, 0, 0.3)"
+        }
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "primary": "Inter",
+        "fallback": [
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "Noto Sans",
+          "sans-serif"
+        ]
+      },
+      "fontWeights": {
+        "normal": 400,
+        "medium": 500,
+        "semiBold": 600,
+        "bold": 700,
+        "extraBold": 800
+      },
+      "letterSpacing": {
+        "body": "0.01em"
+      },
+      "hierarchy": {
+        "h1": {
+          "fontSize": "2.25rem",
+          "fontWeight": 700,
+          "lineHeight": "1.2",
+          "letterSpacing": "-0.025em"
+        },
+        "h2": {
+          "fontSize": "1.875rem",
+          "fontWeight": 600,
+          "lineHeight": "1.3"
+        },
+        "body": {
+          "fontSize": "1rem",
+          "fontWeight": 400,
+          "lineHeight": "1.6"
+        },
+        "caption": {
+          "fontSize": "0.875rem",
+          "fontWeight": 400,
+          "color": "textMuted"
+        }
+      },
+      "rendering": {
+        "webkitFontSmoothing": "antialiased",
+        "mozOsxFontSmoothing": "grayscale",
+        "textRendering": "optimizeLegibility"
+      }
+    },
+    "spacing": {
+      "scale": {
+        "xs": "0.25rem",
+        "sm": "0.5rem",
+        "base": "1rem",
+        "lg": "1.5rem",
+        "xl": "2rem",
+        "2xl": "3rem",
+        "3xl": "4rem"
+      },
+      "component": {
+        "cardPadding": "1.5rem",
+        "buttonPadding": "0.75rem 1.5rem",
+        "containerPadding": "1rem"
+      }
+    },
+    "borderRadius": {
+      "sm": "8px",
+      "base": "12px",
+      "lg": "16px",
+      "xl": "20px",
+      "2xl": "24px",
+      "3xl": "32px",
+      "full": "9999px",
+      "components": {
+        "cards": "16px",
+        "buttons": "12px",
+        "inputs": "12px",
+        "badges": "8px"
+      }
+    },
+    "shadows": {
+      "subtle": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      "soft": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+      "elevated": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      "strong": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+    },
+    "glassEffects": {
+      "backdropBlur": {
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px"
+      },
+      "implementation": {
+        "css": "backdrop-filter: blur(var(--backdrop-blur-sm)); -webkit-backdrop-filter: blur(var(--backdrop-blur-sm));",
+        "tailwind": "backdrop-blur-sm"
+      },
+      "usage": "Applied to modals, sidebars, and overlay elements for Apple-like translucency"
+    },
+    "animations": {
+      "principles": {
+        "physicsBasedMotion": true,
+        "respectsReducedMotion": true,
+        "sensoryCoherence": "All animations feel like they belong to the same family"
+      },
+      "easingCurves": {
+        "appleEasing": [0.22, 1, 0.36, 1],
+        "appleEaseInOut": [0.4, 0, 0.2, 1]
+      },
+      "springConfigs": {
+        "default": {
+          "type": "spring",
+          "stiffness": 400,
+          "damping": 30
+        },
+        "gentle": {
+          "type": "spring",
+          "stiffness": 200,
+          "damping": 25
+        },
+        "smooth": {
+          "type": "spring",
+          "stiffness": 700,
+          "damping": 30
+        }
+      },
+      "variants": {
+        "pageTransition": {
+          "initial": { "opacity": 0, "y": 20 },
+          "animate": {
+            "opacity": 1,
+            "y": 0,
+            "transition": { "duration": 0.4, "ease": [0.22, 1, 0.36, 1] }
+          },
+          "exit": { "opacity": 0, "y": -20, "transition": { "duration": 0.3 } }
+        },
+        "cardVariants": {
+          "hidden": { "opacity": 0, "y": 30, "scale": 0.95 },
+          "visible": { "opacity": 1, "y": 0, "scale": 1 },
+          "hover": { "scale": 1.02, "y": -2 },
+          "tap": { "scale": 0.98 }
+        },
+        "buttonVariants": {
+          "hover": { "scale": 1.05 },
+          "tap": { "scale": 0.95 }
+        },
+        "stagger": {
+          "container": { "staggerChildren": 0.1, "delayChildren": 0.2 },
+          "item": { "y": 20, "opacity": 0 }
+        }
+      },
+      "microInteractions": {
+        "toggleSwitch": {
+          "transition": "spring with stiffness: 700, damping: 30",
+          "description": "Quick, tactile feeling toggle animation"
+        },
+        "buttonHover": {
+          "scale": 1.05,
+          "description": "Subtle scale increase on hover for tactile feedback"
+        },
+        "dragAndDrop": {
+          "idle": { "scale": 1 },
+          "dragging": { "scale": 1.02 },
+          "description": "Gentle scale increase during drag operations"
+        }
+      }
+    },
+    "components": {
+      "buttons": {
+        "primary": {
+          "background": "primary",
+          "color": "primaryContent",
+          "borderRadius": "12px",
+          "padding": "0.75rem 1.5rem",
+          "fontWeight": 600,
+          "boxShadow": "none",
+          "textTransform": "none",
+          "animation": "buttonVariants"
+        },
+        "secondary": {
+          "background": "transparent",
+          "color": "baseContent",
+          "border": "1px solid borderColor",
+          "borderRadius": "12px",
+          "animation": "buttonVariants"
+        }
+      },
+      "cards": {
+        "suggestion": {
+          "background": "base100",
+          "borderRadius": "16px",
+          "padding": "1.5rem",
+          "border": "1px solid base300",
+          "animation": "cardVariants",
+          "hover": "subtle shadow and scale increase"
+        },
+        "upload": {
+          "background": "base100",
+          "borderRadius": "24px",
+          "border": "2px dashed base300",
+          "transition": "border becomes solid on hover/drag"
+        }
+      },
+      "toggleSwitch": {
+        "width": "44px",
+        "height": "24px",
+        "borderRadius": "full",
+        "animation": "spring-based position change",
+        "states": {
+          "off": { "background": "base300", "thumbPosition": "2px" },
+          "on": { "background": "primary", "thumbPosition": "22px" }
+        }
+      },
+      "modals": {
+        "backdrop": {
+          "background": "rgba(0, 0, 0, 0.5)",
+          "backdropBlur": "8px",
+          "animation": "fade in/out"
+        },
+        "content": {
+          "background": "glass effect",
+          "borderRadius": "20px",
+          "animation": "scale and slide from top"
+        }
+      }
+    },
+    "layoutPatterns": {
+      "responsive": {
+        "mobile": "Card-like container with rounded corners",
+        "tablet": "Card-like container with more padding",
+        "desktop": "Full viewport layout with centered content"
+      },
+      "whitespace": {
+        "principle": "Generous whitespace for premium feel",
+        "section": "3rem vertical padding",
+        "container": "max-width with centered alignment"
+      },
+      "grid": {
+        "suggestions": "Responsive grid with consistent gaps",
+        "gallery": "Masonry-like layout for inspiration images"
+      }
+    },
+    "accessibility": {
+      "colorContrast": {
+        "standard": "4.5:1 for normal text",
+        "large": "3:1 for large text"
+      },
+      "focusStates": {
+        "outline": "2px solid primary",
+        "outlineOffset": "2px",
+        "borderRadius": "4px"
+      },
+      "motionReduction": {
+        "implementation": "@media (prefers-reduced-motion: reduce)",
+        "behavior": "Disable non-essential animations"
+      },
+      "keyboard": {
+        "navigation": "All interactive elements accessible via keyboard",
+        "focusTrapping": "Implemented in modals"
+      },
+      "screenReader": {
+        "ariaLabels": "All interactive elements have descriptive labels",
+        "ariaRoles": "Custom components use appropriate ARIA roles"
+      }
+    },
+    "userExperience": {
+      "loadingStates": {
+        "skeleton": "Maintain structure during loading",
+        "progressive": "Show granular progress updates",
+        "description": "Transform waiting time into anticipation"
+      },
+      "errorStates": {
+        "tone": "Helpful, not blaming",
+        "actions": "Clear next steps provided",
+        "recovery": "Easy retry mechanisms"
+      },
+      "emptyStates": {
+        "inspirational": "Guide users to next action",
+        "illustration": "Visual elements that match brand tone"
+      },
+      "feedback": {
+        "immediate": "Visual confirmation for all actions",
+        "contextual": "Relevant information at the right time",
+        "positive": "Celebrate user achievements"
+      }
+    },
+    "technicalImplementation": {
+      "framework": "Next.js 15 with TypeScript",
+      "styling": "Tailwind CSS 4 + DaisyUI 5",
+      "animations": "Framer Motion 12",
+      "stateManagement": "Zustand",
+      "configuration": {
+        "tailwindConfig": {
+          "theme": "DaisyUI light/dark themes",
+          "fontFamily": "Inter with system fallbacks",
+          "customProperties": "CSS variables for theme switching"
+        },
+        "framerMotion": {
+          "respectReducedMotion": true,
+          "physicsBasedTransitions": true,
+          "staggeredAnimations": true
+        }
+      }
+    },
+    "designTokens": {
+      "naming": {
+        "convention": "BEM-like with semantic meaning",
+        "hierarchy": "base -> component -> variant -> state"
+      },
+      "cssVariables": {
+        "colors": "HSL with semantic names",
+        "spacing": "rem-based scale",
+        "borderRadius": "consistent scale",
+        "animation": "duration and easing curves"
+      }
+    },
+    "brandPersonality": {
+      "voice": "Professional yet approachable",
+      "tone": "Confident and helpful",
+      "language": "German (primary), clear and direct",
+      "emotional": "Trustworthy, innovative, elegant"
+    },
+    "implementation-guidelines": {
+      "consistency": [
+        "Always use defined color tokens",
+        "Stick to spacing scale",
+        "Apply consistent border radius",
+        "Use physics-based animations",
+        "Maintain sensory coherence"
+      ],
+      "customization": [
+        "Extend existing variants rather than creating new ones",
+        "Follow established animation patterns",
+        "Respect accessibility requirements",
+        "Test in both light and dark themes"
+      ],
+      "quality-checks": [
+        "Color contrast meets WCAG standards",
+        "Animations respect reduced motion preferences",
+        "Focus states are clearly visible",
+        "Components work across device sizes",
+        "Loading states are implemented"
+      ]
+    }
+  }
+}
