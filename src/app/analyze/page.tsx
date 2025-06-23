@@ -392,18 +392,43 @@ export default function AnalyzePage() {
       const formData = new FormData();
       formData.append("file", imageFile);
 
-      // Call our analysis API (temporarily using test endpoint for debugging)
-      const response = await fetch("/api/test-analyze", {
+      // Call our analysis API
+      const response = await fetch("/api/analyze", {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          // If we can't parse the error response, it might be HTML
+          const textResponse = await response.text();
+          console.error("Non-JSON error response:", textResponse);
+          throw new Error(
+            `Server Error (${response.status}): Response is not valid JSON`
+          );
+        }
         throw new Error(errorData.error || "Analyse fehlgeschlagen");
       }
 
-      const analysisResult = await response.json();
+      let analysisResult;
+      try {
+        const responseText = await response.text();
+        console.log("Raw response:", responseText.substring(0, 200) + "...");
+        analysisResult = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Failed to parse response as JSON:", parseError);
+        console.error("Response status:", response.status);
+        console.error(
+          "Response headers:",
+          Object.fromEntries(response.headers.entries())
+        );
+        throw new Error(
+          "Server returned invalid JSON response. This may be due to missing environment variables or server configuration issues."
+        );
+      }
 
       // Clear progress interval and complete
       clearInterval(progressInterval);
@@ -482,6 +507,13 @@ export default function AnalyzePage() {
           errorTitle = "Verbindungsfehler";
           errorMessage =
             "Die Verbindung zum Server ist fehlgeschlagen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+        } else if (
+          error.message.includes("invalid JSON response") ||
+          error.message.includes("environment variables")
+        ) {
+          errorTitle = "Konfigurationsfehler";
+          errorMessage =
+            "Es gibt ein Problem mit der Server-Konfiguration. Bitte versuchen Sie es in wenigen Minuten erneut oder kontaktieren Sie den Support.";
         } else {
           errorMessage = `${error.message} (Fehlercode: ANALYZE_${Date.now()})`;
         }

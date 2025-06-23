@@ -23,6 +23,25 @@ const openai = new OpenAI({
 });
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  console.log("=== ANALYZE API START ===");
+  console.log("Environment:", process.env.NODE_ENV);
+  console.log("Vercel Region:", process.env.VERCEL_REGION);
+  console.log("OpenAI Key exists:", !!process.env.OPENAI_API_KEY);
+
+  // Check if OpenAI API key is configured
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("OPENAI_API_KEY is not configured");
+    return NextResponse.json(
+      {
+        error: "OpenAI API key is not configured",
+        details: "Please check your environment variables configuration",
+        environment: process.env.NODE_ENV,
+      },
+      { status: 500 }
+    );
+  }
+
   try {
     const data = await request.formData();
     const file: File | null = data.get("file") as unknown as File;
@@ -93,7 +112,14 @@ QUALITÄTS-ANFORDERUNGEN:
 Antworte NUR mit dem JSON-Format!
 `;
 
+    console.log("File info:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+
     // Call OpenAI Vision API
+    console.log("Calling OpenAI API...");
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -120,7 +146,10 @@ Antworte NUR mit dem JSON-Format!
       temperature: 0.1,
     });
 
+    console.log("OpenAI API call completed");
     const responseContent = completion.choices[0]?.message?.content;
+    console.log("Response content exists:", !!responseContent);
+    console.log("Response content length:", responseContent?.length || 0);
 
     if (!responseContent) {
       throw new Error("Keine Antwort von OpenAI erhalten");
@@ -243,13 +272,26 @@ Antworte NUR mit dem JSON-Format!
       throw validationError;
     }
 
+    console.log("=== ANALYZE SUCCESS ===");
+    console.log("Processing time:", Date.now() - startTime, "ms");
     return NextResponse.json(validatedResponse);
   } catch (error) {
+    console.log("=== ANALYZE ERROR ===");
     console.error("Analyse-Fehler:", error);
+    console.log("Processing time:", Date.now() - startTime, "ms");
 
     if (error instanceof OpenAI.APIError) {
+      console.error("OpenAI API Error details:", {
+        status: error.status,
+        message: error.message,
+        code: error.code,
+        type: error.type,
+      });
       return NextResponse.json(
-        { error: `OpenAI API Fehler: ${error.message}` },
+        {
+          error: `OpenAI API Fehler: ${error.message}`,
+          details: `Status: ${error.status}, Code: ${error.code}`,
+        },
         { status: 500 }
       );
     }
@@ -268,8 +310,22 @@ Antworte NUR mit dem JSON-Format!
       );
     }
 
+    // For any other error, provide more debug info
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    console.error("Error details:", {
+      message: errorMessage,
+      stack: errorStack,
+      type: error instanceof Error ? error.constructor.name : typeof error,
+    });
+
     return NextResponse.json(
-      { error: "Fehler bei der Bildanalyse" },
+      {
+        error: "Fehler bei der Bildanalyse",
+        details: errorMessage,
+        environment: process.env.NODE_ENV,
+      },
       { status: 500 }
     );
   }

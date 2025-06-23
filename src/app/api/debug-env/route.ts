@@ -11,16 +11,11 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     environment: process.env.NODE_ENV,
-    vercelRegion: process.env.VERCEL_REGION || "unknown",
-    openaiKeyExists: !!process.env.OPENAI_API_KEY,
-    openaiKeyLength: process.env.OPENAI_API_KEY?.length || 0,
     nodeVersion: process.version,
+    vercelRegion: process.env.VERCEL_REGION,
+    hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+    openAIKeyLength: process.env.OPENAI_API_KEY?.length || 0,
+    hasReplicateToken: !!process.env.REPLICATE_API_TOKEN,
     timestamp: new Date().toISOString(),
-    runtime: "nodejs",
-    // Don't expose actual keys, just check their presence
-    envVars: {
-      SUPABASE_URL: !!process.env.SUPABASE_URL,
-      SUPABASE_ANON_KEY: !!process.env.SUPABASE_ANON_KEY,
-    },
   });
 }
