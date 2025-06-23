@@ -65,6 +65,14 @@ const UploadForm = () => {
   const [supabase] = useState(() => createClient());
   const reducedMotion = useMotionPreference();
 
+  // Check for gallery parameter on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("gallery") === "true") {
+      setShowInspiration(true);
+    }
+  }, []);
+
   // Get current user on component mount
   useEffect(() => {
     const getUser = async () => {
@@ -283,8 +291,18 @@ const UploadForm = () => {
   }, []);
 
   const toggleInspiration = useCallback(() => {
-    setShowInspiration((prev) => !prev);
-  }, []);
+    const newShowInspiration = !showInspiration;
+    setShowInspiration(newShowInspiration);
+
+    // Update URL without page refresh
+    const url = new URL(window.location.href);
+    if (newShowInspiration) {
+      url.searchParams.set("gallery", "true");
+    } else {
+      url.searchParams.delete("gallery");
+    }
+    window.history.replaceState({}, "", url.toString());
+  }, [showInspiration]);
 
   if (showInspiration) {
     return (
@@ -436,7 +454,7 @@ const UploadForm = () => {
               />
             </svg>
             <span className="font-semibold text-sm md:text-base text-base-content/70 group-hover:text-primary transition-colors">
-              Inspiration-Galerie durchsuchen
+              KI-Transformationen entdecken
             </span>
           </motion.button>
         </motion.div>
