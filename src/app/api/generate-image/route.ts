@@ -20,20 +20,9 @@ const generateImageSchema = z.object({
         return false;
       }
     }, "Must be a valid image URL or data URL"),
-  suggestions: z
-    .array(
-      z.object({
-        id: z.string().min(1, "Suggestion ID cannot be empty"),
-        title: z.string().min(1, "Suggestion title cannot be empty"),
-        suggestion: z.string().min(1, "Suggestion text cannot be empty"),
-        explanation: z
-          .string()
-          .optional()
-          .transform((val) => val || ""),
-        category: z.string().min(1, "Suggestion category cannot be empty"),
-      })
-    )
-    .min(1, "At least one suggestion is required"),
+  prompt: z
+    .string()
+    .min(10, "Generated prompt must be at least 10 characters long"),
 });
 
 // Initialize Replicate client
@@ -87,53 +76,6 @@ function isReadableStream(obj: any): obj is ReadableStream {
   return obj && typeof obj === "object" && typeof obj.getReader === "function";
 }
 
-// Function to create a detailed prompt from suggestions
-function createDetailedPrompt(
-  suggestions: Array<{
-    id: string;
-    title: string;
-    suggestion: string;
-    explanation: string;
-    category: string;
-  }>
-): string {
-  // Group suggestions by category for better organization
-  const suggestionsByCategory = suggestions.reduce((acc, suggestion) => {
-    if (!acc[suggestion.category]) {
-      acc[suggestion.category] = [];
-    }
-    acc[suggestion.category].push(suggestion);
-    return acc;
-  }, {} as Record<string, typeof suggestions>);
-
-  // Create detailed prompt sections
-  const promptSections = Object.entries(suggestionsByCategory).map(
-    ([category, categorySuggestions]) => {
-      const categoryPrompts = categorySuggestions
-        .map((s) => `${s.suggestion} (${s.explanation.split(".")[0]})`)
-        .join("; ");
-
-      return `${category}: ${categoryPrompts}`;
-    }
-  );
-
-  // Build the complete prompt
-  const detailedPrompt = `Transform this interior space by implementing the following specific improvements while maintaining the original room layout and overall style:
-
-${promptSections.join("\n\n")}
-
-Requirements:
-- Keep the same room layout, furniture positioning, and architectural elements
-- Maintain the current lighting conditions and perspective
-- Apply changes realistically and tastefully
-- Ensure all modifications blend naturally with the existing interior design
-- Focus on enhancing the space while preserving its character and functionality
-
-The result should show a refined version of the same room with these specific improvements applied.`;
-
-  return detailedPrompt;
-}
-
 export async function POST(req: Request) {
   if (!process.env.REPLICATE_API_TOKEN) {
     return NextResponse.json(
@@ -147,18 +89,15 @@ export async function POST(req: Request) {
 
     // Validate the input
     const validatedData = generateImageSchema.parse(body);
-    const { imageUrl, suggestions } = validatedData;
+    const { imageUrl, prompt } = validatedData;
 
-    // Create a detailed prompt based on the suggestions
-    const detailedPrompt = createDetailedPrompt(suggestions);
-
-    console.log("Generated detailed prompt:", detailedPrompt);
+    console.log("Using pre-generated prompt:", prompt);
 
     const prediction = await replicate.predictions.create({
       model: "black-forest-labs/flux-kontext-pro",
       input: {
         input_image: imageUrl,
-        prompt: detailedPrompt,
+        prompt: prompt,
       },
     });
 

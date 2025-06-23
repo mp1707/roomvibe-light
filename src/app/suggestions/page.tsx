@@ -10,7 +10,10 @@ import { ContinueIcon } from "../components/Icons";
 import { buttonVariants, useMotionPreference } from "@/utils/animations";
 import { useAppState } from "@/utils/store";
 import toast from "react-hot-toast";
-import { getGenerateImageEndpoint } from "@/utils/apiHelpers";
+import {
+  getGenerateImageEndpoint,
+  getGeneratePromptEndpoint,
+} from "@/utils/apiHelpers";
 
 export default function SuggestionsPage() {
   const [selectedSuggestions, setSelectedSuggestions] = useState<
@@ -54,34 +57,76 @@ export default function SuggestionsPage() {
     const selected = allSuggestions.filter((s) => selectedSuggestions[s.id]);
 
     try {
-      // Debug logging
-      console.log("=== GENERATE IMAGE DEBUG ===");
+      // Step 1: Generate optimized prompt using OpenAI
+      console.log("=== STEP 1: GENERATE PROMPT ===");
       console.log("Image URL:", hostedImageUrl);
       console.log("Selected suggestions:", selected);
-      console.log("Endpoint:", getGenerateImageEndpoint());
+      console.log("Prompt endpoint:", getGeneratePromptEndpoint());
 
-      const requestBody = {
+      const promptRequestBody = {
         imageUrl: hostedImageUrl,
         suggestions: selected,
       };
 
-      console.log("Request body:", JSON.stringify(requestBody, null, 2));
+      console.log(
+        "Prompt request body:",
+        JSON.stringify(promptRequestBody, null, 2)
+      );
 
-      const response = await fetch(getGenerateImageEndpoint(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+      toast.loading("Erstelle optimierten Prompt...", {
+        id: "prompt-generation",
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      const promptResponse = await fetch(getGeneratePromptEndpoint(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(promptRequestBody),
+      });
+
+      if (!promptResponse.ok) {
+        const errorData = await promptResponse.json();
+        throw new Error(
+          errorData.error || "Die Prompt-Generierung ist fehlgeschlagen."
+        );
+      }
+
+      const { prompt } = await promptResponse.json();
+      console.log("Generated prompt:", prompt);
+
+      toast.dismiss("prompt-generation");
+      toast.loading("Generiere dein neues Bild...", { id: "image-generation" });
+
+      // Step 2: Generate image using the optimized prompt
+      console.log("=== STEP 2: GENERATE IMAGE ===");
+      console.log("Image endpoint:", getGenerateImageEndpoint());
+
+      const imageRequestBody = {
+        imageUrl: hostedImageUrl,
+        prompt: prompt,
+      };
+
+      console.log(
+        "Image request body:",
+        JSON.stringify(imageRequestBody, null, 2)
+      );
+
+      const imageResponse = await fetch(getGenerateImageEndpoint(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(imageRequestBody),
+      });
+
+      if (!imageResponse.ok) {
+        const errorData = await imageResponse.json();
         throw new Error(
           errorData.error || "Die Bildgenerierung ist fehlgeschlagen."
         );
       }
 
-      const prediction = await response.json();
+      const prediction = await imageResponse.json();
       setPrediction(prediction);
+
+      toast.dismiss("image-generation");
       toast.success("Dein neues Bild wird generiert...");
       router.push("/result");
     } catch (error) {
@@ -91,6 +136,10 @@ export default function SuggestionsPage() {
           : "Ein unbekannter Fehler ist aufgetreten.";
       console.error("Fehler bei der Bildgenerierung:", errorMessage);
       setGenerationError(errorMessage);
+
+      // Dismiss any loading toasts
+      toast.dismiss("prompt-generation");
+      toast.dismiss("image-generation");
       toast.error(errorMessage);
       setIsGenerating(false);
     } finally {

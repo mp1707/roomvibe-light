@@ -13,6 +13,11 @@ export function getGenerateImageEndpoint(): string {
     : "/api/generate-image";
 }
 
+export function getGeneratePromptEndpoint(): string {
+  // For now, we don't have a mock version of generate-prompt, so always use the real one
+  return "/api/generate-prompt";
+}
+
 export function getPredictionEndpoint(predictionId: string): string {
   // Check if it's a mock prediction ID
   if (predictionId.startsWith("mock_")) {

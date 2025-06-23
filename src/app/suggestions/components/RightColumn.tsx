@@ -166,14 +166,24 @@ const RightColumn: React.FC<RightColumnProps> = ({
         animate="visible"
         className="flex-1 space-y-3 sm:space-y-4 py-4 sm:py-6 overflow-visible"
       >
-        {/* Add Custom Suggestion Card */}
-        <motion.div
-          variants={reducedMotion ? {} : staggerItem}
-          custom={0}
-          className="overflow-visible"
-        >
-          <AddSuggestionCard onAdd={handleAddCustomSuggestion} delay={0} />
-        </motion.div>
+        {/* AI Suggestions */}
+        {suggestions.map((suggestion, index) => (
+          <motion.div
+            key={suggestion.id}
+            variants={reducedMotion ? {} : staggerItem}
+            custom={index + customSuggestions.length + 1}
+            className="overflow-visible"
+          >
+            <SuggestionCard
+              title={suggestion.title}
+              suggestion={suggestion.suggestion}
+              explanation={suggestion.explanation}
+              selected={!!selectedSuggestions[suggestion.id]}
+              onToggle={() => onToggleSuggestion(suggestion.id)}
+              delay={(index + customSuggestions.length + 1) * 0.1}
+            />
+          </motion.div>
+        ))}
 
         {/* Custom Suggestions */}
         {customSuggestions.map((suggestion, index) => (
@@ -196,24 +206,14 @@ const RightColumn: React.FC<RightColumnProps> = ({
           </motion.div>
         ))}
 
-        {/* AI Suggestions */}
-        {suggestions.map((suggestion, index) => (
-          <motion.div
-            key={suggestion.id}
-            variants={reducedMotion ? {} : staggerItem}
-            custom={index + customSuggestions.length + 1}
-            className="overflow-visible"
-          >
-            <SuggestionCard
-              title={suggestion.title}
-              suggestion={suggestion.suggestion}
-              explanation={suggestion.explanation}
-              selected={!!selectedSuggestions[suggestion.id]}
-              onToggle={() => onToggleSuggestion(suggestion.id)}
-              delay={(index + customSuggestions.length + 1) * 0.1}
-            />
-          </motion.div>
-        ))}
+        {/* Add Custom Suggestion Card */}
+        <motion.div
+          variants={reducedMotion ? {} : staggerItem}
+          custom={0}
+          className="overflow-visible"
+        >
+          <AddSuggestionCard onAdd={handleAddCustomSuggestion} delay={0} />
+        </motion.div>
       </motion.div>
     </div>
   );

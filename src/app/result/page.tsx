@@ -126,7 +126,7 @@ const ResultPage = () => {
         className="text-center"
       >
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
-          Ihr Raum, neu erfunden.
+          Dein Raum, neu erfunden.
         </h1>
         <p className="text-lg sm:text-xl text-base-content/60 max-w-2xl mx-auto px-4">
           {isGenerating
@@ -244,7 +244,10 @@ const ResultPage = () => {
 
             {/* Action Buttons */}
             <motion.div variants={reducedMotion ? {} : staggerItem}>
-              <ActionButtons itemVariants={staggerItem} />
+              <ActionButtons
+                itemVariants={staggerItem}
+                generatedImageUrl={safeGeneratedImageUrls[selectedVariation]}
+              />
             </motion.div>
 
             {/* Tips */}

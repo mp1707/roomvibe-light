@@ -19,20 +19,9 @@ const generateImageSchema = z.object({
         return false;
       }
     }, "Must be a valid image URL or data URL"),
-  suggestions: z
-    .array(
-      z.object({
-        id: z.string().min(1, "Suggestion ID cannot be empty"),
-        title: z.string().min(1, "Suggestion title cannot be empty"),
-        suggestion: z.string().min(1, "Suggestion text cannot be empty"),
-        explanation: z
-          .string()
-          .optional() // Made optional to support custom suggestions without explanation
-          .transform((val) => val || ""), // Transform undefined to empty string for consistency
-        category: z.string().min(1, "Suggestion category cannot be empty"),
-      })
-    )
-    .min(1, "At least one suggestion is required"),
+  prompt: z
+    .string()
+    .min(10, "Generated prompt must be at least 10 characters long"),
 });
 
 // Mock generated images - using multiple images from assets for variety
@@ -56,12 +45,12 @@ export async function POST(req: Request) {
 
     // Validate the input
     const validatedData = generateImageSchema.parse(body);
-    const { imageUrl, suggestions } = validatedData;
+    const { imageUrl, prompt } = validatedData;
 
     console.log("Mock generation request:", {
       imageUrlLength: imageUrl.length,
-      suggestionsCount: suggestions.length,
-      categories: suggestions.map((s) => s.category),
+      promptLength: prompt.length,
+      prompt: prompt.substring(0, 100) + "...", // Log first 100 chars
     });
 
     // Simulate API delay for realism
@@ -74,7 +63,7 @@ export async function POST(req: Request) {
       version: "mock-version",
       input: {
         input_image: imageUrl,
-        prompt: "Mock prompt generated from suggestions",
+        prompt: prompt,
       },
       output: null, // Will be populated later via polling
       status: "starting",
@@ -111,7 +100,7 @@ export async function POST(req: Request) {
 }
 
 // Helper function to get a random mock image
-export function getRandomMockImage(): string {
+function getRandomMockImage(): string {
   const randomIndex = Math.floor(Math.random() * mockGeneratedImages.length);
   return mockGeneratedImages[randomIndex];
 }
