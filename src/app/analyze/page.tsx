@@ -12,6 +12,7 @@ import {
   useMotionPreference,
 } from "@/utils/animations";
 import resizeImage from "@/utils/resizeImage";
+import { getAnalyzeEndpoint } from "@/utils/apiHelpers";
 
 const ErrorModal = ({
   isOpen,
@@ -419,8 +420,8 @@ export default function AnalyzePage() {
       const formData = new FormData();
       formData.append("file", processedImageFile);
 
-      // Call our analysis API
-      const response = await fetch("/api/analyze", {
+      // Call our analysis API (real or mock based on settings)
+      const response = await fetch(getAnalyzeEndpoint(), {
         method: "POST",
         body: formData,
       });

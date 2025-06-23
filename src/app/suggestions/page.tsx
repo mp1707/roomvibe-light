@@ -10,6 +10,7 @@ import { ContinueIcon } from "../components/Icons";
 import { buttonVariants, useMotionPreference } from "@/utils/animations";
 import { useAppState } from "@/utils/store";
 import toast from "react-hot-toast";
+import { getGenerateImageEndpoint } from "@/utils/apiHelpers";
 
 export default function SuggestionsPage() {
   const [selectedSuggestions, setSelectedSuggestions] = useState<
@@ -51,7 +52,7 @@ export default function SuggestionsPage() {
     const selected = suggestions.filter((s) => selectedSuggestions[s.id]);
 
     try {
-      const response = await fetch("/api/generate-image", {
+      const response = await fetch(getGenerateImageEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

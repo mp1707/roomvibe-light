@@ -14,6 +14,7 @@ import {
   useMotionPreference,
 } from "@/utils/animations";
 import toast from "react-hot-toast";
+import { getPredictionEndpoint } from "@/utils/apiHelpers";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -35,12 +36,11 @@ const ResultPage = () => {
     ? generatedImageUrls
     : [];
 
-
   const checkStatus = useCallback(async () => {
     if (!prediction?.id) return;
 
     try {
-      const response = await fetch(`/api/predictions/${prediction.id}`);
+      const response = await fetch(getPredictionEndpoint(prediction.id));
       if (!response.ok) {
         throw new Error("Netzwerk-Antwort war nicht in Ordnung.");
       }
