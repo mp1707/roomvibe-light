@@ -34,13 +34,8 @@ const generateImageSchema = z.object({
     .min(1, "At least one suggestion is required"),
 });
 
-// Mock generated images - using sample room images from public assets
-const mockGeneratedImages = [
-  "/assets/images/hero2.png",
-  "/assets/images/hero3.png",
-  "/assets/images/hero4.jpeg",
-  "/assets/images/hero5.jpeg",
-];
+// Mock generated images - using mockResult.png
+const mockGeneratedImages = ["/mockResult.png"];
 
 // Generate a unique prediction ID
 function generatePredictionId(): string {

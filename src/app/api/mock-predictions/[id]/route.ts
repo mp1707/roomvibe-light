@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Mock generated images - using sample room images from public assets
-const mockGeneratedImages = [
-  "/assets/images/hero2.png",
-  "/assets/images/hero3.png",
-  "/assets/images/hero4.jpeg",
-  "/assets/images/hero5.jpeg",
-];
+// Mock generated images - using mockResult.png
+const mockGeneratedImages = ["/mockResult.png"];
 
 // In-memory store for mock predictions (in production this would be a database)
 const mockPredictions = new Map<string, any>();
@@ -68,13 +63,8 @@ export async function GET(
       prediction.status = "succeeded";
 
       if (!prediction.output) {
-        // Generate random mock images (1-3 images)
-        const imageCount = Math.floor(Math.random() * 3) + 1;
-        const images = [];
-        for (let i = 0; i < imageCount; i++) {
-          images.push(getRandomMockImage());
-        }
-        prediction.output = images;
+        // Return single mock result image
+        prediction.output = [mockGeneratedImages[0]];
       }
     }
 
