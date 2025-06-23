@@ -54,13 +54,23 @@ export default function SuggestionsPage() {
     const selected = allSuggestions.filter((s) => selectedSuggestions[s.id]);
 
     try {
+      // Debug logging
+      console.log("=== GENERATE IMAGE DEBUG ===");
+      console.log("Image URL:", hostedImageUrl);
+      console.log("Selected suggestions:", selected);
+      console.log("Endpoint:", getGenerateImageEndpoint());
+
+      const requestBody = {
+        imageUrl: hostedImageUrl,
+        suggestions: selected,
+      };
+
+      console.log("Request body:", JSON.stringify(requestBody, null, 2));
+
       const response = await fetch(getGenerateImageEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          imageUrl: hostedImageUrl,
-          suggestions: selected,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {

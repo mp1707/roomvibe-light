@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppState } from "@/utils/store";
+import { useSettingsStore } from "@/utils/settingsStore";
 import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,10 @@ import {
   useMotionPreference,
 } from "@/utils/animations";
 import { UploadIcon } from "./Icons";
+
+// Mock image URL for development
+const MOCK_ROOM_IMAGE_URL =
+  "https://media.istockphoto.com/id/2175713816/de/foto/elegantes-wohnzimmer-mit-beigem-sofa-und-kamin.jpg?s=2048x2048&w=is&k=20&c=E9JrU7zYWFLQsEJQf0fXJyiVECM6tsIyKgSNNp-cEkc%3D";
 
 const ProgressIndicator = ({ progress }: { progress: number }) => (
   <motion.div
@@ -49,6 +54,7 @@ const ProgressIndicator = ({ progress }: { progress: number }) => (
 
 const UploadForm = () => {
   const { setLocalImageUrl, setHostedImageUrl } = useAppState();
+  const { mockFileUpload } = useSettingsStore();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -70,12 +76,37 @@ const UploadForm = () => {
     getUser();
   }, [supabase]);
 
+  // Mock upload simulation
+  const simulateUpload = useCallback(async (file: File) => {
+    return new Promise<string>((resolve) => {
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + Math.random() * 15;
+        });
+      }, 150);
+
+      // Simulate upload time (2-3 seconds)
+      setTimeout(() => {
+        clearInterval(progressInterval);
+        setUploadProgress(100);
+
+        // Use the stock image URL for mock mode
+        const mockPublicUrl = MOCK_ROOM_IMAGE_URL;
+        resolve(mockPublicUrl);
+      }, 2000 + Math.random() * 1000);
+    });
+  }, []);
+
   const handleFileSelect = useCallback(
     async (file: File | null) => {
       if (!file) return;
 
-      // Check if user is authenticated
-      if (!user) {
+      // Check if user is authenticated (skip in mock mode)
+      if (!mockFileUpload && !user) {
         alert("Sie müssen angemeldet sein, um Bilder hochzuladen.");
         router.push("/auth/login");
         return;
@@ -96,46 +127,90 @@ const UploadForm = () => {
       setIsUploading(true);
       setUploadProgress(0);
 
-      // Simulate upload progress for better UX
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return prev;
-          }
-          return prev + Math.random() * 15;
-        });
-      }, 100);
-
       try {
-        // Generate unique filename with user ID and timestamp
-        const fileExt = file.name.split(".").pop();
-        const fileName = `${user.id}/${Date.now()}-${Math.random()
-          .toString(36)
-          .substring(2)}.${fileExt}`;
+        let publicUrl: string;
 
-        // Upload file to Supabase Storage
-        const { data, error } = await supabase.storage
-          .from("room-images")
-          .upload(fileName, file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
+        if (mockFileUpload) {
+          // Use mock upload simulation
+          console.log("🎭 Mock file upload enabled - simulating upload...");
+          publicUrl = await simulateUpload(file);
 
-        if (error) {
-          throw error;
+          // For mock mode, create a mock file object that represents the stock image
+          // This ensures both the local preview and analysis step work properly
+          try {
+            console.log("🎭 Fetching mock image for local storage...");
+            const response = await fetch(publicUrl, {
+              mode: "cors",
+              headers: {
+                Accept: "image/*",
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch mock image: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const mockFile = new File([blob], "elegantes-wohnzimmer.jpg", {
+              type: "image/jpeg",
+            });
+
+            console.log("🎭 Mock file created:", mockFile.size, "bytes");
+            setLocalImageUrl(mockFile); // Set mock file for local preview
+          } catch (error) {
+            console.warn("Could not create mock file object:", error);
+            // In case of CORS or other issues, create a placeholder
+            const placeholderFile = new File([""], "mock-placeholder.jpg", {
+              type: "image/jpeg",
+            });
+            setLocalImageUrl(placeholderFile);
+          }
+        } else {
+          // Real Supabase upload
+          // Simulate upload progress for better UX
+          const progressInterval = setInterval(() => {
+            setUploadProgress((prev) => {
+              if (prev >= 90) {
+                clearInterval(progressInterval);
+                return prev;
+              }
+              return prev + Math.random() * 15;
+            });
+          }, 100);
+
+          // Generate unique filename with user ID and timestamp
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${user.id}/${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2)}.${fileExt}`;
+
+          // Upload file to Supabase Storage
+          const { data, error } = await supabase.storage
+            .from("room-images")
+            .upload(fileName, file, {
+              cacheControl: "3600",
+              upsert: false,
+            });
+
+          if (error) {
+            throw error;
+          }
+
+          // Get the public URL for the uploaded file
+          const {
+            data: { publicUrl: realPublicUrl },
+          } = supabase.storage.from("room-images").getPublicUrl(data.path);
+
+          setUploadProgress(100);
+          clearInterval(progressInterval);
+          publicUrl = realPublicUrl;
         }
 
-        // Get the public URL for the uploaded file
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("room-images").getPublicUrl(data.path);
-
-        setUploadProgress(100);
-
         // Store both local and hosted URLs
-        setLocalImageUrl(file); // Keep local URL for immediate preview
-        setHostedImageUrl(publicUrl); // Store hosted URL for API calls
+        if (!mockFileUpload) {
+          setLocalImageUrl(file); // Keep local URL for immediate preview (only if not mock)
+        }
+        setHostedImageUrl(publicUrl); // Store hosted/mock URL for API calls
 
         // Small delay to show completion
         setTimeout(() => {
@@ -146,10 +221,17 @@ const UploadForm = () => {
         alert("Upload fehlgeschlagen. Bitte versuchen Sie es erneut.");
         setIsUploading(false);
         setUploadProgress(0);
-        clearInterval(progressInterval);
       }
     },
-    [setLocalImageUrl, setHostedImageUrl, router, user, supabase]
+    [
+      setLocalImageUrl,
+      setHostedImageUrl,
+      router,
+      user,
+      supabase,
+      mockFileUpload,
+      simulateUpload,
+    ]
   );
 
   const handleFileChange = useCallback(
@@ -295,6 +377,26 @@ const UploadForm = () => {
                     >
                       PNG, JPG, WEBP bis 10MB
                     </p>
+                    {mockFileUpload && (
+                      <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 bg-warning/10 border border-warning/20 rounded-lg">
+                        <svg
+                          className="w-4 h-4 text-warning"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span className="text-xs font-medium text-warning">
+                          Mock-Modus aktiv - Verwendet Beispielbild
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}

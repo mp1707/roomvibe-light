@@ -18,6 +18,9 @@ import { getPredictionEndpoint } from "@/utils/apiHelpers";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// Maximum polling time: 10 minutes
+const MAX_POLLING_TIME = 10 * 60 * 1000;
+
 const ResultPage = () => {
   const {
     hostedImageUrl,
@@ -36,50 +39,54 @@ const ResultPage = () => {
     ? generatedImageUrls
     : [];
 
-  const checkStatus = useCallback(async () => {
-    if (!prediction?.id) return;
+  const checkStatus = useCallback(
+    async (predictionId: string) => {
+      if (!predictionId) return;
 
-    try {
-      const response = await fetch(getPredictionEndpoint(prediction.id));
-      if (!response.ok) {
-        throw new Error("Netzwerk-Antwort war nicht in Ordnung.");
-      }
-      const newPrediction = await response.json();
-
-      setPrediction(newPrediction);
-
-      if (
-        newPrediction.status === "failed" ||
-        newPrediction.status === "succeeded"
-      ) {
-        if (newPrediction.status === "failed") {
-          toast.error(`Bildgenerierung fehlgeschlagen: ${newPrediction.error}`);
+      try {
+        const response = await fetch(getPredictionEndpoint(predictionId));
+        if (!response.ok) {
+          throw new Error("Netzwerk-Antwort war nicht in Ordnung.");
         }
-        return; // Stop polling
-      }
+        const newPrediction = await response.json();
 
-      // If still running, poll again after a delay
-      await sleep(2500);
-      checkStatus();
-    } catch (error) {
-      console.error("Fehler beim Abrufen des Prediction-Status:", error);
-      setPrediction({
-        ...prediction,
-        status: "failed",
-        error: error instanceof Error ? error.message : "Unbekannter Fehler",
-      });
-      toast.error("Ein Fehler ist beim Abrufen des Ergebnisses aufgetreten.");
-    }
-  }, [prediction, setPrediction]);
+        setPrediction(newPrediction);
+
+        if (
+          newPrediction.status === "failed" ||
+          newPrediction.status === "succeeded"
+        ) {
+          if (newPrediction.status === "failed") {
+            toast.error(
+              `Bildgenerierung fehlgeschlagen: ${newPrediction.error}`
+            );
+          }
+          return; // Stop polling
+        }
+
+        // If still running, schedule next poll
+        setTimeout(() => checkStatus(predictionId), 2500);
+      } catch (error) {
+        console.error("Fehler beim Abrufen des Prediction-Status:", error);
+        setPrediction((prev: any) => ({
+          ...prev,
+          status: "failed",
+          error: error instanceof Error ? error.message : "Unbekannter Fehler",
+        }));
+        toast.error("Ein Fehler ist beim Abrufen des Ergebnisses aufgetreten.");
+      }
+    },
+    [setPrediction]
+  );
 
   useEffect(() => {
     if (
       prediction?.id &&
       (prediction.status === "starting" || prediction.status === "processing")
     ) {
-      checkStatus();
+      checkStatus(prediction.id);
     }
-  }, [prediction, checkStatus]);
+  }, [prediction?.id, prediction?.status, checkStatus]);
 
   if (!hostedImageUrl) {
     return (

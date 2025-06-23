@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
       new URL("https://replicate.delivery/**"),
+      // Add iStock domain for mock images
+      {
+        protocol: "https",
+        hostname: "media.istockphoto.com",
+        pathname: "/**",
+      },
     ],
   },
 };
