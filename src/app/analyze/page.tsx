@@ -11,6 +11,7 @@ import {
   buttonVariants,
   useMotionPreference,
 } from "@/utils/animations";
+import resizeImage from "@/utils/resizeImage";
 
 const ErrorModal = ({
   isOpen,
@@ -388,9 +389,35 @@ export default function AnalyzePage() {
         throw new Error("Kein Bild zum Analysieren gefunden");
       }
 
+      // Compress image if it's too large (> 5MB) to prevent 413 errors
+      let processedImageFile = imageFile;
+      if (imageFile.size > 5 * 1024 * 1024) {
+        // 5MB
+        console.log("Image is large, compressing...", imageFile.size);
+        try {
+          const compressedBlob = await resizeImage(imageFile, 1920, 1080, 0.8);
+          processedImageFile = new File([compressedBlob], imageFile.name, {
+            type: compressedBlob.type,
+            lastModified: Date.now(),
+          });
+          console.log(
+            "Image compressed from",
+            imageFile.size,
+            "to",
+            processedImageFile.size
+          );
+        } catch (compressionError) {
+          console.warn(
+            "Image compression failed, using original:",
+            compressionError
+          );
+          // Continue with original file if compression fails
+        }
+      }
+
       // Prepare form data for API call
       const formData = new FormData();
-      formData.append("file", imageFile);
+      formData.append("file", processedImageFile);
 
       // Call our analysis API
       const response = await fetch("/api/analyze", {
@@ -398,24 +425,43 @@ export default function AnalyzePage() {
         body: formData,
       });
 
+      // Read response text once and handle both success and error cases
+      let responseText: string;
+      try {
+        responseText = await response.text();
+      } catch (readError) {
+        console.error("Failed to read response:", readError);
+        throw new Error(
+          `Network error: Could not read server response (Status: ${response.status})`
+        );
+      }
+
       if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch (parseError) {
-          // If we can't parse the error response, it might be HTML
-          const textResponse = await response.text();
-          console.error("Non-JSON error response:", textResponse);
+        console.error("API Error Response:", responseText);
+
+        // Handle specific error codes
+        if (response.status === 413) {
           throw new Error(
-            `Server Error (${response.status}): Response is not valid JSON`
+            "Das Bild ist zu groß. Bitte verwenden Sie ein kleineres Bild (max. 5MB)."
           );
         }
-        throw new Error(errorData.error || "Analyse fehlgeschlagen");
+
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText);
+          throw new Error(
+            errorData.error || `Server Error (${response.status})`
+          );
+        } catch (parseError) {
+          // If we can't parse the error response, use the status
+          throw new Error(
+            `Server Error (${response.status}): ${response.statusText}`
+          );
+        }
       }
 
       let analysisResult;
       try {
-        const responseText = await response.text();
         console.log("Raw response:", responseText.substring(0, 200) + "...");
         analysisResult = JSON.parse(responseText);
       } catch (parseError) {
@@ -514,6 +560,14 @@ export default function AnalyzePage() {
           errorTitle = "Konfigurationsfehler";
           errorMessage =
             "Es gibt ein Problem mit der Server-Konfiguration. Bitte versuchen Sie es in wenigen Minuten erneut oder kontaktieren Sie den Support.";
+        } else if (
+          error.message.includes("zu groß") ||
+          error.message.includes("Content Too Large") ||
+          error.message.includes("413")
+        ) {
+          errorTitle = "Bild zu groß";
+          errorMessage =
+            "Das ausgewählte Bild ist zu groß für die Verarbeitung. Bitte verwenden Sie ein kleineres Bild (empfohlen: unter 5MB) oder komprimieren Sie das Bild.";
         } else {
           errorMessage = `${error.message} (Fehlercode: ANALYZE_${Date.now()})`;
         }

@@ -53,6 +53,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check file size (limit to 10MB to be safe)
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxFileSize) {
+      console.error(`File too large: ${file.size} bytes (max: ${maxFileSize})`);
+      return NextResponse.json(
+        {
+          error: "Das Bild ist zu groß",
+          details: `Maximale Dateigröße: ${Math.round(
+            maxFileSize / (1024 * 1024)
+          )}MB. Ihr Bild: ${Math.round(file.size / (1024 * 1024))}MB`,
+        },
+        { status: 413 }
+      );
+    }
+
+    // Check file type
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Ungültiger Dateityp. Bitte laden Sie ein Bild hoch." },
+        { status: 400 }
+      );
+    }
+
     // Convert file to base64
     const bytes = await file.arrayBuffer();
     const base64 = Buffer.from(bytes).toString("base64");
