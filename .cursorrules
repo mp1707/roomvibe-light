@@ -1,0 +1,390 @@
+# RoomVibe - AI Interior Design App - Cursor Rules
+
+## Project Overview
+
+This is a premium AI-powered interior design application built with Next.js, featuring Apple-inspired "Liquid Glass" aesthetics and human-centered AI principles. The app transforms spaces through AI collaboration, not just AI tools.
+
+## Core Philosophy & Design Principles
+
+### AI Interaction Paradigm
+
+- **KI-Kollaborateur (AI Collaborator)**: Design interactions as dialogues, not transactions
+- **Transparent AI**: Always explain why AI makes suggestions (XAI - Explainable AI)
+- **User Control**: Users must feel they're the final arbiters of taste
+- **Trust Building**: Provide context, reasoning, and easy override options
+
+### UI Philosophy
+
+- **Unobtrusive but Transparent**: UI recedes when focusing on content, emerges elegantly when guidance needed
+- **Sensory Coherence**: All interactions (visual, haptic, audio) must feel like they belong to the same family
+- **Apple-Inspired Quality**: Premium feel through attention to detail, not just minimalism
+
+## Technical Stack & Requirements
+
+### Core Technologies
+
+- **Framework**: Next.js 15 with TypeScript (strict mode)
+- **Styling**: Tailwind CSS 4 + DaisyUI 5 with custom "aura" theme
+- **Animations**: Framer Motion 12 with physics-based transitions
+- **State**: Zustand for state management
+- **Backend**: Supabase (auth, storage, database)
+- **Language**: German for UI text (primary), English for code
+
+### Design System Compliance
+
+#### Colors (Always use design tokens)
+
+```typescript
+// ✅ Good - Use design tokens
+className = "bg-primary text-primary-content";
+className = "text-base-content bg-base-100";
+
+// ❌ Bad - Direct color values
+className = "bg-blue-500 text-white";
+```
+
+#### Typography
+
+- **Font**: Inter (already configured)
+- **Hierarchy**: Use defined h1, h2, body, caption styles
+- **Rendering**: Always include font smoothing classes
+
+```typescript
+// ✅ Good
+className = "text-2xl font-semibold tracking-tight";
+
+// Include anti-aliasing
+className = "antialiased";
+```
+
+#### Spacing & Layout
+
+- **Scale**: Use xs(0.25rem), sm(0.5rem), base(1rem), lg(1.5rem), xl(2rem), 2xl(3rem), 3xl(4rem)
+- **Border Radius**: sm(8px), base(12px), lg(16px), xl(20px), 2xl(24px), 3xl(32px)
+
+```typescript
+// ✅ Good
+className = "p-6 rounded-lg"; // Uses design system scale
+className = "gap-4 rounded-xl"; // Consistent with design tokens
+
+// ❌ Bad
+className = "p-5 rounded-md"; // Off-scale values
+```
+
+### Animation Standards
+
+#### Framer Motion Patterns
+
+- **Physics-Based**: Always use spring animations over ease curves
+- **Reduced Motion**: Respect `prefers-reduced-motion`
+- **Sensory Coherence**: Use predefined animation variants
+
+```typescript
+// ✅ Good - Use predefined variants
+import { cardVariants, buttonVariants } from '@/utils/animations'
+
+<motion.div variants={cardVariants} whileHover="hover" whileTap="tap">
+
+// ✅ Good - Physics-based transitions
+transition={{ type: "spring", stiffness: 400, damping: 30 }}
+
+// ❌ Bad - Linear animations
+transition={{ duration: 0.3, ease: "linear" }}
+```
+
+#### Required Animation Patterns
+
+```typescript
+// Page transitions
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: { opacity: 0, y: -20 },
+};
+
+// Staggered children (for suggestion cards)
+const containerVariants = {
+  visible: { transition: { staggerChildren: 0.05 } },
+};
+```
+
+### Glass Effects Implementation
+
+```typescript
+// ✅ Good - Proper glass effect
+className = "backdrop-blur-sm bg-white/70 border border-white/20";
+
+// For dark mode support
+className =
+  "backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-white/10";
+```
+
+## Component Architecture
+
+### File Organization
+
+```
+src/
+├── app/                    # Next.js app directory
+├── components/            # Shared UI components
+├── utils/                 # Utilities and stores
+└── types/                 # TypeScript definitions
+```
+
+### Component Naming & Structure
+
+- **PascalCase** for component files and names
+- **Descriptive names** that reflect purpose, not appearance
+- **Single responsibility** - each component should have one clear purpose
+
+```typescript
+// ✅ Good
+export function SuggestionCard({ suggestion, onToggle }: SuggestionCardProps) {
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="bg-base-100 rounded-lg border border-base-300 p-6"
+    >
+      {/* Implementation */}
+    </motion.div>
+  );
+}
+
+// ❌ Bad
+export function BlueCard() {} // Not descriptive
+export function Card() {} // Too generic
+```
+
+## AI Integration Patterns
+
+### Explainable AI (XAI) Implementation
+
+- Always provide reasoning for AI suggestions
+- Include "Why?" tooltips or expandable explanations
+- Show confidence levels when available
+
+```typescript
+// ✅ Good - Explainable AI suggestion
+interface AISuggestion {
+  id: string;
+  title: string;
+  description: string;
+  reasoning: string; // Always include reasoning
+  confidence?: number;
+  category: "color" | "furniture" | "layout" | "lighting";
+}
+```
+
+### User Control Patterns
+
+- Provide granular controls, not just binary accept/reject
+- Enable iterative refinement
+- Always allow users to override AI decisions
+
+```typescript
+// ✅ Good - Granular control
+<SuggestionCard
+  suggestion={suggestion}
+  onToggle={handleToggle}
+  onRefine={handleRefine} // Allow refinement
+  onExplore={handleExplore} // Show variations
+/>
+```
+
+## Accessibility Requirements (WCAG 2.2 AA)
+
+### Essential Patterns
+
+```typescript
+// ✅ Focus states
+className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+
+// ✅ Color contrast - ensure 4.5:1 ratio
+// Test all color combinations
+
+// ✅ Keyboard navigation
+onKeyDown={(e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    handleClick()
+  }
+}}
+
+// ✅ Screen reader support
+<button aria-label="Apply this color suggestion to walls">
+  <span aria-hidden="true">✓</span>
+</button>
+```
+
+### Required ARIA Patterns
+
+- Use semantic HTML first
+- Add ARIA only when semantic HTML isn't sufficient
+- Always provide meaningful labels
+
+## German UI Language Standards
+
+### Text Patterns
+
+```typescript
+// ✅ Good - German UI text
+const labels = {
+  upload: "Bild hochladen",
+  analyze: "Raum analysieren",
+  suggestions: "Vorschläge",
+  apply: "Anwenden",
+  why: "Warum?",
+  newStart: "Neu beginnen",
+};
+
+// ✅ Error messages should be helpful, not blaming
+("Das Bild konnte nicht geladen werden. Bitte versuchen Sie es erneut.");
+```
+
+## Performance & Loading States
+
+### Required Loading Patterns
+
+```typescript
+// ✅ Skeleton loading for image analysis
+<div className="animate-pulse bg-base-300 rounded-lg h-48" />;
+
+// ✅ Progressive loading messages
+const loadingMessages = [
+  "Analysiere Raumlayout und Proportionen...",
+  "Bewerte Beleuchtung und Schattenwurf...",
+  "Wähle komplementäre Möbel aus...",
+  "Rendere das finale Bild...",
+];
+```
+
+## File and Code Standards
+
+### Import Organization
+
+```typescript
+// 1. React/Next.js imports
+import { useState } from "react";
+import { NextPage } from "next";
+
+// 2. Third-party libraries
+import { motion } from "framer-motion";
+
+// 3. Internal utilities/stores
+import { useImageStore } from "@/utils/store";
+
+// 4. Components (from most general to most specific)
+import { Button } from "@/components/Button";
+import { SuggestionCard } from "@/components/SuggestionCard";
+
+// 5. Types
+import type { AISuggestion } from "@/types/suggestions";
+```
+
+### TypeScript Standards
+
+- Use strict TypeScript configuration
+- Define proper interfaces for all props
+- Use `type` for unions, `interface` for objects
+- Prefer explicit return types for functions
+
+```typescript
+// ✅ Good
+interface SuggestionCardProps {
+  suggestion: AISuggestion;
+  isSelected: boolean;
+  onToggle: (id: string) => void;
+}
+
+export function SuggestionCard({
+  suggestion,
+  isSelected,
+  onToggle,
+}: SuggestionCardProps): JSX.Element {
+  // Implementation
+}
+```
+
+## Testing & Quality
+
+### Required Checks
+
+- [ ] Color contrast meets WCAG 2.2 AA standards
+- [ ] Components work in both light and dark themes
+- [ ] Animations respect `prefers-reduced-motion`
+- [ ] All interactive elements are keyboard accessible
+- [ ] Loading states are implemented for all async operations
+- [ ] Error boundaries are in place
+- [ ] German text is used for all user-facing content
+
+## Common Anti-Patterns to Avoid
+
+### ❌ Don't Do
+
+```typescript
+// Generic loading spinners
+<div className="spinner" />
+
+// Hardcoded colors
+className="bg-blue-500"
+
+// Linear animations
+transition={{ duration: 0.3 }}
+
+// Generic component names
+function Card() {}
+
+// Missing explanations for AI suggestions
+<AIResult result={result} />
+
+// Binary AI interactions
+<button>Accept All</button>
+```
+
+### ✅ Do Instead
+
+```typescript
+// Contextual loading with skeleton
+<SuggestionCardSkeleton />
+
+// Design system colors
+className="bg-primary"
+
+// Physics-based animations
+transition={{ type: "spring", stiffness: 400, damping: 30 }}
+
+// Descriptive component names
+function SuggestionCard() {}
+
+// Explainable AI
+<AISuggestion suggestion={suggestion} reasoning={reasoning} />
+
+// Granular controls
+<SuggestionToggle onToggle={toggle} onRefine={refine} />
+```
+
+## Quick Reference
+
+### Design Tokens
+
+- **Primary**: #007AFF (Apple blue)
+- **Base**: #FFFFFF (light), #1C1C1E (dark)
+- **Border Radius**: 8px, 12px, 16px, 20px, 24px, 32px
+- **Spacing**: 0.25rem, 0.5rem, 1rem, 1.5rem, 2rem, 3rem, 4rem
+
+### Animation Timing
+
+- **Page transitions**: 0.4s with apple easing [0.22, 1, 0.36, 1]
+- **Micro-interactions**: Spring with stiffness: 400, damping: 30
+- **Stagger delay**: 0.05s between children
+
+### Accessibility
+
+- **Focus ring**: 2px solid primary with 2px offset
+- **Contrast**: 4.5:1 minimum for normal text
+- **Font size**: 16px minimum for body text
+
+Remember: Every interaction should feel premium, intentional, and part of a cohesive experience that builds trust in the AI collaboration process.
