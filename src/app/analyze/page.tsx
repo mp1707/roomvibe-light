@@ -428,6 +428,7 @@ export default function AnalyzePage() {
                   title="KI-Analyse läuft"
                   subtitle="Ihre Raumgestaltungsvorschläge werden gerade erstellt. Bitte haben Sie einen Moment Geduld."
                   hint="Die Analyse dauert in der Regel 30-60 Sekunden"
+                  mode="analyze"
                 />
               ) : (
                 <motion.div

@@ -134,13 +134,16 @@ export const useAppState = create<AppState>((set, get) => ({
       }
     }
 
+    const currentState = get();
+
     set({
       prediction,
       isGenerating:
         prediction?.status === "starting" ||
         prediction?.status === "processing",
       generationError: prediction?.error ? prediction.error : null,
-      currentGeneratedImage: currentImage,
+      // Only update currentGeneratedImage if we have a new image, otherwise preserve the existing one
+      currentGeneratedImage: currentImage || currentState.currentGeneratedImage,
     });
   },
 

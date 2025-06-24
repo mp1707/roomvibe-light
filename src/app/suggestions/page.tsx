@@ -9,7 +9,6 @@ import SuggestionCard from "../components/SuggestionCard";
 import CustomSuggestionCard from "../components/CustomSuggestionCard";
 import AddSuggestionCard from "../components/AddSuggestionCard";
 import AILoadingScreen from "../components/AILoadingScreen";
-import AIGenerationLoadingScreen from "../components/AIGenerationLoadingScreen";
 import DiffSlider from "../components/DiffSlider";
 import { BackIcon } from "../components/Icons";
 import {
@@ -345,7 +344,7 @@ export default function SuggestionsPage() {
               exit={{ opacity: 0 }}
               className="w-full"
             >
-              <AIGenerationLoadingScreen
+              <AILoadingScreen
                 progress={generationProgress}
                 steps={[
                   "Plane die gewünschten Anpassungen...",
@@ -355,6 +354,7 @@ export default function SuggestionsPage() {
                 title="Dein Vorschlag wird angewendet"
                 subtitle="Wir arbeiten an deiner personalisierten Raumtransformation..."
                 hint="Die Generierung dauert in der Regel 30-60 Sekunden"
+                mode="generate"
                 currentGeneratedImage={currentGeneratedImage}
               />
             </motion.div>

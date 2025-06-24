@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useMotionPreference } from "@/utils/animations";
 import { useAppState } from "@/utils/store";
@@ -10,9 +12,11 @@ interface AILoadingScreenProps {
   title: string;
   subtitle: string;
   hint?: string;
+  mode: "analyze" | "generate";
+  currentGeneratedImage?: string | null;
 }
 
-const ScanningEffect = ({ progress }: { progress: number }) => {
+const AnalysisEffect = ({ progress }: { progress: number }) => {
   const reducedMotion = useMotionPreference();
 
   if (reducedMotion) {
@@ -92,12 +96,160 @@ const ScanningEffect = ({ progress }: { progress: number }) => {
   );
 };
 
-const ImageAnalysisDisplay = ({ progress }: { progress: number }) => {
-  const { localImageUrl, hostedImageUrl } = useAppState();
-  const imageUrl = localImageUrl || hostedImageUrl;
+const GenerationEffect = ({ progress }: { progress: number }) => {
   const reducedMotion = useMotionPreference();
 
-  if (!imageUrl) {
+  if (reducedMotion) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-success/10 to-transparent animate-pulse" />
+    );
+  }
+
+  return (
+    <>
+      {/* AI Generation Wave - flowing from bottom to top */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ y: "100%" }}
+        animate={{ y: "-100%" }}
+        transition={{
+          duration: 16,
+          repeat: Infinity,
+          ease: [0.22, 1, 0.36, 1], // Apple easing from design system
+          repeatType: "loop",
+          repeatDelay: 3,
+        }}
+      >
+        <div className="relative w-full h-full">
+          {/* Main generation wave */}
+          <div className="absolute left-0 right-0 top-1/2 h-1 bg-success shadow-[0_0_15px_theme(colors.success/0.6)] dark:shadow-[0_0_20px_theme(colors.success/0.7)] transform -translate-y-1/2" />
+
+          {/* Wave gradient */}
+          <div className="absolute left-0 right-0 top-1/2 h-20 bg-gradient-to-t from-transparent via-success/20 dark:via-success/25 to-transparent transform -translate-y-1/2" />
+
+          {/* Trailing glow */}
+          <div className="absolute left-0 right-0 top-1/2 h-2 bg-success/40 dark:bg-success/50 blur-sm transform -translate-y-1/2" />
+        </div>
+      </motion.div>
+
+      {/* Pixel generation effect - small squares appearing */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none opacity-30 dark:opacity-40"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 30%, rgba(34,197,94,0.1) 2px, transparent 2px),
+            radial-gradient(circle at 80% 70%, rgba(34,197,94,0.08) 1px, transparent 1px),
+            radial-gradient(circle at 40% 80%, rgba(34,197,94,0.12) 1.5px, transparent 1.5px),
+            radial-gradient(circle at 70% 20%, rgba(34,197,94,0.06) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px, 40px 40px, 80px 80px, 50px 50px",
+        }}
+        animate={{
+          backgroundPosition: [
+            "0% 0%, 0% 0%, 0% 0%, 0% 0%",
+            "100% 100%, -100% -100%, 100% -100%, -100% 100%",
+          ],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+
+      {/* Digital mesh overlay */}
+      <div
+        className="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(34,197,94,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(34,197,94,0.08) 1px, transparent 1px)
+          `,
+          backgroundSize: "25px 25px",
+        }}
+      />
+
+      {/* Flowing data streams - diagonal lines */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-transparent via-success/6 dark:via-success/8 to-transparent pointer-events-none"
+        initial={{ x: "-100%", y: "-100%" }}
+        animate={{ x: "100%", y: "100%" }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: [0.4, 0, 0.2, 1], // Apple ease-in-out from design system
+          repeatType: "loop",
+          repeatDelay: 4,
+        }}
+        style={{ width: "200%", height: "200%" }}
+      />
+
+      {/* Generation particles floating upward */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-success/40 rounded-full"
+            style={{
+              left: `${10 + i * 12}%`,
+              bottom: "10%",
+            }}
+            animate={{
+              y: [0, -300],
+              opacity: [0, 1, 0],
+              scale: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 4 + i * 0.5,
+              repeat: Infinity,
+              delay: i * 0.8,
+              ease: "easeOut",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Subtle breathing effect */}
+      <motion.div
+        className="absolute inset-0 bg-success/3 dark:bg-success/4 pointer-events-none"
+        animate={{
+          opacity: [0, 1, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          repeatType: "reverse",
+        }}
+      />
+    </>
+  );
+};
+
+const ImageDisplay = ({
+  progress,
+  mode,
+  currentGeneratedImage,
+}: {
+  progress: number;
+  mode: "analyze" | "generate";
+  currentGeneratedImage?: string | null;
+}) => {
+  const { localImageUrl, hostedImageUrl } = useAppState();
+  const reducedMotion = useMotionPreference();
+
+  // Determine which image to show based on mode
+  const displayImageUrl =
+    mode === "analyze"
+      ? localImageUrl || hostedImageUrl
+      : currentGeneratedImage || localImageUrl || hostedImageUrl;
+
+  // Color theme based on mode
+  const colorTheme = mode === "analyze" ? "primary" : "success";
+  const statusText =
+    mode === "analyze" ? "KI-Analyse läuft" : "KI-Generierung läuft";
+
+  if (!displayImageUrl) {
     return (
       <div className="w-full aspect-[4/3] rounded-3xl bg-base-200 flex items-center justify-center">
         <div className="text-base-content/40">Kein Bild verfügbar</div>
@@ -107,22 +259,34 @@ const ImageAnalysisDisplay = ({ progress }: { progress: number }) => {
 
   return (
     <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
-      {/* Original image */}
+      {/* Base image */}
       <Image
-        src={imageUrl}
-        alt="Bild wird analysiert"
+        src={displayImageUrl}
+        alt={
+          mode === "analyze" ? "Bild wird analysiert" : "Bild wird generiert"
+        }
         fill
         className="object-cover"
         priority
       />
 
-      {/* Dark overlay for better contrast - adjusted for light/dark mode */}
-      <div className="absolute inset-0 bg-black/20 dark:bg-black/40" />
+      {/* Overlay for better contrast - adjusted based on mode */}
+      <div
+        className={`absolute inset-0 ${
+          mode === "analyze"
+            ? "bg-black/20 dark:bg-black/40"
+            : "bg-black/15 dark:bg-black/25"
+        }`}
+      />
 
-      {/* Scanning effect */}
-      <ScanningEffect progress={progress} />
+      {/* AI Effects based on mode */}
+      {mode === "analyze" ? (
+        <AnalysisEffect progress={progress} />
+      ) : (
+        <GenerationEffect progress={progress} />
+      )}
 
-      {/* Analysis status indicator */}
+      {/* Status indicator */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -132,7 +296,7 @@ const ImageAnalysisDisplay = ({ progress }: { progress: number }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <motion.div
-                className="w-2 h-2 bg-primary rounded-full"
+                className={`w-2 h-2 bg-${colorTheme} rounded-full`}
                 animate={reducedMotion ? {} : { scale: [1, 1.5, 1] }}
                 transition={
                   reducedMotion
@@ -145,7 +309,7 @@ const ImageAnalysisDisplay = ({ progress }: { progress: number }) => {
                 }
               />
               <span className="text-sm font-medium text-base-content">
-                KI-Analyse läuft
+                {statusText}
               </span>
             </div>
             <div className="text-xs text-base-content/60 tabular-nums">
@@ -155,18 +319,26 @@ const ImageAnalysisDisplay = ({ progress }: { progress: number }) => {
         </div>
       </motion.div>
 
-      {/* Corner indicators for a tech feel - improved for dark mode */}
+      {/* Corner indicators - themed by mode */}
       <div className="absolute top-4 left-4">
-        <div className="w-6 h-6 border-l-2 border-t-2 border-primary/60 dark:border-primary/70 rounded-tl-lg" />
+        <div
+          className={`w-6 h-6 border-l-2 border-t-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-tl-lg`}
+        />
       </div>
       <div className="absolute top-4 right-4">
-        <div className="w-6 h-6 border-r-2 border-t-2 border-primary/60 dark:border-primary/70 rounded-tr-lg" />
+        <div
+          className={`w-6 h-6 border-r-2 border-t-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-tr-lg`}
+        />
       </div>
       <div className="absolute bottom-16 left-4">
-        <div className="w-6 h-6 border-l-2 border-b-2 border-primary/60 dark:border-primary/70 rounded-bl-lg" />
+        <div
+          className={`w-6 h-6 border-l-2 border-b-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-bl-lg`}
+        />
       </div>
       <div className="absolute bottom-16 right-4">
-        <div className="w-6 h-6 border-r-2 border-b-2 border-primary/60 dark:border-primary/70 rounded-br-lg" />
+        <div
+          className={`w-6 h-6 border-r-2 border-b-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-br-lg`}
+        />
       </div>
     </div>
   );
@@ -178,6 +350,8 @@ export default function AILoadingScreen({
   title,
   subtitle,
   hint,
+  mode,
+  currentGeneratedImage,
 }: AILoadingScreenProps) {
   const currentStep = Math.min(
     Math.floor((progress / 100) * steps.length),
@@ -218,9 +392,13 @@ export default function AILoadingScreen({
         </p>
       </div>
 
-      {/* Image with scanning effect */}
+      {/* Image with AI effects */}
       <div className="mb-8">
-        <ImageAnalysisDisplay progress={progress} />
+        <ImageDisplay
+          progress={progress}
+          mode={mode}
+          currentGeneratedImage={currentGeneratedImage}
+        />
       </div>
 
       {/* Current step text */}
@@ -253,7 +431,8 @@ export default function AILoadingScreen({
 
       {/* Accessibility */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        Fortschritt: {Math.round(progress)}%. {steps[currentStep]}
+        {mode === "analyze" ? "Fortschritt" : "Generierung"}:{" "}
+        {Math.round(progress)}%. {steps[currentStep]}
       </div>
     </motion.div>
   );
