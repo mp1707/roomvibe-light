@@ -133,9 +133,11 @@ const ToggleSwitch = ({
 const ExplanationArea = ({
   explanation,
   isExpanded,
+  isApplied = false,
 }: {
   explanation: string;
   isExpanded: boolean;
+  isApplied?: boolean;
 }) => {
   const reducedMotion = useMotionPreference();
 
@@ -155,16 +157,28 @@ const ExplanationArea = ({
           }
           className="overflow-hidden"
         >
-          <div className="pt-4 border-t border-base-300/50 mt-4">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center mt-0.5">
-                <InfoIcon className="w-3.5 h-3.5 text-primary" />
+          <div className="pt-4 sm:pt-5 border-t border-base-300/50 mt-4">
+            <div className="flex items-start space-x-3 sm:space-x-4">
+              <div
+                className={`flex-shrink-0 w-7 h-7 sm:w-6 sm:h-6 ${
+                  isApplied ? "bg-success/10" : "bg-primary/10"
+                } rounded-full flex items-center justify-center mt-0.5`}
+              >
+                <InfoIcon
+                  className={`w-4 h-4 sm:w-3.5 sm:h-3.5 ${
+                    isApplied ? "text-success" : "text-primary"
+                  }`}
+                />
               </div>
               <div className="flex-1">
-                <h4 className="text-sm font-medium text-primary mb-2">
+                <h4
+                  className={`text-sm sm:text-sm font-medium ${
+                    isApplied ? "text-success" : "text-primary"
+                  } mb-3 sm:mb-2`}
+                >
                   Warum diese Empfehlung?
                 </h4>
-                <p className="text-sm text-base-content/70 leading-relaxed">
+                <p className="text-sm sm:text-sm text-base-content/70 leading-relaxed">
                   {explanation}
                 </p>
               </div>
@@ -210,7 +224,7 @@ const SuggestionCard = ({
       whileHover={reducedMotion ? {} : "hover"}
       whileTap={reducedMotion ? {} : "tap"}
       transition={{ delay }}
-      className={`group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out relative ${
+      className={`group p-5 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out relative ${
         isApplied
           ? "border-success bg-success/10 shadow-lg shadow-success/10 cursor-default"
           : isGenerating
@@ -225,72 +239,111 @@ const SuggestionCard = ({
       aria-describedby={`${cardId}-description`}
       aria-expanded={showExplanation}
     >
-      {/* Applied Badge - Fixed clipping with proper positioning */}
+      {/* Applied Badge */}
       {isApplied && (
         <div className="absolute -top-2 -right-2 px-3 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm z-10 whitespace-nowrap">
           ✓ Angewendet
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3 sm:mb-4">
-        <div className="flex-1 min-w-0 pr-3">
-          <div className="flex items-start justify-between mb-2">
+      {/* Header - Improved mobile layout */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4">
+        {/* Title and Description Section */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3 mb-3">
             <h3
               id={`${cardId}-title`}
-              className="text-base sm:text-lg font-semibold text-base-content flex-1"
+              className="text-lg sm:text-xl font-semibold text-base-content leading-tight flex-1"
             >
               {title}
             </h3>
 
-            {/* Warum Button - Fixed position in header */}
-            {explanation && (
-              <motion.button
-                variants={reducedMotion ? {} : buttonVariants}
-                whileHover={reducedMotion ? {} : "hover"}
-                whileTap={reducedMotion ? {} : "tap"}
-                onClick={toggleExplanation}
-                className={`ml-2 flex items-center space-x-1 text-xs font-medium transition-all duration-200 ease-out rounded-lg px-2 py-1 ${
-                  showExplanation
-                    ? "text-primary bg-primary/10 hover:bg-primary/15"
-                    : "text-base-content/50 hover:text-primary hover:bg-primary/5"
-                } focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-0`}
-                aria-label={`Erklärung für ${title} ${
-                  showExplanation ? "ausblenden" : "anzeigen"
-                }`}
-                aria-expanded={showExplanation}
-              >
-                <InfoIcon className="w-3 h-3" />
-                <span>{showExplanation ? "Weniger" : "Warum?"}</span>
-                <motion.div
-                  animate={{ rotate: showExplanation ? 180 : 0 }}
-                  transition={
-                    reducedMotion
-                      ? { duration: 0 }
-                      : { type: "spring", stiffness: 400, damping: 30 }
-                  }
-                >
-                  <ChevronDownIcon className="w-2.5 h-2.5" />
-                </motion.div>
-              </motion.button>
+            {/* Toggle Switch - Show on mobile for all cards */}
+            {!isApplied && (
+              <div className="flex-shrink-0 sm:hidden">
+                <ToggleSwitch
+                  checked={selected}
+                  onChange={handleToggle}
+                  id={toggleId}
+                  ariaLabel={`${title} ${
+                    selected ? "deaktivieren" : "aktivieren"
+                  }`}
+                  disabled={isGenerating}
+                />
+              </div>
             )}
           </div>
 
           <p
             id={`${cardId}-description`}
-            className="text-base-content/60 text-sm leading-relaxed"
+            className="text-base-content/60 text-sm sm:text-base leading-relaxed mb-3"
           >
             {suggestion}
           </p>
+
+          {/* Warum Button - Better mobile positioning */}
+          {explanation && (
+            <motion.button
+              variants={reducedMotion ? {} : buttonVariants}
+              whileHover={reducedMotion ? {} : "hover"}
+              whileTap={reducedMotion ? {} : "tap"}
+              onClick={toggleExplanation}
+              className={`inline-flex items-center space-x-2 text-sm font-medium transition-all duration-200 ease-out rounded-lg px-3 py-2 ${
+                isApplied
+                  ? showExplanation
+                    ? "text-success bg-success/10 hover:bg-success/15"
+                    : "text-success hover:text-success hover:bg-success/5"
+                  : showExplanation
+                  ? "text-primary bg-primary/10 hover:bg-primary/15"
+                  : "text-base-content/50 hover:text-primary hover:bg-primary/5"
+              } focus:outline-none focus:ring-2 ${
+                isApplied ? "focus:ring-success/30" : "focus:ring-primary/30"
+              } focus:ring-offset-0`}
+              aria-label={`Erklärung für ${title} ${
+                showExplanation ? "ausblenden" : "anzeigen"
+              }`}
+              aria-expanded={showExplanation}
+            >
+              <InfoIcon
+                className={`w-4 h-4 ${isApplied ? "text-success" : ""}`}
+              />
+              <span>{showExplanation ? "Weniger" : "Warum?"}</span>
+              <motion.div
+                animate={{ rotate: showExplanation ? 180 : 0 }}
+                transition={
+                  reducedMotion
+                    ? { duration: 0 }
+                    : { type: "spring", stiffness: 400, damping: 30 }
+                }
+              >
+                <ChevronDownIcon
+                  className={`w-3 h-3 ${isApplied ? "text-success" : ""}`}
+                />
+              </motion.div>
+            </motion.button>
+          )}
         </div>
 
-        {/* Toggle Switch - Hide for applied suggestions */}
-        {!isApplied && (
-          <div className="flex-shrink-0">
+        {/* Toggle Switch - Desktop only, when we have explanation */}
+        {!isApplied && explanation && (
+          <div className="hidden sm:block flex-shrink-0">
             <ToggleSwitch
               checked={selected}
               onChange={handleToggle}
-              id={toggleId}
+              id={`${toggleId}-desktop`}
+              ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
+              disabled={isGenerating}
+            />
+          </div>
+        )}
+
+        {/* Toggle Switch - Desktop only, when no explanation */}
+        {!isApplied && !explanation && (
+          <div className="hidden sm:block flex-shrink-0">
+            <ToggleSwitch
+              checked={selected}
+              onChange={handleToggle}
+              id={`${toggleId}-desktop-no-exp`}
               ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
               disabled={isGenerating}
             />
@@ -298,11 +351,12 @@ const SuggestionCard = ({
         )}
       </div>
 
-      {/* Explanation Area - Expandable inline */}
+      {/* Explanation Area */}
       {explanation && (
         <ExplanationArea
           explanation={explanation}
           isExpanded={showExplanation}
+          isApplied={isApplied}
         />
       )}
     </motion.div>

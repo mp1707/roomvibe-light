@@ -422,7 +422,7 @@ export default function SuggestionsPage() {
       {/* Suggestions Section */}
       <motion.div
         variants={staggerItem}
-        className="w-full max-w-4xl mx-auto px-4"
+        className="w-full max-w-4xl mx-auto px-4 sm:px-6"
       >
         <div className="text-center mb-6">
           <h3 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
@@ -442,7 +442,10 @@ export default function SuggestionsPage() {
             <AddSuggestionCard onAdd={handleAddCustomSuggestion} />
           </div>
         ) : (
-          <motion.div variants={staggerContainer} className="space-y-4 pt-3">
+          <motion.div
+            variants={staggerContainer}
+            className="space-y-5 sm:space-y-4 pt-3"
+          >
             {/* AI Suggestions */}
             {suggestions.map((suggestion, index) => (
               <motion.div
@@ -504,7 +507,7 @@ export default function SuggestionsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="fixed bottom-0 left-0 right-0 bg-base-100/95 backdrop-blur-sm border-t border-base-300/50 shadow-2xl z-50"
         >
-          <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
               <div className="text-center sm:text-left">
                 <p className="text-sm text-base-content/60">
