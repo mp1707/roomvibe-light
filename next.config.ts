@@ -19,6 +19,13 @@ const nextConfig: NextConfig = {
         hostname: "media.istockphoto.com",
         pathname: "/**",
       },
+      // Add localhost for development
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
+        pathname: "/**",
+      },
     ],
   },
 };
