@@ -14,8 +14,10 @@ export function getGenerateImageEndpoint(): string {
 }
 
 export function getGeneratePromptEndpoint(): string {
-  // For now, we don't have a mock version of generate-prompt, so always use the real one
-  return "/api/generate-prompt";
+  const mockImageGeneration = useSettingsStore.getState().mockImageGeneration;
+  return mockImageGeneration
+    ? "/api/mock-generate-prompt"
+    : "/api/generate-prompt";
 }
 
 export function getPredictionEndpoint(predictionId: string): string {

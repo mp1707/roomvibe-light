@@ -18,6 +18,7 @@ interface CustomSuggestionCardProps {
   onEdit: (id: string, data: { title: string; suggestion: string }) => void;
   onDelete: (id: string) => void;
   isApplied?: boolean;
+  isGenerating?: boolean;
   delay?: number;
 }
 
@@ -77,11 +78,13 @@ const ToggleSwitch = ({
   onChange,
   id,
   ariaLabel,
+  disabled = false,
 }: {
   checked: boolean;
   onChange: () => void;
   id: string;
   ariaLabel: string;
+  disabled?: boolean;
 }) => {
   const reducedMotion = useMotionPreference();
 
@@ -91,13 +94,16 @@ const ToggleSwitch = ({
       role="switch"
       aria-checked={checked}
       aria-label={ariaLabel}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
-        onChange();
+        if (!disabled) {
+          onChange();
+        }
       }}
-      className={`relative inline-flex items-center h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-        checked ? "bg-primary" : "bg-base-300"
-      }`}
+      className={`relative inline-flex items-center h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+      } ${checked ? "bg-primary" : "bg-base-300"}`}
     >
       <span className="sr-only">{ariaLabel}</span>
       <motion.span
@@ -235,6 +241,7 @@ const CustomSuggestionCard = ({
   onEdit,
   onDelete,
   isApplied = false,
+  isGenerating = false,
   delay = 0,
 }: CustomSuggestionCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -243,10 +250,10 @@ const CustomSuggestionCard = ({
   const toggleId = `toggle-${cardId}`;
 
   const handleToggle = useCallback(() => {
-    if (!isApplied) {
+    if (!isApplied && !isGenerating) {
       onToggle(suggestion);
     }
-  }, [onToggle, suggestion, isApplied]);
+  }, [onToggle, suggestion, isApplied, isGenerating]);
 
   const handleEdit = useCallback(() => {
     setIsEditing(true);
@@ -302,6 +309,8 @@ const CustomSuggestionCard = ({
       className={`relative group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-200 ease-out ${
         isApplied
           ? "border-success bg-success/10 shadow-lg shadow-success/10 cursor-default"
+          : isGenerating
+          ? "border-base-300 bg-base-100 cursor-not-allowed opacity-60"
           : selected
           ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 cursor-pointer"
           : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 cursor-pointer"
@@ -316,9 +325,9 @@ const CustomSuggestionCard = ({
         Eigener Vorschlag
       </div>
 
-      {/* Applied Badge */}
+      {/* Applied Badge - Fixed clipping with proper positioning */}
       {isApplied && (
-        <div className="absolute -top-2 -right-2 px-2 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm">
+        <div className="absolute -top-2 -right-2 px-3 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm z-10 whitespace-nowrap">
           ✓ Angewendet
         </div>
       )}
@@ -340,44 +349,59 @@ const CustomSuggestionCard = ({
           </p>
         </div>
 
-        {/* Toggle Switch */}
-        <div className="ml-3 sm:ml-4 flex-shrink-0">
-          <ToggleSwitch
-            checked={selected}
-            onChange={handleToggle}
-            id={toggleId}
-            ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
-          />
+        {/* Toggle Switch - Hide for applied suggestions */}
+        {!isApplied && (
+          <div className="ml-3 sm:ml-4 flex-shrink-0">
+            <ToggleSwitch
+              checked={selected}
+              onChange={handleToggle}
+              id={toggleId}
+              ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
+              disabled={isGenerating}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Action buttons - Hide for applied suggestions */}
+      {!isApplied && (
+        <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <motion.button
+            variants={reducedMotion ? {} : buttonVariants}
+            whileHover={reducedMotion ? {} : "hover"}
+            whileTap={reducedMotion ? {} : "tap"}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit();
+            }}
+            disabled={isGenerating}
+            className={`p-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg ${
+              isGenerating
+                ? "text-base-content/30 cursor-not-allowed"
+                : "text-base-content/50 hover:text-primary"
+            }`}
+            aria-label={`${title} bearbeiten`}
+          >
+            <EditIcon className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            variants={reducedMotion ? {} : buttonVariants}
+            whileHover={reducedMotion ? {} : "hover"}
+            whileTap={reducedMotion ? {} : "tap"}
+            onClick={handleDelete}
+            disabled={isGenerating}
+            className={`p-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 rounded-lg ${
+              isGenerating
+                ? "text-base-content/30 cursor-not-allowed"
+                : "text-base-content/50 hover:text-error"
+            }`}
+            aria-label={`${title} löschen`}
+          >
+            <DeleteIcon className="w-4 h-4" />
+          </motion.button>
         </div>
-      </div>
-
-      {/* Action buttons */}
-      <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <motion.button
-          variants={reducedMotion ? {} : buttonVariants}
-          whileHover={reducedMotion ? {} : "hover"}
-          whileTap={reducedMotion ? {} : "tap"}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEdit();
-          }}
-          className="p-2 text-base-content/50 hover:text-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
-          aria-label={`${title} bearbeiten`}
-        >
-          <EditIcon className="w-4 h-4" />
-        </motion.button>
-
-        <motion.button
-          variants={reducedMotion ? {} : buttonVariants}
-          whileHover={reducedMotion ? {} : "hover"}
-          whileTap={reducedMotion ? {} : "tap"}
-          onClick={handleDelete}
-          className="p-2 text-base-content/50 hover:text-error transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 rounded-lg"
-          aria-label={`${title} löschen`}
-        >
-          <DeleteIcon className="w-4 h-4" />
-        </motion.button>
-      </div>
+      )}
 
       {/* Selection Indicator */}
       <AnimatePresence>

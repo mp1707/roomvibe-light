@@ -32,6 +32,12 @@ const mockGeneratedImages = [
   "/assets/images/hero3.png",
 ];
 
+// Helper to convert relative paths to full URLs
+function getFullImageUrl(relativePath: string, request: Request): string {
+  const baseUrl = new URL(request.url).origin;
+  return `${baseUrl}${relativePath}`;
+}
+
 // Generate a unique prediction ID
 function generatePredictionId(): string {
   return `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

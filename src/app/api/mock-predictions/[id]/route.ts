@@ -8,6 +8,12 @@ const mockGeneratedImages = [
   "/assets/images/hero3.png",
 ];
 
+// Helper to convert relative paths to full URLs
+function getFullImageUrl(relativePath: string, request: NextRequest): string {
+  const baseUrl = new URL(request.url).origin;
+  return `${baseUrl}${relativePath}`;
+}
+
 // In-memory store for mock predictions (in production this would be a database)
 const mockPredictions = new Map<string, any>();
 
@@ -69,8 +75,11 @@ export async function GET(
       prediction.status = "succeeded";
 
       if (!prediction.output) {
-        // Return multiple mock result images for variety
-        prediction.output = mockGeneratedImages.slice(0, 2); // Return 2 variations
+        // Return multiple mock result images for variety with full URLs
+        const fullImageUrls = mockGeneratedImages
+          .slice(0, 2)
+          .map((path) => getFullImageUrl(path, request));
+        prediction.output = fullImageUrls;
         console.log("Mock prediction output set to:", prediction.output);
       }
     }

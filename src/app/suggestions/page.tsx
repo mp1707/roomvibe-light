@@ -62,12 +62,18 @@ export default function SuggestionsPage() {
 
   const allSuggestions = getAllSuggestions();
 
-  const handleToggleSuggestion = useCallback((suggestionId: string) => {
-    // Only allow one selection at a time
-    setSelectedSuggestion((prev) =>
-      prev === suggestionId ? null : suggestionId
-    );
-  }, []);
+  const handleToggleSuggestion = useCallback(
+    (suggestionId: string) => {
+      // Prevent selection changes during generation
+      if (isGenerating) return;
+
+      // Only allow one selection at a time
+      setSelectedSuggestion((prev) =>
+        prev === suggestionId ? null : suggestionId
+      );
+    },
+    [isGenerating]
+  );
 
   const checkStatus = useCallback(
     async (predictionId: string) => {
@@ -77,10 +83,27 @@ export default function SuggestionsPage() {
 
       while (Date.now() - startTime < MAX_POLLING_TIME) {
         try {
-          const response = await fetch(getPredictionEndpoint(predictionId));
-          if (!response.ok) throw new Error("Status check failed");
+          const endpointUrl = getPredictionEndpoint(predictionId);
+          console.log("📊 Checking prediction status:", {
+            predictionId,
+            endpointUrl,
+          });
+
+          const response = await fetch(endpointUrl);
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Status check failed:", {
+              status: response.status,
+              statusText: response.statusText,
+              body: errorText,
+            });
+            throw new Error(
+              `Status check failed: ${response.status} ${response.statusText}`
+            );
+          }
 
           const prediction = await response.json();
+          console.log("📊 Prediction status:", prediction.status);
 
           // Update progress based on status
           if (prediction.status === "starting") {
@@ -141,6 +164,19 @@ export default function SuggestionsPage() {
 
       const baseImageUrl = currentGeneratedImage || hostedImageUrl;
 
+      // Validate that we have a base image URL
+      if (!baseImageUrl) {
+        throw new Error(
+          "Kein Basisbild verfügbar. Bitte laden Sie zunächst ein Bild hoch."
+        );
+      }
+
+      console.log("🖼️ Image generation using:", {
+        baseImageUrl: baseImageUrl.substring(0, 50) + "...",
+        usingGeneratedImage: !!currentGeneratedImage,
+        suggestionTitle: suggestionToApply.title,
+      });
+
       const promptResponse = await fetch(getGeneratePromptEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -180,12 +216,21 @@ export default function SuggestionsPage() {
       }
 
       const predictionData = await imageResponse.json();
+      console.log("📷 Image generation response:", {
+        id: predictionData.id,
+        status: predictionData.status,
+        hasOutput: !!predictionData.output,
+      });
+
       setGenerationProgress(50);
       setPrediction(predictionData);
 
       // Start polling for status
       if (predictionData.id) {
+        console.log("🔄 Starting status polling for:", predictionData.id);
         await checkStatus(predictionData.id);
+      } else {
+        throw new Error("Keine Prediction ID erhalten von der Bildgenerierung");
       }
 
       // Mark suggestion as applied and clear selection
@@ -401,13 +446,13 @@ export default function SuggestionsPage() {
             <AddSuggestionCard onAdd={handleAddCustomSuggestion} />
           </div>
         ) : (
-          <motion.div variants={staggerContainer} className="space-y-4">
+          <motion.div variants={staggerContainer} className="space-y-4 pt-3">
             {/* AI Suggestions */}
             {suggestions.map((suggestion, index) => (
               <motion.div
                 key={suggestion.id}
                 variants={staggerItem}
-                className={`${
+                className={`relative ${
                   appliedSuggestions.has(suggestion.id) ? "opacity-60" : ""
                 }`}
               >
@@ -418,6 +463,7 @@ export default function SuggestionsPage() {
                   selected={selectedSuggestion === suggestion.id}
                   onToggle={() => handleToggleSuggestion(suggestion.id)}
                   isApplied={appliedSuggestions.has(suggestion.id)}
+                  isGenerating={isGenerating}
                   delay={index * 0.1}
                 />
               </motion.div>
@@ -428,7 +474,7 @@ export default function SuggestionsPage() {
               <motion.div
                 key={suggestion.id}
                 variants={staggerItem}
-                className={`${
+                className={`relative ${
                   appliedSuggestions.has(suggestion.id) ? "opacity-60" : ""
                 }`}
               >
@@ -441,6 +487,7 @@ export default function SuggestionsPage() {
                   onEdit={handleEditCustomSuggestion}
                   onDelete={handleDeleteCustomSuggestion}
                   isApplied={appliedSuggestions.has(suggestion.id)}
+                  isGenerating={isGenerating}
                   delay={(suggestions.length + index) * 0.1}
                 />
               </motion.div>
@@ -480,7 +527,12 @@ export default function SuggestionsPage() {
                   variants={reducedMotion ? {} : buttonVariants}
                   whileHover={reducedMotion ? {} : "hover"}
                   whileTap={reducedMotion ? {} : "tap"}
-                  className="px-4 py-2 text-base-content/60 hover:text-base-content font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl"
+                  disabled={isGenerating}
+                  className={`px-4 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl ${
+                    isGenerating
+                      ? "text-base-content/30 cursor-not-allowed"
+                      : "text-base-content/60 hover:text-base-content"
+                  }`}
                 >
                   Abbrechen
                 </motion.button>

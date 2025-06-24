@@ -15,6 +15,7 @@ interface SuggestionCardProps {
   selected: boolean;
   onToggle: (suggestion: string) => void;
   isApplied?: boolean;
+  isGenerating?: boolean;
   delay?: number;
 }
 
@@ -74,11 +75,13 @@ const ToggleSwitch = ({
   onChange,
   id,
   ariaLabel,
+  disabled = false,
 }: {
   checked: boolean;
   onChange: () => void;
   id: string;
   ariaLabel: string;
+  disabled?: boolean;
 }) => {
   const reducedMotion = useMotionPreference();
 
@@ -88,13 +91,16 @@ const ToggleSwitch = ({
       role="switch"
       aria-checked={checked}
       aria-label={ariaLabel}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
-        onChange();
+        if (!disabled) {
+          onChange();
+        }
       }}
-      className={`relative inline-flex items-center h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-        checked ? "bg-primary" : "bg-base-300"
-      }`}
+      className={`relative inline-flex items-center h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+      } ${checked ? "bg-primary" : "bg-base-300"}`}
     >
       <span className="sr-only">{ariaLabel}</span>
       <motion.span
@@ -177,6 +183,7 @@ const SuggestionCard = ({
   selected,
   onToggle,
   isApplied = false,
+  isGenerating = false,
   delay = 0,
 }: SuggestionCardProps) => {
   const [showExplanation, setShowExplanation] = useState(false);
@@ -185,10 +192,10 @@ const SuggestionCard = ({
   const toggleId = `toggle-${cardId}`;
 
   const handleToggle = useCallback(() => {
-    if (!isApplied) {
+    if (!isApplied && !isGenerating) {
       onToggle(suggestion);
     }
-  }, [onToggle, suggestion, isApplied]);
+  }, [onToggle, suggestion, isApplied, isGenerating]);
 
   const toggleExplanation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -203,9 +210,11 @@ const SuggestionCard = ({
       whileHover={reducedMotion ? {} : "hover"}
       whileTap={reducedMotion ? {} : "tap"}
       transition={{ delay }}
-      className={`group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out overflow-hidden ${
+      className={`group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out relative ${
         isApplied
           ? "border-success bg-success/10 shadow-lg shadow-success/10 cursor-default"
+          : isGenerating
+          ? "border-base-300 bg-base-100 cursor-not-allowed opacity-60"
           : selected
           ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 cursor-pointer"
           : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 cursor-pointer"
@@ -216,9 +225,9 @@ const SuggestionCard = ({
       aria-describedby={`${cardId}-description`}
       aria-expanded={showExplanation}
     >
-      {/* Applied Badge */}
+      {/* Applied Badge - Fixed clipping with proper positioning */}
       {isApplied && (
-        <div className="absolute -top-2 -right-2 px-2 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm">
+        <div className="absolute -top-2 -right-2 px-3 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm z-10 whitespace-nowrap">
           ✓ Angewendet
         </div>
       )}
@@ -275,15 +284,18 @@ const SuggestionCard = ({
           </p>
         </div>
 
-        {/* Toggle Switch */}
-        <div className="flex-shrink-0">
-          <ToggleSwitch
-            checked={selected}
-            onChange={handleToggle}
-            id={toggleId}
-            ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
-          />
-        </div>
+        {/* Toggle Switch - Hide for applied suggestions */}
+        {!isApplied && (
+          <div className="flex-shrink-0">
+            <ToggleSwitch
+              checked={selected}
+              onChange={handleToggle}
+              id={toggleId}
+              ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
+              disabled={isGenerating}
+            />
+          </div>
+        )}
       </div>
 
       {/* Explanation Area - Expandable inline */}
