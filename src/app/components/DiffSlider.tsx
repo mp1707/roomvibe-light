@@ -204,12 +204,12 @@ const DiffSlider: React.FC<DiffSliderProps> = ({
         onTouchStart={handleTouchStart}
       >
         {/* Slider Line */}
-        <div className="w-0.5 h-full bg-white shadow-lg" />
+        <div className="w-0.5 h-full bg-base-100 shadow-lg" />
 
         {/* Slider Handle */}
         <motion.div
           ref={sliderRef}
-          className="absolute w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center cursor-col-resize border border-white/20"
+          className="absolute w-8 h-8 bg-base-100 rounded-full shadow-lg flex items-center justify-center cursor-col-resize border border-white/20"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           animate={isDragging ? { scale: 1.1 } : { scale: 1 }}

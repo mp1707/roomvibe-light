@@ -1,5 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useMotionPreference } from "@/utils/animations";
+import { useAppState } from "@/utils/store";
+import { useEffect } from "react";
+import Image from "next/image";
 
 interface AILoadingScreenProps {
   progress: number;
@@ -9,118 +12,165 @@ interface AILoadingScreenProps {
   hint?: string;
 }
 
-const SkeletonLoader = () => {
-  const reducedMotion = useMotionPreference();
-
-  return (
-    <div className="w-full aspect-[4/3] rounded-2xl sm:rounded-3xl bg-base-200 overflow-hidden relative">
-      {/* Skeleton base */}
-      <div className="absolute inset-0 bg-gradient-to-r from-base-200 via-base-100 to-base-200" />
-
-      {/* Shimmer effect */}
-      {!reducedMotion && (
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-base-100/40 to-transparent transform -skew-x-12"
-          animate={{
-            x: [-200, 800],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      )}
-
-      {/* Room outline sketch */}
-      <div className="absolute inset-4 sm:inset-6 border-2 border-dashed border-base-300 rounded-xl flex items-center justify-center">
-        <div className="text-center">
-          <motion.div
-            className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-base-300 rounded-lg"
-            animate={reducedMotion ? {} : { scale: [1, 1.05, 1] }}
-            transition={
-              reducedMotion
-                ? {}
-                : { duration: 2, repeat: Infinity, ease: "easeInOut" }
-            }
-          />
-          <motion.div
-            className="w-20 h-2.5 sm:w-24 sm:h-3 bg-base-300 rounded mx-auto"
-            animate={reducedMotion ? {} : { opacity: [0.5, 1, 0.5] }}
-            transition={
-              reducedMotion
-                ? {}
-                : { duration: 2, repeat: Infinity, ease: "easeInOut" }
-            }
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const GenerativeAnimation = () => {
+const ScanningEffect = ({ progress }: { progress: number }) => {
   const reducedMotion = useMotionPreference();
 
   if (reducedMotion) {
     return (
-      <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6">
-        <div className="w-full h-full border-3 sm:border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-pulse" />
+    );
+  }
+
+  return (
+    <>
+      {/* Main scanning laser */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ x: "-120%" }}
+        animate={{ x: "120%" }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: [0.22, 1, 0.36, 1], // Apple easing from design system
+          repeatType: "loop",
+          repeatDelay: 2,
+        }}
+      >
+        <div className="relative w-full h-full">
+          {/* Scanning line - more subtle */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary/80 shadow-[0_0_12px_theme(colors.primary/0.4)] dark:shadow-[0_0_16px_theme(colors.primary/0.5)] transform -translate-x-1/2" />
+
+          {/* Scanning gradient - softer */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-24 bg-gradient-to-r from-transparent via-primary/15 dark:via-primary/20 to-transparent transform -translate-x-1/2" />
+
+          {/* Leading glow - more subtle */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-primary/30 dark:bg-primary/40 blur-sm transform -translate-x-1/2" />
+        </div>
+      </motion.div>
+
+      {/* Grid overlay for futuristic feel - more subtle */}
+      <div
+        className="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,122,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,122,255,0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      {/* Scanning overlay effect - gentle trailing glow */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/4 dark:via-primary/6 to-transparent pointer-events-none"
+        initial={{ x: "-80%" }}
+        animate={{ x: "180%" }}
+        transition={{
+          duration: 14,
+          repeat: Infinity,
+          ease: [0.4, 0, 0.2, 1], // Apple ease-in-out from design system
+          repeatType: "loop",
+          repeatDelay: 2.5,
+        }}
+        style={{ width: "80%" }}
+      />
+
+      {/* Very subtle breathing effect on the whole overlay */}
+      <motion.div
+        className="absolute inset-0 bg-primary/2 dark:bg-primary/3 pointer-events-none"
+        animate={{
+          opacity: [0, 1, 0],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+          repeatType: "reverse",
+        }}
+      />
+    </>
+  );
+};
+
+const ImageAnalysisDisplay = ({ progress }: { progress: number }) => {
+  const { localImageUrl, hostedImageUrl } = useAppState();
+  const imageUrl = localImageUrl || hostedImageUrl;
+  const reducedMotion = useMotionPreference();
+
+  if (!imageUrl) {
+    return (
+      <div className="w-full aspect-[4/3] rounded-3xl bg-base-200 flex items-center justify-center">
+        <div className="text-base-content/40">Kein Bild verfügbar</div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6">
-      {/* Outer ring */}
-      <motion.div
-        className="absolute inset-0 border-3 sm:border-4 border-primary/30 rounded-full"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+    <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+      {/* Original image */}
+      <Image
+        src={imageUrl}
+        alt="Bild wird analysiert"
+        fill
+        className="object-cover"
+        priority
       />
 
-      {/* Inner ring */}
-      <motion.div
-        className="absolute inset-1.5 sm:inset-2 border-2 sm:border-3 border-primary/60 rounded-full"
-        animate={{ rotate: -360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-      />
+      {/* Dark overlay for better contrast - adjusted for light/dark mode */}
+      <div className="absolute inset-0 bg-black/20 dark:bg-black/40" />
 
-      {/* Center dot */}
+      {/* Scanning effect */}
+      <ScanningEffect progress={progress} />
+
+      {/* Analysis status indicator */}
       <motion.div
-        className="absolute inset-5 sm:inset-6 bg-primary rounded-full"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-      />
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute bottom-4 left-4 right-4"
+      >
+        <div className="bg-base-100/90 dark:bg-base-100/95 backdrop-blur-sm rounded-2xl px-4 py-3 border border-white/20 dark:border-white/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <motion.div
+                className="w-2 h-2 bg-primary rounded-full"
+                animate={reducedMotion ? {} : { scale: [1, 1.5, 1] }}
+                transition={
+                  reducedMotion
+                    ? {}
+                    : {
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }
+                }
+              />
+              <span className="text-sm font-medium text-base-content">
+                KI-Analyse läuft
+              </span>
+            </div>
+            <div className="text-xs text-base-content/60 tabular-nums">
+              {Math.round(progress)}%
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Corner indicators for a tech feel - improved for dark mode */}
+      <div className="absolute top-4 left-4">
+        <div className="w-6 h-6 border-l-2 border-t-2 border-primary/60 dark:border-primary/70 rounded-tl-lg" />
+      </div>
+      <div className="absolute top-4 right-4">
+        <div className="w-6 h-6 border-r-2 border-t-2 border-primary/60 dark:border-primary/70 rounded-tr-lg" />
+      </div>
+      <div className="absolute bottom-16 left-4">
+        <div className="w-6 h-6 border-l-2 border-b-2 border-primary/60 dark:border-primary/70 rounded-bl-lg" />
+      </div>
+      <div className="absolute bottom-16 right-4">
+        <div className="w-6 h-6 border-r-2 border-b-2 border-primary/60 dark:border-primary/70 rounded-br-lg" />
+      </div>
     </div>
   );
 };
-
-const ProgressBar = ({ progress }: { progress: number }) => (
-  <div className="w-full max-w-sm sm:max-w-md mx-auto mb-4 sm:mb-6 px-4">
-    <div className="w-full bg-base-200/60 rounded-full h-2.5 sm:h-3 overflow-hidden">
-      <motion.div
-        className="h-full bg-gradient-to-r from-primary to-primary-focus"
-        initial={{ width: 0 }}
-        animate={{ width: `${progress}%` }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-      />
-    </div>
-    <div className="flex justify-between text-xs sm:text-sm text-base-content/50 mt-2">
-      <span>0%</span>
-      <motion.span
-        key={Math.round(progress)}
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 500, damping: 25 }}
-        className="font-medium tabular-nums"
-      >
-        {Math.round(progress)}%
-      </motion.span>
-      <span>100%</span>
-    </div>
-  </div>
-);
 
 export default function AILoadingScreen({
   progress,
@@ -133,6 +183,22 @@ export default function AILoadingScreen({
     Math.floor((progress / 100) * steps.length),
     steps.length - 1
   );
+  const reducedMotion = useMotionPreference();
+
+  // Scroll to top when component mounts (animation starts)
+  useEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
+    };
+
+    // Small delay to ensure the component is rendered
+    const timeoutId = setTimeout(scrollToTop, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [reducedMotion]);
 
   return (
     <motion.div
@@ -152,58 +218,32 @@ export default function AILoadingScreen({
         </p>
       </div>
 
-      {/* Skeleton Screen */}
-      <div className="mb-6 sm:mb-8">
-        <SkeletonLoader />
+      {/* Image with scanning effect */}
+      <div className="mb-8">
+        <ImageAnalysisDisplay progress={progress} />
       </div>
 
-      {/* Generative Animation */}
-      <GenerativeAnimation />
-
-      {/* Progress Bar */}
-      <ProgressBar progress={progress} />
-
-      {/* Progress Text */}
+      {/* Current step text */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+          animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
           transition={{ duration: 0.4 }}
-          className="mb-6 sm:mb-8"
+          className="mb-6"
         >
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-base-content mb-2 px-4">
+          <h3 className="text-lg sm:text-xl font-semibold text-base-content px-4">
             {steps[currentStep]}
           </h3>
         </motion.div>
       </AnimatePresence>
 
-      {/* Processing Steps Indicator */}
-      <div className="flex justify-center space-x-2 mb-6 sm:mb-8">
-        {steps.map((_, index) => (
-          <motion.div
-            key={index}
-            className={`w-2 h-2 rounded-full ${
-              index <= currentStep ? "bg-primary" : "bg-base-300"
-            }`}
-            animate={{
-              scale: index === currentStep ? [1, 1.3, 1] : 1,
-            }}
-            transition={{
-              duration: 0.6,
-              repeat: index === currentStep ? Infinity : 0,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
       {/* Processing hint */}
       {hint && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="text-center"
         >
