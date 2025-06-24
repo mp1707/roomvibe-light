@@ -238,7 +238,6 @@ const ResultPage = () => {
                 "Plane die gewünschten Anpassungen...",
                 "Bereite Bildgenerierung vor...",
                 "Generiere dein neues Bild...",
-                "Finalisiere Ergebnis...",
               ]}
               title="Dein Raum wird transformiert"
               subtitle="Wir arbeiten an deinen personalisierten Designvorschlägen..."
