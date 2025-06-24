@@ -330,12 +330,12 @@ const ImageDisplay = ({
           className={`w-6 h-6 border-r-2 border-t-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-tr-lg`}
         />
       </div>
-      <div className="absolute bottom-16 left-4">
+      <div className="absolute bottom-20 left-4">
         <div
           className={`w-6 h-6 border-l-2 border-b-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-bl-lg`}
         />
       </div>
-      <div className="absolute bottom-16 right-4">
+      <div className="absolute bottom-20 right-4">
         <div
           className={`w-6 h-6 border-r-2 border-b-2 border-${colorTheme}/60 dark:border-${colorTheme}/70 rounded-br-lg`}
         />

@@ -369,10 +369,10 @@ export default function SuggestionsPage() {
             >
               <div className="text-center mb-4">
                 <h2 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
-                  Ihr Raum, Schritt für Schritt transformiert
+                  Dein Raum, Schritt für Schritt transformiert
                 </h2>
                 <p className="text-base-content/60">
-                  Bewegen Sie den Regler, um die Veränderungen zu sehen
+                  Bewege den Regler, um die Veränderungen zu sehen
                 </p>
               </div>
 
@@ -431,7 +431,7 @@ export default function SuggestionsPage() {
             Design-Vorschläge
           </h3>
           <p className="text-base-content/60 max-w-2xl mx-auto">
-            Wählen Sie einen Vorschlag aus und wenden Sie ihn an. Sie können
+            Wähle einen Vorschlag aus und wende ihn an. Du kannst
             Schritt für Schritt weitere Verbesserungen hinzufügen.
           </p>
         </div>
