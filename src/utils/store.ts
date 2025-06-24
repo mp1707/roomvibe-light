@@ -5,6 +5,8 @@ interface AppState {
   localImageUrl: string | null;
   hostedImageUrl: string | null;
   generatedImageUrls: string[];
+  currentGeneratedImage: string | null;
+  appliedSuggestions: Set<string>;
   suggestions: Suggestion[];
   customSuggestions: Suggestion[];
   suggestionsToApply: Set<string>;
@@ -16,6 +18,9 @@ interface AppState {
   setLocalImageUrl: (file: File | null) => void;
   setHostedImageUrl: (url: string | null) => void;
   setGeneratedImageUrls: (urls: string[]) => void;
+  setCurrentGeneratedImage: (url: string | null) => void;
+  setAppliedSuggestions: (suggestions: Set<string>) => void;
+  addAppliedSuggestion: (suggestionId: string) => void;
   setSuggestions: (suggestions: Suggestion[]) => void;
   setCustomSuggestions: (suggestions: Suggestion[]) => void;
   addCustomSuggestion: (suggestion: Omit<Suggestion, "id">) => void;
@@ -37,6 +42,8 @@ const initialState = {
   localImageUrl: null,
   hostedImageUrl: null,
   generatedImageUrls: [],
+  currentGeneratedImage: null,
+  appliedSuggestions: new Set<string>(),
   suggestions: [],
   customSuggestions: [],
   suggestionsToApply: new Set<string>(),
@@ -70,6 +77,20 @@ export const useAppState = create<AppState>((set, get) => ({
 
   setGeneratedImageUrls: (urls) => {
     set({ generatedImageUrls: urls });
+  },
+
+  setCurrentGeneratedImage: (url) => {
+    set({ currentGeneratedImage: url });
+  },
+
+  setAppliedSuggestions: (suggestions) => {
+    set({ appliedSuggestions: suggestions });
+  },
+
+  addAppliedSuggestion: (suggestionId) => {
+    set((state) => ({
+      appliedSuggestions: new Set([...state.appliedSuggestions, suggestionId]),
+    }));
   },
 
   setSuggestions: (newSuggestions) => {
@@ -129,11 +150,15 @@ export const useAppState = create<AppState>((set, get) => ({
   setPrediction: (prediction) => {
     // Ensure generatedImageUrls is always an array
     let urls: string[] = [];
+    let currentImage: string | null = null;
+
     if (prediction?.output) {
       if (Array.isArray(prediction.output)) {
         urls = prediction.output;
+        currentImage = prediction.output[0] || null;
       } else if (typeof prediction.output === "string") {
         urls = [prediction.output];
+        currentImage = prediction.output;
       }
     }
 
@@ -144,6 +169,7 @@ export const useAppState = create<AppState>((set, get) => ({
         prediction?.status === "processing",
       generationError: prediction?.error ? prediction.error : null,
       generatedImageUrls: urls,
+      currentGeneratedImage: currentImage,
     });
   },
 
@@ -161,6 +187,11 @@ export const useAppState = create<AppState>((set, get) => ({
     if (currentUrl) {
       URL.revokeObjectURL(currentUrl);
     }
-    set(initialState);
+    set({
+      ...initialState,
+      appliedSuggestions: new Set<string>(),
+      suggestionsToApply: new Set<string>(),
+      currentGeneratedImage: null,
+    });
   },
 }));

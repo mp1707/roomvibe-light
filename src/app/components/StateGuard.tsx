@@ -20,7 +20,7 @@ export function StateGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Define routes that should be protected (require localImageUrl)
-    const protectedRoutes = ["/suggestions", "/result"];
+    const protectedRoutes = ["/suggestions"];
     const isProtectedRoute = protectedRoutes.some((route) =>
       pathname.startsWith(route)
     );
@@ -32,7 +32,7 @@ export function StateGuard({ children }: { children: React.ReactNode }) {
   }, [isClient, pathname, localImageUrl, router]);
 
   // Only block rendering for protected routes without an image
-  const protectedRoutes = ["/suggestions", "/result"];
+  const protectedRoutes = ["/suggestions"];
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );

@@ -17,6 +17,7 @@ interface CustomSuggestionCardProps {
   onToggle: (suggestion: string) => void;
   onEdit: (id: string, data: { title: string; suggestion: string }) => void;
   onDelete: (id: string) => void;
+  isApplied?: boolean;
   delay?: number;
 }
 
@@ -233,6 +234,7 @@ const CustomSuggestionCard = ({
   onToggle,
   onEdit,
   onDelete,
+  isApplied = false,
   delay = 0,
 }: CustomSuggestionCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -241,8 +243,10 @@ const CustomSuggestionCard = ({
   const toggleId = `toggle-${cardId}`;
 
   const handleToggle = useCallback(() => {
-    onToggle(suggestion);
-  }, [onToggle, suggestion]);
+    if (!isApplied) {
+      onToggle(suggestion);
+    }
+  }, [onToggle, suggestion, isApplied]);
 
   const handleEdit = useCallback(() => {
     setIsEditing(true);
@@ -295,10 +299,12 @@ const CustomSuggestionCard = ({
       whileHover={reducedMotion ? {} : "hover"}
       whileTap={reducedMotion ? {} : "tap"}
       transition={{ delay }}
-      className={`relative group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 ease-out ${
-        selected
-          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
-          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+      className={`relative group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-200 ease-out ${
+        isApplied
+          ? "border-success bg-success/10 shadow-lg shadow-success/10 cursor-default"
+          : selected
+          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 cursor-pointer"
+          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 cursor-pointer"
       }`}
       onClick={handleToggle}
       role="article"
@@ -309,6 +315,13 @@ const CustomSuggestionCard = ({
       <div className="absolute -top-2 -left-2 px-2 py-1 bg-accent text-accent-content text-xs font-semibold rounded-full">
         Eigener Vorschlag
       </div>
+
+      {/* Applied Badge */}
+      {isApplied && (
+        <div className="absolute -top-2 -right-2 px-2 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm">
+          ✓ Angewendet
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex items-start justify-between mb-3 sm:mb-4">
