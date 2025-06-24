@@ -4,7 +4,7 @@ import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Loader from "./components/Loader";
+import AILoadingScreen from "../components/AILoadingScreen";
 import ResultDisplay from "./components/ResultDisplay";
 import ActionButtons from "./components/ActionButtons";
 import {
@@ -14,7 +14,11 @@ import {
   useMotionPreference,
 } from "@/utils/animations";
 import toast from "react-hot-toast";
-import { getPredictionEndpoint } from "@/utils/apiHelpers";
+import {
+  getPredictionEndpoint,
+  getGenerateImageEndpoint,
+  getGeneratePromptEndpoint,
+} from "@/utils/apiHelpers";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -27,11 +31,15 @@ const ResultPage = () => {
     prediction,
     setPrediction,
     isGenerating,
+    setIsGenerating,
     generationError,
+    setGenerationError,
     generatedImageUrls,
+    selectedSuggestionsForGeneration,
   } = useAppState();
   const { openModal } = useImageModalStore();
   const [selectedVariation, setSelectedVariation] = useState(0);
+  const [generationProgress, setGenerationProgress] = useState(0);
   const reducedMotion = useMotionPreference();
 
   // Safety check: ensure generatedImageUrls is always an array
@@ -52,15 +60,16 @@ const ResultPage = () => {
 
         setPrediction(newPrediction);
 
-        if (
-          newPrediction.status === "failed" ||
-          newPrediction.status === "succeeded"
-        ) {
-          if (newPrediction.status === "failed") {
-            toast.error(
-              `Bildgenerierung fehlgeschlagen: ${newPrediction.error}`
-            );
-          }
+        // Update progress based on prediction status during generation phase (50-100%)
+        if (newPrediction.status === "starting") {
+          setGenerationProgress(60);
+        } else if (newPrediction.status === "processing") {
+          setGenerationProgress(75);
+        } else if (newPrediction.status === "succeeded") {
+          setGenerationProgress(100);
+          return; // Stop polling
+        } else if (newPrediction.status === "failed") {
+          toast.error(`Bildgenerierung fehlgeschlagen: ${newPrediction.error}`);
           return; // Stop polling
         }
 
@@ -78,6 +87,84 @@ const ResultPage = () => {
     },
     [setPrediction]
   );
+
+  // Handle generation process if coming from suggestions page
+  useEffect(() => {
+    const startGeneration = async () => {
+      if (
+        selectedSuggestionsForGeneration.length > 0 &&
+        !prediction &&
+        isGenerating
+      ) {
+        try {
+          // Step 1: Generate optimized prompt using OpenAI (0-25%)
+          console.log("=== STEP 1: GENERATE PROMPT ===");
+          setGenerationProgress(5); // Start planning phase
+
+          const promptResponse = await fetch(getGeneratePromptEndpoint(), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageUrl: hostedImageUrl,
+              suggestions: selectedSuggestionsForGeneration,
+            }),
+          });
+
+          if (!promptResponse.ok) {
+            const errorData = await promptResponse.json();
+            throw new Error(
+              errorData.error || "Die Prompt-Generierung ist fehlgeschlagen."
+            );
+          }
+
+          const { prompt } = await promptResponse.json();
+          setGenerationProgress(25); // Planning complete, move to preparation
+
+          // Step 2: Generate image using the optimized prompt (25-50%)
+          console.log("=== STEP 2: GENERATE IMAGE ===");
+          setGenerationProgress(30); // Start image preparation
+
+          const imageResponse = await fetch(getGenerateImageEndpoint(), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageUrl: hostedImageUrl,
+              prompt: prompt,
+            }),
+          });
+
+          if (!imageResponse.ok) {
+            const errorData = await imageResponse.json();
+            throw new Error(
+              errorData.error || "Die Bildgenerierung ist fehlgeschlagen."
+            );
+          }
+
+          const newPrediction = await imageResponse.json();
+          setGenerationProgress(50); // Image generation started, now polling
+          setPrediction(newPrediction);
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Ein unbekannter Fehler ist aufgetreten.";
+          console.error("Fehler bei der Bildgenerierung:", errorMessage);
+          setGenerationError(errorMessage);
+          setIsGenerating(false);
+        }
+      }
+    };
+
+    startGeneration();
+  }, [
+    selectedSuggestionsForGeneration,
+    prediction,
+    isGenerating,
+    hostedImageUrl,
+    setPrediction,
+    setGenerationError,
+    setIsGenerating,
+  ]);
 
   useEffect(() => {
     if (
@@ -120,20 +207,20 @@ const ResultPage = () => {
       animate="visible"
       className="flex flex-col gap-8 items-center justify-center w-full"
     >
-      {/* Header */}
-      <motion.div
-        variants={reducedMotion ? {} : staggerItem}
-        className="text-center"
-      >
-        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
-          Dein Raum, neu erfunden.
-        </h1>
-        <p className="text-lg sm:text-xl text-base-content/60 max-w-2xl mx-auto px-4">
-          {isGenerating
-            ? "Unsere KI arbeitet an Ihren personalisierten Designvorschlägen..."
-            : "Bewegen Sie den Regler, um die Transformation zu sehen!"}
-        </p>
-      </motion.div>
+      {/* Header - Hide when generating */}
+      {!isGenerating && (
+        <motion.div
+          variants={reducedMotion ? {} : staggerItem}
+          className="text-center"
+        >
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
+            Dein Raum, neu erfunden.
+          </h1>
+          <p className="text-lg sm:text-xl text-base-content/60 max-w-2xl mx-auto px-4">
+            Bewegen Sie den Regler, um die Transformation zu sehen!
+          </p>
+        </motion.div>
+      )}
 
       <AnimatePresence mode="wait">
         {isGenerating ? (
@@ -145,9 +232,17 @@ const ResultPage = () => {
             exit="exit"
             className="w-full max-w-4xl"
           >
-            <Loader
-              status={prediction?.status ?? "starting"}
-              logs={prediction?.logs}
+            <AILoadingScreen
+              progress={generationProgress}
+              steps={[
+                "Plane die gewünschten Anpassungen...",
+                "Bereite Bildgenerierung vor...",
+                "Generiere dein neues Bild...",
+                "Finalisiere Ergebnis...",
+              ]}
+              title="Dein Raum wird transformiert"
+              subtitle="Wir arbeiten an deinen personalisierten Designvorschlägen..."
+              hint="Die Generierung dauert in der Regel 30-60 Sekunden"
             />
           </motion.div>
         ) : generationError ? (

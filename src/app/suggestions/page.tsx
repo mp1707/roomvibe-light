@@ -9,7 +9,6 @@ import AnimatedButton from "../components/AnimatedButton";
 import { ContinueIcon } from "../components/Icons";
 import { buttonVariants, useMotionPreference } from "@/utils/animations";
 import { useAppState } from "@/utils/store";
-import toast from "react-hot-toast";
 import {
   getGenerateImageEndpoint,
   getGeneratePromptEndpoint,
@@ -56,6 +55,13 @@ export default function SuggestionsPage() {
 
     const selected = allSuggestions.filter((s) => selectedSuggestions[s.id]);
 
+    // Store selected suggestions for the background process
+    const { setSelectedSuggestionsForGeneration } = useAppState.getState();
+    setSelectedSuggestionsForGeneration(selected);
+
+    // Immediately redirect to result page which will handle the loading
+    router.push("/result");
+
     try {
       // Step 1: Generate optimized prompt using OpenAI
       console.log("=== STEP 1: GENERATE PROMPT ===");
@@ -73,10 +79,6 @@ export default function SuggestionsPage() {
         JSON.stringify(promptRequestBody, null, 2)
       );
 
-      toast.loading("Erstelle optimierten Prompt...", {
-        id: "prompt-generation",
-      });
-
       const promptResponse = await fetch(getGeneratePromptEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,9 +94,6 @@ export default function SuggestionsPage() {
 
       const { prompt } = await promptResponse.json();
       console.log("Generated prompt:", prompt);
-
-      toast.dismiss("prompt-generation");
-      toast.loading("Generiere dein neues Bild...", { id: "image-generation" });
 
       // Step 2: Generate image using the optimized prompt
       console.log("=== STEP 2: GENERATE IMAGE ===");
@@ -125,10 +124,6 @@ export default function SuggestionsPage() {
 
       const prediction = await imageResponse.json();
       setPrediction(prediction);
-
-      toast.dismiss("image-generation");
-      toast.success("Dein neues Bild wird generiert...");
-      router.push("/result");
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -136,11 +131,6 @@ export default function SuggestionsPage() {
           : "Ein unbekannter Fehler ist aufgetreten.";
       console.error("Fehler bei der Bildgenerierung:", errorMessage);
       setGenerationError(errorMessage);
-
-      // Dismiss any loading toasts
-      toast.dismiss("prompt-generation");
-      toast.dismiss("image-generation");
-      toast.error(errorMessage);
       setIsGenerating(false);
     } finally {
       setIsSubmitting(false);

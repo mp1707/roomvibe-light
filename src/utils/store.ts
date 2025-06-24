@@ -8,6 +8,7 @@ interface AppState {
   suggestions: Suggestion[];
   customSuggestions: Suggestion[];
   suggestionsToApply: Set<string>;
+  selectedSuggestionsForGeneration: Suggestion[];
   prediction: any | null;
   isGenerating: boolean;
   generationError: string | null;
@@ -25,6 +26,7 @@ interface AppState {
   removeCustomSuggestion: (id: string) => void;
   getAllSuggestions: () => Suggestion[];
   setSuggestionsToApply: (suggestions: Set<string>) => void;
+  setSelectedSuggestionsForGeneration: (suggestions: Suggestion[]) => void;
   setPrediction: (prediction: any | null) => void;
   setIsGenerating: (isGenerating: boolean) => void;
   setGenerationError: (error: string | null) => void;
@@ -38,6 +40,7 @@ const initialState = {
   suggestions: [],
   customSuggestions: [],
   suggestionsToApply: new Set<string>(),
+  selectedSuggestionsForGeneration: [],
   prediction: null,
   isGenerating: false,
   generationError: null,
@@ -117,6 +120,10 @@ export const useAppState = create<AppState>((set, get) => ({
 
   setSuggestionsToApply: (suggestions) => {
     set({ suggestionsToApply: suggestions });
+  },
+
+  setSelectedSuggestionsForGeneration: (suggestions) => {
+    set({ selectedSuggestionsForGeneration: suggestions });
   },
 
   setPrediction: (prediction) => {
