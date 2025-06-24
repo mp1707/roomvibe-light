@@ -2,24 +2,26 @@ import { create } from "zustand";
 import { Suggestion } from "@/types/suggestions";
 
 interface AppState {
+  // Image management
   localImageUrl: string | null;
   hostedImageUrl: string | null;
-  generatedImageUrls: string[];
   currentGeneratedImage: string | null;
+
+  // Suggestion management
   appliedSuggestions: Set<string>;
   suggestions: Suggestion[];
   customSuggestions: Suggestion[];
-  suggestionsToApply: Set<string>;
-  selectedSuggestionsForGeneration: Suggestion[];
+
+  // Generation state
   prediction: any | null;
   isGenerating: boolean;
   generationError: string | null;
 
+  // Image setters
   setLocalImageUrl: (file: File | null) => void;
   setHostedImageUrl: (url: string | null) => void;
-  setGeneratedImageUrls: (urls: string[]) => void;
-  setCurrentGeneratedImage: (url: string | null) => void;
-  setAppliedSuggestions: (suggestions: Set<string>) => void;
+
+  // Suggestion setters
   addAppliedSuggestion: (suggestionId: string) => void;
   setSuggestions: (suggestions: Suggestion[]) => void;
   setCustomSuggestions: (suggestions: Suggestion[]) => void;
@@ -29,25 +31,23 @@ interface AppState {
     suggestion: Omit<Suggestion, "id">
   ) => void;
   removeCustomSuggestion: (id: string) => void;
-  getAllSuggestions: () => Suggestion[];
-  setSuggestionsToApply: (suggestions: Set<string>) => void;
-  setSelectedSuggestionsForGeneration: (suggestions: Suggestion[]) => void;
+
+  // Generation setters
   setPrediction: (prediction: any | null) => void;
   setIsGenerating: (isGenerating: boolean) => void;
   setGenerationError: (error: string | null) => void;
+
+  // Utility
   reset: () => void;
 }
 
 const initialState = {
   localImageUrl: null,
   hostedImageUrl: null,
-  generatedImageUrls: [],
   currentGeneratedImage: null,
   appliedSuggestions: new Set<string>(),
   suggestions: [],
   customSuggestions: [],
-  suggestionsToApply: new Set<string>(),
-  selectedSuggestionsForGeneration: [],
   prediction: null,
   isGenerating: false,
   generationError: null,
@@ -73,18 +73,6 @@ export const useAppState = create<AppState>((set, get) => ({
 
   setHostedImageUrl: (url) => {
     set({ hostedImageUrl: url });
-  },
-
-  setGeneratedImageUrls: (urls) => {
-    set({ generatedImageUrls: urls });
-  },
-
-  setCurrentGeneratedImage: (url) => {
-    set({ currentGeneratedImage: url });
-  },
-
-  setAppliedSuggestions: (suggestions) => {
-    set({ appliedSuggestions: suggestions });
   },
 
   addAppliedSuggestion: (suggestionId) => {
@@ -134,30 +122,14 @@ export const useAppState = create<AppState>((set, get) => ({
     }));
   },
 
-  getAllSuggestions: () => {
-    const state = get();
-    return [...state.suggestions, ...state.customSuggestions];
-  },
-
-  setSuggestionsToApply: (suggestions) => {
-    set({ suggestionsToApply: suggestions });
-  },
-
-  setSelectedSuggestionsForGeneration: (suggestions) => {
-    set({ selectedSuggestionsForGeneration: suggestions });
-  },
-
   setPrediction: (prediction) => {
-    // Ensure generatedImageUrls is always an array
-    let urls: string[] = [];
+    // Extract the current image from prediction output
     let currentImage: string | null = null;
 
     if (prediction?.output) {
       if (Array.isArray(prediction.output)) {
-        urls = prediction.output;
         currentImage = prediction.output[0] || null;
       } else if (typeof prediction.output === "string") {
-        urls = [prediction.output];
         currentImage = prediction.output;
       }
     }
@@ -168,7 +140,6 @@ export const useAppState = create<AppState>((set, get) => ({
         prediction?.status === "starting" ||
         prediction?.status === "processing",
       generationError: prediction?.error ? prediction.error : null,
-      generatedImageUrls: urls,
       currentGeneratedImage: currentImage,
     });
   },
@@ -190,7 +161,6 @@ export const useAppState = create<AppState>((set, get) => ({
     set({
       ...initialState,
       appliedSuggestions: new Set<string>(),
-      suggestionsToApply: new Set<string>(),
       currentGeneratedImage: null,
     });
   },

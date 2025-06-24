@@ -39,14 +39,12 @@ export default function SuggestionsPage() {
   const { openModal } = useImageModalStore();
 
   const {
-    getAllSuggestions,
     localImageUrl,
     hostedImageUrl,
     isGenerating,
     setPrediction,
     setIsGenerating,
     setGenerationError,
-    prediction,
     generationError,
     suggestions,
     customSuggestions,
@@ -54,13 +52,11 @@ export default function SuggestionsPage() {
     editCustomSuggestion,
     removeCustomSuggestion,
     currentGeneratedImage,
-    setCurrentGeneratedImage,
-    generatedImageUrls,
     appliedSuggestions,
     addAppliedSuggestion,
   } = useAppState();
 
-  const allSuggestions = getAllSuggestions();
+  const allSuggestions = [...suggestions, ...customSuggestions];
 
   const handleToggleSuggestion = useCallback(
     (suggestionId: string) => {
