@@ -11,6 +11,7 @@ import ThemeToggle from "./components/ThemeToggle";
 import AuthButton from "@/components/AuthButton";
 import { Toaster } from "react-hot-toast";
 import MockModeIndicator from "./components/MockModeIndicator";
+import CreditsDisplay from "./components/CreditsDisplay";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
                   <Logo />
                 </Link>
                 <div className="flex items-center gap-4 ml-auto">
+                  <CreditsDisplay className="hidden sm:flex" />
                   <AuthButton />
                   <Link
                     href="/settings"

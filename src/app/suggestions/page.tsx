@@ -5,12 +5,16 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import SuggestionCard from "../components/SuggestionCard";
 import CustomSuggestionCard from "../components/CustomSuggestionCard";
 import AddSuggestionCard from "../components/AddSuggestionCard";
 import AILoadingScreen from "../components/AILoadingScreen";
 import DiffSlider from "../components/DiffSlider";
+import CostIndicator from "../components/CostIndicator";
 import { BackIcon } from "../components/Icons";
+import { useCreditsStore } from "@/utils/creditsStore";
+import { CREDIT_COSTS } from "@/types/credits";
 import {
   buttonVariants,
   useMotionPreference,
@@ -37,6 +41,8 @@ export default function SuggestionsPage() {
   const router = useRouter();
   const reducedMotion = useMotionPreference();
   const { openModal, reset: resetImageModal } = useImageModalStore();
+  const { credits, canApplySuggestion, fetchCredits, deductCredits } =
+    useCreditsStore();
 
   const {
     localImageUrl,
@@ -65,6 +71,11 @@ export default function SuggestionsPage() {
       router.push("/");
     }
   }, [localImageUrl, hostedImageUrl, router]);
+
+  // Fetch credits on component mount
+  useEffect(() => {
+    fetchCredits();
+  }, [fetchCredits]);
 
   const handleNavigateToUpload = useCallback(() => {
     // Reset all state when navigating to upload new image
@@ -163,6 +174,14 @@ export default function SuggestionsPage() {
     );
     if (!suggestionToApply) return;
 
+    // Check if user has enough credits for applying suggestion
+    if (!canApplySuggestion()) {
+      toast.error(
+        `Nicht genügend Credits! Sie benötigen ${CREDIT_COSTS.APPLY_SUGGESTION} Credits um einen Vorschlag anzuwenden.`
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     setIsGenerating(true);
     setGenerationError(null);
@@ -242,6 +261,24 @@ export default function SuggestionsPage() {
         await checkStatus(predictionData.id);
       } else {
         throw new Error("Keine Prediction ID erhalten von der Bildgenerierung");
+      }
+
+      // Deduct credits for applying suggestion
+      try {
+        await deductCredits(
+          CREDIT_COSTS.APPLY_SUGGESTION,
+          `Vorschlag angewendet: ${suggestionToApply.title}`,
+          `apply-suggestion-${selectedSuggestion}-${Date.now()}`
+        );
+        toast.success(
+          `${CREDIT_COSTS.APPLY_SUGGESTION} Credits für Vorschlag abgezogen`
+        );
+      } catch (error) {
+        console.error("Credits deduction failed:", error);
+        // Still proceed with marking as applied but show warning
+        toast.error(
+          "Fehler beim Abziehen der Credits, aber Vorschlag wurde angewendet"
+        );
       }
 
       // Mark suggestion as applied and clear selection
@@ -536,6 +573,16 @@ export default function SuggestionsPage() {
                       ?.title
                   }
                 </p>
+                {/* Cost indicator */}
+                <div className="mt-2">
+                  <CostIndicator
+                    cost={CREDIT_COSTS.APPLY_SUGGESTION}
+                    action="Vorschlag anwenden"
+                    disabled={isGenerating}
+                    showUpgradePrompt={false}
+                    className="justify-center sm:justify-start"
+                  />
+                </div>
               </div>
               <div className="flex gap-3">
                 <motion.button
@@ -554,25 +601,39 @@ export default function SuggestionsPage() {
                 </motion.button>
                 <motion.button
                   onClick={handleApplySuggestion}
-                  disabled={isSubmitting || isGenerating}
+                  disabled={
+                    isSubmitting || isGenerating || !canApplySuggestion()
+                  }
                   variants={reducedMotion ? {} : buttonVariants}
                   whileHover={
-                    !isSubmitting && !isGenerating && !reducedMotion
+                    !isSubmitting &&
+                    !isGenerating &&
+                    canApplySuggestion() &&
+                    !reducedMotion
                       ? "hover"
                       : undefined
                   }
                   whileTap={
-                    !isSubmitting && !isGenerating && !reducedMotion
+                    !isSubmitting &&
+                    !isGenerating &&
+                    canApplySuggestion() &&
+                    !reducedMotion
                       ? "tap"
                       : undefined
                   }
-                  className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-focus text-primary-content font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`flex items-center gap-2 px-6 py-3 font-semibold rounded-xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    canApplySuggestion() && !isSubmitting && !isGenerating
+                      ? "bg-primary hover:bg-primary-focus text-primary-content hover:shadow-xl"
+                      : "bg-base-300 text-base-content/60"
+                  }`}
                 >
                   {isSubmitting || isGenerating ? (
                     <>
                       <div className="w-4 h-4 border-2 border-primary-content/30 border-t-primary-content rounded-full animate-spin" />
                       Wird angewendet...
                     </>
+                  ) : !canApplySuggestion() ? (
+                    "Nicht genügend Credits"
                   ) : (
                     "Vorschlag anwenden"
                   )}
