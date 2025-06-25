@@ -6,13 +6,9 @@ import "./globals.css";
 import { StateGuard } from "@/components/StateGuard";
 import { ImageModal } from "@/components/ImageModal";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
-import Link from "next/link";
-import Logo from "../components/Logo";
-import ThemeToggle from "../components/ThemeToggle";
-import AuthButton from "@/components/AuthButton";
+import Header from "@/components/Header";
 import { Toaster } from "react-hot-toast";
 import MockModeIndicator from "../components/MockModeIndicator";
-import CreditsDisplay from "../components/CreditsDisplay";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,46 +31,7 @@ export default function RootLayout({
         <main
           className={`${inter.variable} font-sans min-h-screen w-full antialiased flex flex-col bg-base-100`}
         >
-          {/* Header */}
-          <header className="w-full bg-base-100 border-b border-base-300 sticky top-0 z-40">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-between py-4">
-                <Link href="/" className="flex-shrink-0">
-                  <Logo />
-                </Link>
-                <div className="flex items-center gap-4 ml-auto">
-                  <CreditsDisplay className="hidden sm:flex" />
-                  <AuthButton />
-                  <Link
-                    href="/settings"
-                    className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-base-content/60 hover:text-base-content transition-colors rounded-lg hover:bg-base-200"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    Einstellungen
-                  </Link>
-                  <ThemeToggle />
-                </div>
-              </div>
-            </div>
-          </header>
+          <Header />
 
           {/* Main Content Area - Responsive Layout */}
           <div className="flex-1 bg-base-200 lg:bg-base-100 min-h-screen overflow-visible">
