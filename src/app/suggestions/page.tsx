@@ -29,6 +29,7 @@ import {
   getGeneratePromptEndpoint,
   getPredictionEndpoint,
 } from "@/utils/apiHelpers";
+import { downloadImage, isDownloadSupported } from "@/utils/downloadUtils";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const MAX_POLLING_TIME = 10 * 60 * 1000;
@@ -376,6 +377,23 @@ export default function SuggestionsPage() {
     [openModal]
   );
 
+  const handleDownloadImage = useCallback(async () => {
+    if (!currentGeneratedImage) return;
+
+    try {
+      const fileName = `roomvibe-design-${new Date()
+        .toISOString()
+        .slice(0, 10)}-${Date.now()}.jpg`;
+      await downloadImage(currentGeneratedImage, fileName);
+      toast.success("Bild wurde erfolgreich heruntergeladen");
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast.error(
+        "Das Bild konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut."
+      );
+    }
+  }, [currentGeneratedImage]);
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -480,6 +498,56 @@ export default function SuggestionsPage() {
                 aspectRatio="aspect-[4/3]"
                 showInstructionText={true}
               />
+
+              {/* Action Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.3,
+                  duration: 0.4,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6"
+              >
+                <motion.button
+                  onClick={handleDownloadImage}
+                  disabled={!currentGeneratedImage || !isDownloadSupported()}
+                  variants={reducedMotion ? {} : buttonVariants}
+                  whileHover={reducedMotion ? {} : "hover"}
+                  whileTap={reducedMotion ? {} : "tap"}
+                  className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-content font-semibold rounded-xl shadow-lg transition-all duration-300 hover:bg-primary-focus hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px] justify-center"
+                  aria-label="Transformiertes Bild herunterladen"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Bild herunterladen
+                </motion.button>
+
+                <motion.button
+                  onClick={handleNavigateToUpload}
+                  variants={reducedMotion ? {} : buttonVariants}
+                  whileHover={reducedMotion ? {} : "hover"}
+                  whileTap={reducedMotion ? {} : "tap"}
+                  className="flex items-center gap-2 px-6 py-3 bg-base-200 text-base-content font-semibold rounded-xl border border-base-300 transition-all duration-300 hover:bg-base-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[160px] justify-center"
+                  aria-label="Neues Bild hochladen"
+                >
+                  <BackIcon />
+                  Neues Bild
+                </motion.button>
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div
@@ -507,6 +575,30 @@ export default function SuggestionsPage() {
                   priority
                 />
               </button>
+
+              {/* Action Buttons for Original Image */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.3,
+                  duration: 0.4,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6"
+              >
+                <motion.button
+                  onClick={handleNavigateToUpload}
+                  variants={reducedMotion ? {} : buttonVariants}
+                  whileHover={reducedMotion ? {} : "hover"}
+                  whileTap={reducedMotion ? {} : "tap"}
+                  className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-content font-semibold rounded-xl shadow-lg transition-all duration-300 hover:bg-primary-focus hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[160px] justify-center"
+                  aria-label="Neues Bild hochladen"
+                >
+                  <BackIcon />
+                  Neues Bild
+                </motion.button>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -682,17 +774,6 @@ export default function SuggestionsPage() {
           </div>
         </motion.div>
       )}
-
-      {/* Navigation */}
-      <motion.div variants={staggerItem} className="text-center">
-        <button
-          onClick={handleNavigateToUpload}
-          className="inline-flex items-center gap-2 text-base-content/60 hover:text-base-content transition-colors group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-2 py-1"
-        >
-          <BackIcon />
-          <span className="font-medium">Anderes Bild hochladen</span>
-        </button>
-      </motion.div>
 
       {/* Error Display */}
       {generationError && (
