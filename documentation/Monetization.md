@@ -55,8 +55,8 @@ Viele Nutzer schrecken vor Abonnements zurück, besonders wenn sie nur ein einma
   - z.B. 50 Credits für 4,99 €
   - z.B. 120 Credits für 9,99 €
 - **Verbrauch**:
-  - 1 Raum-Analyse: 20 Credits
-  - 1 KI-Bildgenerierung: 10 Credits
+  - 1 Raum-Analyse: KOSTENLOS
+  - 1 KI-Bildgenerierung: 5 Credits
 - **Vorteil**: Du koppelst den Umsatz direkt an deine Kosten und bietest maximale Flexibilität. Du könntest dieses Modell sogar mit den Abos kombinieren: Im "Kreativ-Paket" sind z.B. 200 Credits pro Monat enthalten, zusätzliche Credits können dazugekauft werden.
 
 ## Realistische technische Umsetzung für dich als Einzelunternehmer

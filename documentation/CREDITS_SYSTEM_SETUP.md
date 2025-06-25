@@ -8,7 +8,7 @@
 
 ### Step 2: Test Credit Deduction
 
-1. Upload an image (should deduct 5 credits)
+1. Upload an image (now free - no credits deducted)
 2. Apply a suggestion (should deduct 5 credits)
 3. Verify credits are properly deducted and transactions are recorded
 
@@ -29,7 +29,7 @@ Use Stripe test card numbers:
 ### Step 5: Test Insufficient Credits
 
 1. Reduce a user's credits in the database
-2. Try to analyze an image or apply a suggestion
+2. Try to apply a suggestion (analysis is now free)
 3. Verify proper error messages are shown
 
 # Local Development with Stripe CLI

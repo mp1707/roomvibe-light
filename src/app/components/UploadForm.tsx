@@ -16,7 +16,6 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import InspirationGallery from "./InspirationGallery";
-import CostIndicator from "./CostIndicator";
 import {
   staggerContainer,
   staggerItem,
@@ -25,8 +24,6 @@ import {
   useMotionPreference,
 } from "@/utils/animations";
 import { UploadIcon } from "./Icons";
-import { useCreditsStore } from "@/utils/creditsStore";
-import { CREDIT_COSTS } from "@/types/credits";
 
 // Mock image URL for development
 const MOCK_ROOM_IMAGE_URL =
@@ -66,8 +63,6 @@ const UploadForm = () => {
     useAppState();
   const { mockFileUpload } = useSettingsStore();
   const { reset: resetImageModal } = useImageModalStore();
-  const { credits, canAnalyzeImage, fetchCredits, deductCredits } =
-    useCreditsStore();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -92,21 +87,16 @@ const UploadForm = () => {
     resetImageModal();
   }, [resetForNewImage, resetImageModal]);
 
-  // Get current user on component mount and fetch credits
+  // Get current user on component mount
   useEffect(() => {
     const getUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-
-      // Fetch credits if user is authenticated
-      if (user) {
-        await fetchCredits();
-      }
     };
     getUser();
-  }, [supabase, fetchCredits]);
+  }, [supabase]);
 
   // Mock upload simulation
   const simulateUpload = useCallback(async (file: File) => {
@@ -148,13 +138,7 @@ const UploadForm = () => {
         return;
       }
 
-      // Check if user has enough credits (skip in mock mode)
-      if (!mockFileUpload && user && !canAnalyzeImage()) {
-        toast.error(
-          `Nicht genügend Credits! Sie benötigen ${CREDIT_COSTS.IMAGE_ANALYSIS} Credits für die Bildanalyse.`
-        );
-        return;
-      }
+      // Analysis is now free, so no credit check needed
 
       // Validate file type and size
       if (!file.type.startsWith("image/")) {
@@ -258,25 +242,7 @@ const UploadForm = () => {
         }
         setHostedImageUrl(publicUrl); // Store hosted/mock URL for API calls
 
-        // Deduct credits for analysis (skip in mock mode)
-        if (!mockFileUpload && user) {
-          try {
-            await deductCredits(
-              CREDIT_COSTS.IMAGE_ANALYSIS,
-              "Bildanalyse gestartet",
-              `image-upload-${Date.now()}`
-            );
-            toast.success(
-              `${CREDIT_COSTS.IMAGE_ANALYSIS} Credits für Bildanalyse abgezogen`
-            );
-          } catch (error) {
-            console.error("Credits deduction failed:", error);
-            // Still proceed with analysis but show warning
-            toast.error(
-              "Fehler beim Abziehen der Credits, aber Analyse wird fortgesetzt"
-            );
-          }
-        }
+        // Analysis is now free, no credit deduction needed
 
         // Small delay to show completion
         setTimeout(() => {
@@ -480,22 +446,7 @@ const UploadForm = () => {
             </AnimatePresence>
           </motion.button>
 
-          {/* Credits Cost Indicator - only show for authenticated users */}
-          {user && !mockFileUpload && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex justify-center mt-4"
-            >
-              <CostIndicator
-                cost={CREDIT_COSTS.IMAGE_ANALYSIS}
-                action="Bildanalyse"
-                disabled={isUploading}
-                className="text-center"
-              />
-            </motion.div>
-          )}
+          {/* Analysis is now free - no cost indicator needed */}
         </motion.div>
 
         {/* Inspiration CTA */}

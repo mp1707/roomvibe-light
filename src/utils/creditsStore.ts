@@ -207,7 +207,7 @@ export const useCreditsStore = create<CreditsStore>((set, get) => ({
   },
 
   canAnalyzeImage: (): boolean => {
-    return get().hasEnoughCredits(CREDIT_COSTS.IMAGE_ANALYSIS);
+    return true; // Analysis is now free, so always return true
   },
 
   canApplySuggestion: (): boolean => {

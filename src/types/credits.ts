@@ -96,7 +96,7 @@ export interface CreditState {
 
 // Action cost constants
 export const CREDIT_COSTS = {
-  IMAGE_ANALYSIS: 5,
+  IMAGE_ANALYSIS: 0,
   APPLY_SUGGESTION: 5,
 } as const;
 

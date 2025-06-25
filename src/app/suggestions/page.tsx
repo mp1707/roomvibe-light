@@ -14,6 +14,7 @@ import DiffSlider from "../components/DiffSlider";
 import CostIndicator from "../components/CostIndicator";
 import { BackIcon } from "../components/Icons";
 import { useCreditsStore } from "@/utils/creditsStore";
+import { useConfirmationModalStore } from "@/utils/useConfirmationModalStore";
 import { CREDIT_COSTS } from "@/types/credits";
 import {
   buttonVariants,
@@ -41,6 +42,7 @@ export default function SuggestionsPage() {
   const router = useRouter();
   const reducedMotion = useMotionPreference();
   const { openModal, reset: resetImageModal } = useImageModalStore();
+  const { openModal: openConfirmationModal } = useConfirmationModalStore();
   const { credits, canApplySuggestion, fetchCredits, deductCredits } =
     useCreditsStore();
 
@@ -164,7 +166,7 @@ export default function SuggestionsPage() {
     [setPrediction, setIsGenerating, setGenerationError]
   );
 
-  const handleApplySuggestion = useCallback(async () => {
+  const confirmAndApplySuggestion = useCallback(async () => {
     if (!selectedSuggestion || isSubmitting || isGenerating) {
       return;
     }
@@ -307,6 +309,43 @@ export default function SuggestionsPage() {
     setGenerationError,
     checkStatus,
     addAppliedSuggestion,
+    deductCredits,
+  ]);
+
+  const handleApplySuggestion = useCallback(() => {
+    if (!selectedSuggestion || isSubmitting || isGenerating) {
+      return;
+    }
+
+    const suggestionToApply = allSuggestions.find(
+      (s) => s.id === selectedSuggestion
+    );
+    if (!suggestionToApply) return;
+
+    // Check if user has enough credits for applying suggestion
+    if (!canApplySuggestion()) {
+      toast.error(
+        `Nicht genügend Credits! Sie benötigen ${CREDIT_COSTS.APPLY_SUGGESTION} Credits um einen Vorschlag anzuwenden.`
+      );
+      return;
+    }
+
+    // Show confirmation modal
+    openConfirmationModal({
+      title: "Vorschlag anwenden",
+      message: `Soll "${suggestionToApply.title}" angewendet werden?`,
+      confirmText: `${CREDIT_COSTS.APPLY_SUGGESTION} Credits verwenden`,
+      cancelText: "Abbrechen",
+      onConfirm: confirmAndApplySuggestion,
+    });
+  }, [
+    selectedSuggestion,
+    isSubmitting,
+    isGenerating,
+    allSuggestions,
+    canApplySuggestion,
+    openConfirmationModal,
+    confirmAndApplySuggestion,
   ]);
 
   const handleAddCustomSuggestion = useCallback(

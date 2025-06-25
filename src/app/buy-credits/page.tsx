@@ -220,18 +220,34 @@ const BuyCreditsPage = () => {
           </svg>
           Wie werden Credits verwendet?
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-primary font-semibold">5</span>
+        <div className="space-y-4 text-sm">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-success/10 border border-success/20">
+            <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+              <svg
+                className="w-4 h-4 text-success"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
-            <span className="text-base-content/80">Bild analysieren</span>
+            <span className="text-base-content/80 font-medium">
+              Bild hochladen & analysieren - <strong>KOSTENLOS</strong>
+            </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
               <span className="text-primary font-semibold">5</span>
             </div>
-            <span className="text-base-content/80">Vorschlag anwenden</span>
+            <span className="text-base-content/80">
+              KI-Bildgenerierung (Vorschlag anwenden)
+            </span>
           </div>
         </div>
       </motion.div>

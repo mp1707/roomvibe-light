@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { StateGuard } from "@/app/components/StateGuard";
 import { ImageModal } from "@/app/components/ImageModal";
+import { ConfirmationModal } from "@/app/components/ConfirmationModal";
 import Link from "next/link";
 import Logo from "./components/Logo";
 import ThemeToggle from "./components/ThemeToggle";
@@ -125,6 +126,7 @@ export default function RootLayout({
 
         <MockModeIndicator />
         <ImageModal />
+        <ConfirmationModal />
         <Toaster
           position="bottom-center"
           toastOptions={{
