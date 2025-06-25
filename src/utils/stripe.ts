@@ -14,7 +14,7 @@ export const getStripe = (): Stripe => {
     }
 
     stripeInstance = new Stripe(secretKey, {
-      apiVersion: "2024-06-20", // Latest stable version
+      apiVersion: "2025-05-28.basil", // Latest stable version
       typescript: true,
     });
   }

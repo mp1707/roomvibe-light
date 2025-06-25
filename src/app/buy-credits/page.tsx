@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -9,13 +9,11 @@ import { useCreditsStore } from "@/utils/creditsStore";
 import { CREDIT_PACKAGES, StripeCheckoutResponse } from "@/types/credits";
 import CreditPackageCard from "@/components/CreditPackageCard";
 
-const BuyCreditsPage = () => {
+// Component that handles search params logic
+const SearchParamsHandler = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { credits, isLoading, fetchCredits, refreshCredits } =
-    useCreditsStore();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [isPageLoading, setIsPageLoading] = useState(true);
+  const { refreshCredits } = useCreditsStore();
 
   // Check for success/cancel parameters
   useEffect(() => {
@@ -36,6 +34,15 @@ const BuyCreditsPage = () => {
       router.replace("/buy-credits");
     }
   }, [searchParams, router, refreshCredits]);
+
+  return null; // This component doesn't render anything
+};
+
+const BuyCreditsContent = () => {
+  const router = useRouter();
+  const { credits, isLoading, fetchCredits } = useCreditsStore();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   // Check authentication
   useEffect(() => {
@@ -308,6 +315,31 @@ const BuyCreditsPage = () => {
         </p>
       </motion.div>
     </div>
+  );
+};
+
+// Loading fallback component
+const BuyCreditsLoading = () => (
+  <div className="max-w-4xl mx-auto py-8 px-4">
+    <div className="animate-pulse space-y-8">
+      <div className="h-8 bg-base-300 rounded w-1/3 mx-auto"></div>
+      <div className="h-4 bg-base-300 rounded w-2/3 mx-auto"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[1, 2].map((i) => (
+          <div key={i} className="h-96 bg-base-300 rounded-xl"></div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// Main component wrapped with Suspense
+const BuyCreditsPage = () => {
+  return (
+    <Suspense fallback={<BuyCreditsLoading />}>
+      <SearchParamsHandler />
+      <BuyCreditsContent />
+    </Suspense>
   );
 };
 
