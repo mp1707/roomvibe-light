@@ -15,7 +15,6 @@ import {
   type DragEvent,
 } from "react";
 import toast from "react-hot-toast";
-import InspirationGallery from "./InspirationGallery";
 import {
   staggerContainer,
   staggerItem,
@@ -68,19 +67,13 @@ const UploadForm = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [showInspiration, setShowInspiration] = useState(false);
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const [user, setUser] = useState<any>(null);
   const [supabase] = useState(() => createClient());
   const reducedMotion = useMotionPreference();
 
-  // Check for gallery parameter on mount and reset state for fresh start
+  // Reset state when component mounts to ensure clean slate
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("gallery") === "true") {
-      setShowInspiration(true);
-    }
-
     // Reset state when component mounts to ensure clean slate
     // This handles page refreshes and direct navigation to upload page
     resetForNewImage();
@@ -316,27 +309,9 @@ const UploadForm = () => {
     fileInputRef.current?.click();
   }, []);
 
-  const toggleInspiration = useCallback(() => {
-    const newShowInspiration = !showInspiration;
-    setShowInspiration(newShowInspiration);
-
-    // Update URL without page refresh
-    const url = new URL(window.location.href);
-    if (newShowInspiration) {
-      url.searchParams.set("gallery", "true");
-    } else {
-      url.searchParams.delete("gallery");
-    }
-    window.history.replaceState({}, "", url.toString());
-  }, [showInspiration]);
-
-  if (showInspiration) {
-    return (
-      <div className="w-full flex items-center justify-center py-8">
-        <InspirationGallery onClose={toggleInspiration} />
-      </div>
-    );
-  }
+  const handleInspirationClick = useCallback(() => {
+    router.push("/inspiration");
+  }, [router]);
 
   return (
     <div className="w-full flex items-center justify-center">
@@ -464,7 +439,7 @@ const UploadForm = () => {
             variants={reducedMotion ? {} : buttonVariants}
             whileHover={reducedMotion ? {} : "hover"}
             whileTap={reducedMotion ? {} : "tap"}
-            onClick={toggleInspiration}
+            onClick={handleInspirationClick}
             className="group flex items-center space-x-3 px-6 md:px-8 py-3 md:py-4 bg-base-100/60 hover:bg-base-100/80 backdrop-blur-sm rounded-xl md:rounded-2xl border border-base-300/50 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             <svg

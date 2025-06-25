@@ -281,16 +281,14 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
           </motion.button>
         </div>
 
-        {onClose && (
-          <motion.button
-            onClick={onClose}
-            className="text-base-content/60 hover:text-base-content font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-4 py-2"
-            whileHover={{ x: -4 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          >
-            ← Zurück zum Upload
-          </motion.button>
-        )}
+        <motion.button
+          onClick={() => router.push("/")}
+          className="text-base-content/60 hover:text-base-content font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-4 py-2"
+          whileHover={{ x: -4 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        >
+          ← Zurück zur Startseite
+        </motion.button>
       </motion.div>
     </motion.div>
   );
