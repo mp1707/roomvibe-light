@@ -3,16 +3,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { StateGuard } from "@/app/components/StateGuard";
-import { ImageModal } from "@/app/components/ImageModal";
-import { ConfirmationModal } from "@/app/components/ConfirmationModal";
+import { StateGuard } from "@/components/StateGuard";
+import { ImageModal } from "@/components/ImageModal";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import Link from "next/link";
-import Logo from "./components/Logo";
-import ThemeToggle from "./components/ThemeToggle";
+import Logo from "../components/Logo";
+import ThemeToggle from "../components/ThemeToggle";
 import AuthButton from "@/components/AuthButton";
 import { Toaster } from "react-hot-toast";
-import MockModeIndicator from "./components/MockModeIndicator";
-import CreditsDisplay from "./components/CreditsDisplay";
+import MockModeIndicator from "../components/MockModeIndicator";
+import CreditsDisplay from "../components/CreditsDisplay";
 
 const inter = Inter({
   subsets: ["latin"],

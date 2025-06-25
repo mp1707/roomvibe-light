@@ -4,7 +4,7 @@ import { use } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useImageModalStore } from "@/utils/useImageModalStore";
-import DiffSlider from "@/app/components/DiffSlider";
+import DiffSlider from "@/components/DiffSlider";
 import {
   staggerContainer,
   staggerItem,

@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
 import { useCreditsStore } from "@/utils/creditsStore";
 import { CREDIT_PACKAGES, StripeCheckoutResponse } from "@/types/credits";
-import CreditPackageCard from "@/app/components/CreditPackageCard";
+import CreditPackageCard from "@/components/CreditPackageCard";
 
 const BuyCreditsPage = () => {
   const router = useRouter();

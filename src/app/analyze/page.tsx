@@ -14,7 +14,7 @@ import {
 } from "@/utils/animations";
 import resizeImage from "@/utils/resizeImage";
 import { getAnalyzeEndpoint } from "@/utils/apiHelpers";
-import AILoadingScreen from "../components/AILoadingScreen";
+import AILoadingScreen from "../../components/AILoadingScreen";
 
 const ErrorModal = ({
   isOpen,
