@@ -36,7 +36,7 @@ export default function SuggestionsPage() {
   const [generationProgress, setGenerationProgress] = useState(0);
   const router = useRouter();
   const reducedMotion = useMotionPreference();
-  const { openModal } = useImageModalStore();
+  const { openModal, reset: resetImageModal } = useImageModalStore();
 
   const {
     localImageUrl,
@@ -54,9 +54,24 @@ export default function SuggestionsPage() {
     currentGeneratedImage,
     appliedSuggestions,
     addAppliedSuggestion,
+    resetForNewImage,
   } = useAppState();
 
   const allSuggestions = [...suggestions, ...customSuggestions];
+
+  // Redirect to upload if no images are available
+  useEffect(() => {
+    if (!localImageUrl && !hostedImageUrl) {
+      router.push("/");
+    }
+  }, [localImageUrl, hostedImageUrl, router]);
+
+  const handleNavigateToUpload = useCallback(() => {
+    // Reset all state when navigating to upload new image
+    resetForNewImage();
+    resetImageModal();
+    router.push("/");
+  }, [router, resetForNewImage, resetImageModal]);
 
   const handleToggleSuggestion = useCallback(
     (suggestionId: string) => {
@@ -431,8 +446,8 @@ export default function SuggestionsPage() {
             Design-Vorschläge
           </h3>
           <p className="text-base-content/60 max-w-2xl mx-auto">
-            Wähle einen Vorschlag aus und wende ihn an. Du kannst
-            Schritt für Schritt weitere Verbesserungen hinzufügen.
+            Wähle einen Vorschlag aus und wende ihn an. Du kannst Schritt für
+            Schritt weitere Verbesserungen hinzufügen.
           </p>
         </div>
 
@@ -570,13 +585,13 @@ export default function SuggestionsPage() {
 
       {/* Navigation */}
       <motion.div variants={staggerItem} className="text-center">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-base-content/60 hover:text-base-content transition-colors group"
+        <button
+          onClick={handleNavigateToUpload}
+          className="inline-flex items-center gap-2 text-base-content/60 hover:text-base-content transition-colors group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg px-2 py-1"
         >
           <BackIcon />
           <span className="font-medium">Anderes Bild hochladen</span>
-        </Link>
+        </button>
       </motion.div>
 
       {/* Error Display */}

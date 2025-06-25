@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/utils/store";
+import { useImageModalStore } from "@/utils/useImageModalStore";
 import Image from "next/image";
 import {
   staggerContainer,
@@ -111,7 +112,8 @@ const ErrorModal = ({
 };
 
 export default function AnalyzePage() {
-  const { localImageUrl, hostedImageUrl } = useAppState();
+  const { localImageUrl, hostedImageUrl, resetForNewImage } = useAppState();
+  const { reset: resetImageModal } = useImageModalStore();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [errorModal, setErrorModal] = useState<{
@@ -376,8 +378,11 @@ export default function AnalyzePage() {
   }, [localImageUrl, hostedImageUrl, router, showErrorModal]);
 
   const handleGoBack = useCallback(() => {
+    // Reset all state when going back to prevent interference
+    resetForNewImage();
+    resetImageModal();
     router.push("/");
-  }, [router]);
+  }, [router, resetForNewImage, resetImageModal]);
 
   if (!localImageUrl && !hostedImageUrl) {
     return null;

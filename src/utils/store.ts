@@ -37,8 +37,10 @@ interface AppState {
   setIsGenerating: (isGenerating: boolean) => void;
   setGenerationError: (error: string | null) => void;
 
-  // Utility
+  // Reset utilities
   reset: () => void;
+  resetForNewImage: () => void;
+  resetSuggestionsAndGeneration: () => void;
 }
 
 const initialState = {
@@ -155,15 +157,50 @@ export const useAppState = create<AppState>((set, get) => ({
     set({ generationError: error });
   },
 
+  // Complete reset - for page reloads or complete app restart
   reset: () => {
-    // Wichtig: Auch beim Reset die eventuell noch vorhandene lokale URL freigeben.
+    // Clean up object URLs to prevent memory leaks
     const currentUrl = get().localImageUrl;
     if (currentUrl) {
       URL.revokeObjectURL(currentUrl);
     }
+
     set({
       ...initialState,
       appliedSuggestions: new Set<string>(),
+    });
+  },
+
+  // Reset for new image upload - keeps settings but clears image-related state
+  resetForNewImage: () => {
+    // Clean up object URLs to prevent memory leaks
+    const currentUrl = get().localImageUrl;
+    if (currentUrl) {
+      URL.revokeObjectURL(currentUrl);
+    }
+
+    set({
+      localImageUrl: null,
+      hostedImageUrl: null,
+      currentGeneratedImage: null,
+      appliedSuggestions: new Set<string>(),
+      suggestions: [],
+      customSuggestions: [],
+      prediction: null,
+      isGenerating: false,
+      generationError: null,
+    });
+  },
+
+  // Reset suggestions and generation state - for when restarting the suggestion flow
+  resetSuggestionsAndGeneration: () => {
+    set({
+      appliedSuggestions: new Set<string>(),
+      suggestions: [],
+      customSuggestions: [],
+      prediction: null,
+      isGenerating: false,
+      generationError: null,
       currentGeneratedImage: null,
     });
   },

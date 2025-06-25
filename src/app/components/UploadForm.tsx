@@ -2,6 +2,7 @@
 
 import { useAppState } from "@/utils/store";
 import { useSettingsStore } from "@/utils/settingsStore";
+import { useImageModalStore } from "@/utils/useImageModalStore";
 import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -53,8 +54,10 @@ const ProgressIndicator = ({ progress }: { progress: number }) => (
 );
 
 const UploadForm = () => {
-  const { setLocalImageUrl, setHostedImageUrl } = useAppState();
+  const { setLocalImageUrl, setHostedImageUrl, resetForNewImage } =
+    useAppState();
   const { mockFileUpload } = useSettingsStore();
+  const { reset: resetImageModal } = useImageModalStore();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -65,13 +68,18 @@ const UploadForm = () => {
   const [supabase] = useState(() => createClient());
   const reducedMotion = useMotionPreference();
 
-  // Check for gallery parameter on mount
+  // Check for gallery parameter on mount and reset state for fresh start
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("gallery") === "true") {
       setShowInspiration(true);
     }
-  }, []);
+
+    // Reset state when component mounts to ensure clean slate
+    // This handles page refreshes and direct navigation to upload page
+    resetForNewImage();
+    resetImageModal();
+  }, [resetForNewImage, resetImageModal]);
 
   // Get current user on component mount
   useEffect(() => {
@@ -112,6 +120,10 @@ const UploadForm = () => {
   const handleFileSelect = useCallback(
     async (file: File | null) => {
       if (!file) return;
+
+      // Reset all state when starting a new upload to prevent interference
+      resetForNewImage();
+      resetImageModal();
 
       // Check if user is authenticated (skip in mock mode)
       if (!mockFileUpload && !user) {
@@ -234,6 +246,8 @@ const UploadForm = () => {
     [
       setLocalImageUrl,
       setHostedImageUrl,
+      resetForNewImage,
+      resetImageModal,
       router,
       user,
       supabase,

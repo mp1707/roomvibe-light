@@ -7,7 +7,7 @@ import { useAppState } from "@/utils/store";
 export function StateGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const localImageUrl = useAppState((state) => state.localImageUrl);
+  const { localImageUrl, hostedImageUrl } = useAppState();
 
   // Wir brauchen einen Zustand, um zu wissen, ob die Komponente auf dem Client gemountet wurde.
   // Auf dem Server ist dieser Wert immer `false`.
@@ -19,25 +19,25 @@ export function StateGuard({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Define routes that should be protected (require localImageUrl)
-    const protectedRoutes = ["/suggestions"];
+    // Define routes that should be protected (require localImageUrl or hostedImageUrl)
+    const protectedRoutes = ["/suggestions", "/analyze"];
     const isProtectedRoute = protectedRoutes.some((route) =>
       pathname.startsWith(route)
     );
 
-    // Only redirect if we're on a protected route without an image
-    if (isClient && isProtectedRoute && !localImageUrl) {
+    // Only redirect if we're on a protected route without any image
+    if (isClient && isProtectedRoute && !localImageUrl && !hostedImageUrl) {
       router.replace("/");
     }
-  }, [isClient, pathname, localImageUrl, router]);
+  }, [isClient, pathname, localImageUrl, hostedImageUrl, router]);
 
   // Only block rendering for protected routes without an image
-  const protectedRoutes = ["/suggestions"];
+  const protectedRoutes = ["/suggestions", "/analyze"];
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
-  if (isClient && isProtectedRoute && !localImageUrl) {
+  if (isClient && isProtectedRoute && !localImageUrl && !hostedImageUrl) {
     return null; // Redirect is happening in useEffect above
   }
 

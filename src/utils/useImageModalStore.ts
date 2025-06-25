@@ -4,6 +4,7 @@ interface ImageModalState {
   imageUrl: string | null;
   openModal: (url: string) => void;
   closeModal: () => void;
+  reset: () => void;
 }
 
 export const useImageModalStore = create<ImageModalState>((set) => ({
@@ -12,6 +13,9 @@ export const useImageModalStore = create<ImageModalState>((set) => ({
     set({ imageUrl: url });
   },
   closeModal: () => {
+    set({ imageUrl: null });
+  },
+  reset: () => {
     set({ imageUrl: null });
   },
 }));
