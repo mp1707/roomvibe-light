@@ -23,6 +23,8 @@ interface AppState {
 
   // Suggestion setters
   addAppliedSuggestion: (suggestionId: string) => void;
+  removeAppliedSuggestion: (suggestionId: string) => void;
+  toggleAppliedSuggestion: (suggestionId: string) => void;
   setSuggestions: (suggestions: Suggestion[]) => void;
   setCustomSuggestions: (suggestions: Suggestion[]) => void;
   addCustomSuggestion: (suggestion: Omit<Suggestion, "id">) => void;
@@ -81,6 +83,26 @@ export const useAppState = create<AppState>((set, get) => ({
     set((state) => ({
       appliedSuggestions: new Set([...state.appliedSuggestions, suggestionId]),
     }));
+  },
+
+  removeAppliedSuggestion: (suggestionId) => {
+    set((state) => {
+      const newSet = new Set(state.appliedSuggestions);
+      newSet.delete(suggestionId);
+      return { appliedSuggestions: newSet };
+    });
+  },
+
+  toggleAppliedSuggestion: (suggestionId) => {
+    set((state) => {
+      const newSet = new Set(state.appliedSuggestions);
+      if (newSet.has(suggestionId)) {
+        newSet.delete(suggestionId);
+      } else {
+        newSet.add(suggestionId);
+      }
+      return { appliedSuggestions: newSet };
+    });
   },
 
   setSuggestions: (newSuggestions) => {

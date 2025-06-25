@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { useAppState } from "@/utils/store";
 
 interface Props {
@@ -23,13 +23,11 @@ const regularShadow =
 const activeGlow = `0 0 0 2px ${colors.glow}`;
 
 const Card = ({ title, text, className }: Props) => {
-  const { suggestionsToApply, setSuggestionsToApply } = useAppState();
-  const active = suggestionsToApply.has(title);
+  const { appliedSuggestions, toggleAppliedSuggestion } = useAppState();
+  const active = appliedSuggestions.has(title);
 
   const toggleActive = () => {
-    const newSet = new Set(suggestionsToApply);
-    active ? newSet.delete(title) : newSet.add(title);
-    setSuggestionsToApply(newSet);
+    toggleAppliedSuggestion(title);
   };
 
   const cardVariants = {
