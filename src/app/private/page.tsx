@@ -18,11 +18,11 @@ import {
 } from "@/utils/animations";
 
 interface GeneratedImage {
-  id: string;
-  original_url: string;
-  generated_url: string;
-  created_at: string;
-  suggestions_applied: string[];
+  name: string;
+  path: string;
+  publicUrl: string;
+  lastModified: string;
+  size: number;
 }
 
 export default function ProfilePage() {
@@ -39,9 +39,88 @@ export default function ProfilePage() {
   const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingImages, setIsLoadingImages] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("overview");
 
   const supabase = createClient();
+
+  // Fetch generated images from Supabase storage
+  const fetchGeneratedImages = useCallback(
+    async (userId: string, showLoading = false) => {
+      if (showLoading) setIsLoadingImages(true);
+
+      try {
+        console.log("🔍 Fetching generated images for user:", userId);
+
+        // List all files in the user's generated folder
+        const { data: files, error } = await supabase.storage
+          .from("room-images")
+          .list(`${userId}/generated`, {
+            limit: 100,
+            offset: 0,
+            sortBy: { column: "created_at", order: "desc" },
+          });
+
+        if (error) {
+          console.error("Error fetching generated images:", error);
+          if (showLoading) toast.error("Fehler beim Laden der Bilder");
+          setGeneratedImages([]);
+          return;
+        }
+
+        if (!files || files.length === 0) {
+          console.log("📷 No generated images found for user");
+          setGeneratedImages([]);
+          return;
+        }
+
+        // Get public URLs for all images
+        const imagesWithUrls: GeneratedImage[] = files
+          .filter((file) => {
+            // Filter out any folders and only include image files
+            const isImageFile = file.name.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+            return isImageFile && file.name !== ".emptyFolderPlaceholder";
+          })
+          .map((file) => {
+            const {
+              data: { publicUrl },
+            } = supabase.storage
+              .from("room-images")
+              .getPublicUrl(`${userId}/generated/${file.name}`);
+
+            return {
+              name: file.name,
+              path: `${userId}/generated/${file.name}`,
+              publicUrl,
+              lastModified:
+                file.created_at || file.updated_at || new Date().toISOString(),
+              size: file.metadata?.size || 0,
+            };
+          });
+
+        console.log(`✅ Found ${imagesWithUrls.length} generated images`);
+        setGeneratedImages(imagesWithUrls);
+
+        if (showLoading && imagesWithUrls.length > 0) {
+          toast.success(`${imagesWithUrls.length} Bilder geladen`);
+        }
+      } catch (error) {
+        console.error("Failed to fetch generated images:", error);
+        if (showLoading) toast.error("Fehler beim Laden der Bilder");
+        setGeneratedImages([]);
+      } finally {
+        if (showLoading) setIsLoadingImages(false);
+      }
+    },
+    [supabase]
+  );
+
+  // Refresh images function
+  const handleRefreshImages = useCallback(() => {
+    if (user?.id) {
+      fetchGeneratedImages(user.id, true);
+    }
+  }, [user?.id, fetchGeneratedImages]);
 
   // Fetch user data
   const fetchUserData = useCallback(async () => {
@@ -81,9 +160,8 @@ export default function ProfilePage() {
         setTransactions(transactionData);
       }
 
-      // Fetch generated images (mock data for now - would need proper storage structure)
-      // This would be implemented when we have a proper generated images table
-      setGeneratedImages([]);
+      // Fetch generated images from Supabase storage
+      await fetchGeneratedImages(user.id);
     } catch (error) {
       console.error("Error fetching user data:", error);
       toast.error("Fehler beim Laden der Profildaten");
@@ -588,40 +666,120 @@ export default function ProfilePage() {
               variants={reducedMotion ? {} : cardVariants}
               className="bg-base-100 border border-base-300 rounded-2xl p-6"
             >
-              <h3 className="text-2xl font-semibold text-base-content mb-6">
-                Generierte Bilder
-              </h3>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-2xl font-semibold text-base-content">
+                    Generierte Bilder
+                  </h3>
+                  {!isLoadingImages && generatedImages.length > 0 && (
+                    <p className="text-sm text-base-content/60 mt-1">
+                      {generatedImages.length}{" "}
+                      {generatedImages.length === 1 ? "Bild" : "Bilder"}{" "}
+                      verfügbar
+                    </p>
+                  )}
+                </div>
+                <motion.button
+                  onClick={handleRefreshImages}
+                  disabled={isLoadingImages}
+                  variants={reducedMotion ? {} : buttonVariants}
+                  whileHover={reducedMotion ? {} : "hover"}
+                  whileTap={reducedMotion ? {} : "tap"}
+                  className="flex items-center gap-2 px-4 py-2 bg-base-100 border border-base-300 hover:bg-base-200 hover:border-base-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium text-base-content transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
+                >
+                  <svg
+                    className={`w-4 h-4 ${
+                      isLoadingImages ? "animate-spin" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  {isLoadingImages ? "Lädt..." : "Aktualisieren"}
+                </motion.button>
+              </div>
 
-              {generatedImages.length > 0 ? (
+              {isLoadingImages ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {generatedImages.map((image) => (
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="bg-base-200 rounded-2xl overflow-hidden animate-pulse"
+                    >
+                      <div className="aspect-[4/3] bg-base-300" />
+                      <div className="p-4 space-y-2">
+                        <div className="h-4 bg-base-300 rounded w-3/4" />
+                        <div className="h-3 bg-base-300 rounded w-1/2" />
+                        <div className="h-3 bg-base-300 rounded w-1/4" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : generatedImages.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {generatedImages.map((image, index) => (
                     <motion.div
-                      key={image.id}
-                      className="bg-base-200 rounded-2xl overflow-hidden"
+                      key={`${image.path}-${index}`}
+                      className="bg-base-200 rounded-2xl overflow-hidden group cursor-pointer"
                       whileHover={{ scale: 1.02 }}
                       transition={{
                         type: "spring",
                         stiffness: 400,
                         damping: 30,
                       }}
+                      onClick={() => window.open(image.publicUrl, "_blank")}
                     >
                       <div className="aspect-[4/3] relative">
                         <Image
-                          src={image.generated_url}
+                          src={image.publicUrl}
                           alt="Generiertes Bild"
                           fill
                           className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+                          <svg
+                            className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </div>
                       </div>
                       <div className="p-4">
+                        <p className="text-sm font-medium text-base-content truncate mb-1">
+                          {image.name
+                            .replace(/^\d+-\w+\./, "")
+                            .replace(/\.(jpg|jpeg|png|webp|gif)$/i, "")}
+                        </p>
                         <p className="text-sm text-base-content/60">
-                          {new Date(image.created_at).toLocaleDateString(
-                            "de-DE"
+                          {new Date(image.lastModified).toLocaleDateString(
+                            "de-DE",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
                           )}
                         </p>
                         <p className="text-xs text-base-content/50 mt-1">
-                          {image.suggestions_applied.length} Vorschläge
-                          angewendet
+                          {(image.size / 1024 / 1024).toFixed(1)} MB
                         </p>
                       </div>
                     </motion.div>
@@ -629,25 +787,54 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-base-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    🖼️
-                  </div>
-                  <h4 className="text-lg font-semibold text-base-content mb-2">
-                    Keine generierten Bilder
-                  </h4>
-                  <p className="text-base-content/60 mb-6">
-                    Sie haben noch keine Bilder mit unserer KI generiert.
-                  </p>
-                  <Link href="/">
-                    <motion.button
-                      variants={reducedMotion ? {} : buttonVariants}
-                      whileHover={reducedMotion ? {} : "hover"}
-                      whileTap={reducedMotion ? {} : "tap"}
-                      className="px-6 py-3 bg-primary text-primary-content rounded-xl font-medium hover:bg-primary-focus transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-20 h-20 bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-6"
+                  >
+                    <svg
+                      className="w-10 h-10 text-primary/60"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      Erstes Bild hochladen
-                    </motion.button>
-                  </Link>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </motion.div>
+                  <h4 className="text-xl font-semibold text-base-content mb-3">
+                    Noch keine Bilder generiert
+                  </h4>
+                  <p className="text-base-content/60 mb-6 max-w-md mx-auto">
+                    Laden Sie ein Raumbild hoch und lassen Sie unsere KI es mit
+                    Ihren Wunschvorstellungen transformieren.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link href="/">
+                      <motion.button
+                        variants={reducedMotion ? {} : buttonVariants}
+                        whileHover={reducedMotion ? {} : "hover"}
+                        whileTap={reducedMotion ? {} : "tap"}
+                        className="px-6 py-3 bg-primary text-primary-content rounded-xl font-medium hover:bg-primary-focus transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      >
+                        Erstes Bild hochladen
+                      </motion.button>
+                    </Link>
+                    <Link href="/inspiration">
+                      <motion.button
+                        variants={reducedMotion ? {} : buttonVariants}
+                        whileHover={reducedMotion ? {} : "hover"}
+                        whileTap={reducedMotion ? {} : "tap"}
+                        className="px-6 py-3 bg-base-200 text-base-content rounded-xl font-medium hover:bg-base-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      >
+                        Inspiration finden
+                      </motion.button>
+                    </Link>
+                  </div>
                 </div>
               )}
             </motion.div>

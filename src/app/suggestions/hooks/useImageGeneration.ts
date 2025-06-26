@@ -8,6 +8,7 @@ import {
   getGeneratePromptEndpoint,
   getPredictionEndpoint,
 } from "@/utils/apiHelpers";
+import { uploadImageFromUrl, getCurrentUserId } from "@/utils/imageUploadUtils";
 
 // Constants
 const POLLING_INTERVAL = 1000;
@@ -178,6 +179,55 @@ export const useImageGeneration = (): UseImageGenerationReturn => {
     [setPrediction]
   );
 
+  // Upload generated image to Supabase storage
+  const uploadGeneratedImageToStorage = useCallback(
+    async (prediction: PredictionStatus): Promise<void> => {
+      try {
+        // Get the current user ID
+        const userId = await getCurrentUserId();
+        if (!userId) {
+          console.warn("No user ID available for image upload");
+          return;
+        }
+
+        // Extract image URL from prediction output
+        let generatedImageUrl: string | null = null;
+        if (prediction.output) {
+          if (Array.isArray(prediction.output)) {
+            generatedImageUrl = prediction.output[0] || null;
+          } else if (typeof prediction.output === "string") {
+            generatedImageUrl = prediction.output;
+          }
+        }
+
+        if (!generatedImageUrl) {
+          console.warn("No generated image URL found in prediction output");
+          return;
+        }
+
+        console.log("🔄 Uploading generated image to Supabase storage...");
+
+        // Upload the generated image to userid/generated folder
+        const uploadedUrl = await uploadImageFromUrl(
+          generatedImageUrl,
+          userId,
+          "generated",
+          `roomvibe-generated-${Date.now()}.jpg`
+        );
+
+        console.log("✅ Generated image uploaded to Supabase:", uploadedUrl);
+
+        // Optionally update the store with the new Supabase URL
+        // The prediction already contains the original URL, but we could track the Supabase URL too
+      } catch (error) {
+        console.error("Failed to upload generated image to storage:", error);
+        // Don't throw here as this shouldn't break the generation flow
+        // The original image URL from the prediction service is still valid
+      }
+    },
+    []
+  );
+
   // Extracted status checking logic
   const checkPredictionStatus = useCallback(
     async (predictionId: string): Promise<void> => {
@@ -217,6 +267,10 @@ export const useImageGeneration = (): UseImageGenerationReturn => {
             setGenerationProgress(PROGRESS_STEPS.COMPLETE);
             setPrediction(prediction);
             setIsGenerating(false);
+
+            // Upload generated image to Supabase storage
+            await uploadGeneratedImageToStorage(prediction);
+
             return;
           } else if (
             prediction.status === "failed" ||
@@ -240,7 +294,12 @@ export const useImageGeneration = (): UseImageGenerationReturn => {
       setIsGenerating(false);
       throw new Error(timeoutError);
     },
-    [setPrediction, setIsGenerating, setGenerationError]
+    [
+      setPrediction,
+      setIsGenerating,
+      setGenerationError,
+      uploadGeneratedImageToStorage,
+    ]
   );
 
   // Extracted credits deduction logic

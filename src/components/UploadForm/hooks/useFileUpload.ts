@@ -101,33 +101,38 @@ export const useFileUpload = () => {
       }, 100);
 
       try {
+        // Create FormData to send the file
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // Upload using the updated API with user-specific folder structure
         const fileExt = file.name.split(".").pop();
-        const fileName = `${user.id}/${Date.now()}-${Math.random()
-          .toString(36)
-          .substring(2)}.${fileExt}`;
+        const response = await fetch(
+          `/api/uploadImage?filename=${encodeURIComponent(
+            file.name
+          )}&folder=original&userId=${user.id}`,
+          {
+            method: "POST",
+            body: file,
+          }
+        );
 
-        const { data, error } = await supabase.storage
-          .from("room-images")
-          .upload(fileName, file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Upload failed");
+        }
 
-        if (error) throw error;
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("room-images").getPublicUrl(data.path);
+        const result = await response.json();
 
         setUploadProgress(100);
         clearInterval(progressInterval);
-        return publicUrl;
+        return result.url;
       } catch (error) {
         clearInterval(progressInterval);
         throw error;
       }
     },
-    [user, supabase]
+    [user]
   );
 
   const handleFileUpload = useCallback(
