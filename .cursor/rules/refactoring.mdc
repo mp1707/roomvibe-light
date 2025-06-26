@@ -1,0 +1,161 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Refactoring Principles & Best Practices
+Here are your established principles, expanded with best practices for your stack:
+
+1. Use Early Returns for Clarity
+Principle: Employ early returns (or guard clauses) to reduce nesting and make function logic more linear and readable. This is especially useful for handling validation, permissions, or loading states at the beginning of a function or component.
+
+Best Practice: In React components, use early returns to handle loading, error, and null or undefined data states before the main component logic. This keeps your primary JSX clean and focused on the "happy path."
+
+// Instead of this:
+const MyComponent = ({ data, isLoading, error }) => {
+  if (!isLoading) {
+    if (!error) {
+      if (data) {
+        return <div>{data.title}</div>;
+      } else {
+        return <div>No data available</div>;
+      }
+    } else {
+      return <div>Error: {error.message}</div>;
+    }
+  } else {
+    return <div>Loading...</div>;
+  }
+};
+
+// Use this:
+const MyComponent = ({ data, isLoading, error }) => {
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return <div>No data available</div>;
+
+  return <div>{data.title}</div>;
+};
+
+2. Embrace Self-Closing Tags
+Principle: Use self-closing tags for components that don't have children. This reduces visual clutter and makes the code more concise.
+
+Best Practice: Always use self-closing tags for elements like <Image />, <Input />, or any custom component that doesn't wrap other elements. This is a standard convention in React/JSX.
+
+// Instead of:
+<Divider></Divider>
+
+// Use:
+<Divider />
+
+3. Single Responsibility Principle for Components
+Principle: Create small, focused components that serve a single, well-defined purpose.
+
+Best Practice:
+
+Component Decomposition: If a component handles multiple concerns (e.g., state management, data fetching, and rendering complex UI), break it down into smaller, more specialized components. For example, a UserDashboard component might be composed of UserProfile, UserPosts, and UserSettings components.
+
+Container/Presenter Pattern: Separate data-fetching and logic (container) from UI rendering (presenter). Custom hooks have largely streamlined this pattern. A component can use a hook for logic and then pass the necessary data and functions down to purely presentational child components.
+
+4. Create Pure Functions
+Principle: Write pure functions whenever possible. A pure function is a function that, given the same input, will always return the same output and has no side effects.
+
+Best Practice:
+
+Utils/Helpers: Externalize complex calculations, data transformations, or formatting logic into a utils or helpers directory. This makes the logic reusable and easily testable in isolation.
+
+Memoization: For computationally expensive pure functions within a component, use React.useMemo to cache the result and avoid unnecessary recalculations on re-renders.
+
+5. Single Responsibility Principle for Functions and Hooks
+Principle: Just like components, functions and hooks should be small, readable, and serve a single purpose.
+
+Best Practice:
+
+Custom Hooks: If you find yourself repeating logic across multiple components (e.g., fetching data, managing form state, interacting with localStorage), extract it into a custom hook. A hook like useUserData(userId) is much cleaner than repeating the fetching logic in every component that needs user data.
+
+Clear Naming: Use descriptive names for your functions and hooks that clearly indicate their purpose (e.g., formatDate, useFormInput, calculateTotalPrice).
+
+6. Adhere to DRY (Don't Repeat Yourself) Principles
+Principle: Write DRY code when it is practical and beneficial.
+
+Best Practice:
+
+Component Props: Reuse components by making them configurable through props. Instead of creating two similar components, create one that accepts props to handle the variations.
+Higher-Order Components (HOCs) / Render Props: While hooks are often preferred, HOCs and render props are still powerful patterns for sharing component logic.
+
+Utility Classes: Leverage Tailwind CSS's utility-first approach to avoid writing custom CSS. If you find yourself repeating the same combination of utilities, use @apply in a CSS file to create a reusable class or create a new component.
+
+Cursor Rules for Manual Refactoring (cursor.sh)
+You can add these rules to your cursor.sh or .cursor/rules.sh file. You can then invoke them manually by highlighting a block of code, opening the command palette (Cmd+K or Ctrl+K), and typing the name of the rule.
+
+# .cursor/rules.sh
+
+# Rule to refactor a function or component to use early returns
+# Select a function or component and run this rule.
+refactor:early-returns() {
+  cat <<EOF
+You are an expert at refactoring React/TypeScript code for clarity.
+Analyze the following code and refactor it to use early returns (guard clauses) to reduce nesting and improve readability.
+Prioritize handling loading, error, and null/undefined states at the beginning of the function or component.
+Only provide the refactored code block.
+EOF
+}
+
+# Rule to convert applicable elements to self-closing tags
+# Select a JSX block and run this rule.
+refactor:self-closing-tags() {
+  cat <<EOF
+You are an expert in React/JSX syntax.
+Review the following JSX code and convert any elements that can be self-closing (i.e., have no children) to their self-closing form (e.g., <div />).
+Only provide the refactored code block.
+EOF
+}
+
+# Rule to break down a large component into smaller components
+# Select a large component and run this rule.
+refactor:decompose-component() {
+  cat <<EOF
+You are an expert in React component architecture and the Single Responsibility Principle.
+Analyze the following large React component. Identify distinct sections of logic and UI that can be extracted into smaller, reusable components.
+Refactor the original component to use these new, smaller components.
+Provide the complete refactored code, including the new child components and the updated parent component.
+The new components should be defined within the same file for simplicity, but clearly separated.
+EOF
+}
+
+# Rule to extract logic into a pure function
+# Select a block of code within a component that performs a calculation or data transformation.
+refactor:extract-pure-function() {
+  cat <<EOF
+You are an expert at writing clean, functional JavaScript/TypeScript.
+Analyze the selected code block. Extract this logic into a pure function.
+The function should be defined outside the component.
+Then, update the original component to call this new function.
+Provide the complete refactored code, including the new pure function and the updated component.
+EOF
+}
+
+# Rule to extract component logic into a custom hook
+# Select a React component that contains state management and/or effect logic.
+refactor:extract-hook() {
+  cat <<EOF
+You are an expert in React Hooks.
+Analyze the following React component. Identify state management logic (useState, useReducer), side effects (useEffect), or context interactions (useContext) that can be extracted into a reusable custom hook.
+Create a new custom hook (e.g., 'useMyLogic') that encapsulates this logic.
+Refactor the original component to use the new custom hook.
+Provide the complete refactored code, including the new custom hook and the updated component.
+EOF
+}
+
+# Rule to identify and abstract repeated JSX patterns
+# Select a component that contains similar-looking JSX blocks.
+refactor:dry-jsx() {
+  cat <<EOF
+You are an expert at writing DRY (Don't Repeat Yourself) React code.
+Analyze the following component's JSX. Identify repeated or very similar JSX structures.
+Refactor the code to eliminate this repetition. This might involve creating a new, reusable component, or using a loop (e.g., .map()) with a configuration array.
+Provide the complete refactored code, showing how the repetition was removed.
+EOF
+}
+
+By combining these enhanced principles with the power of custom Cursor rules, you can create a highly efficient and quality-focused refactoring workflow.

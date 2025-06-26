@@ -4,6 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSettingsStore } from "@/utils/settingsStore";
 import { useState } from "react";
 import Link from "next/link";
+import {
+  SettingsIcon,
+  EyeIcon,
+  ImageIcon,
+  UploadIconSmall,
+  BackIconSmall,
+} from "@/components/Icons";
 
 // Animation variants following design system
 const pageVariants = {
@@ -37,6 +44,113 @@ const previewVariants = {
   exit: { opacity: 0, scale: 0.95 },
 };
 
+// Pure functions
+const getStatusColor = (isMockMode: boolean): string => {
+  return isMockMode ? "text-warning" : "text-success";
+};
+
+const getStatusText = (isMockMode: boolean): string => {
+  return isMockMode ? "Mock-Modus" : "Live API";
+};
+
+const createPreviewImage = (src: string, alt: string) => ({
+  src,
+  alt,
+});
+
+// Custom hook for reset confirmation logic
+const useResetConfirmation = () => {
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const { resetSettings } = useSettingsStore();
+
+  const handleReset = () => {
+    if (showResetConfirm) {
+      resetSettings();
+      setShowResetConfirm(false);
+    } else {
+      setShowResetConfirm(true);
+      setTimeout(() => setShowResetConfirm(false), 3000);
+    }
+  };
+
+  return { showResetConfirm, handleReset };
+};
+
+// Preview images data
+const mockGenerationImages = [
+  createPreviewImage("/assets/images/mockResult.png", "Mock Ergebnis 1"),
+  createPreviewImage("/assets/images/hero.png", "Mock Ergebnis 2"),
+];
+
+const mockUploadImage = createPreviewImage(
+  "https://media.istockphoto.com/id/2175713816/de/foto/elegantes-wohnzimmer-mit-beigem-sofa-und-kamin.jpg?s=2048x2048&w=is&k=20&c=E9JrU7zYWFLQsEJQf0fXJyiVECM6tsIyKgSNNp-cEkc%3D",
+  "Mock Upload Beispiel"
+);
+
+// Reusable Preview Component
+interface PreviewSectionProps {
+  isVisible: boolean;
+  title: string;
+  icon: React.ReactNode;
+  images: Array<{ src: string; alt: string }>;
+  isMultiple?: boolean;
+}
+
+const PreviewSection = ({
+  isVisible,
+  title,
+  icon,
+  images,
+  isMultiple = false,
+}: PreviewSectionProps) => (
+  <AnimatePresence>
+    {isVisible && (
+      <motion.div
+        variants={previewVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ duration: 0.2 }}
+        className="bg-base-200/50 rounded-lg border border-base-300/50 p-3 ml-4"
+      >
+        <h4 className="text-sm font-medium text-base-content mb-2 flex items-center gap-2">
+          {icon}
+          {title}
+        </h4>
+        <div className={`flex gap-2 ${isMultiple ? "" : ""}`}>
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="w-16 h-16 rounded-lg overflow-hidden border border-base-300"
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
+
+// Reusable Status Item Component
+interface StatusItemProps {
+  label: string;
+  isMockMode: boolean;
+}
+
+const StatusItem = ({ label, isMockMode }: StatusItemProps) => (
+  <div className="flex justify-between">
+    <span className="text-base-content/60">{label}:</span>
+    <span className={`font-medium ${getStatusColor(isMockMode)}`}>
+      {getStatusText(isMockMode)}
+    </span>
+  </div>
+);
+
 // Toggle Switch Component following design system
 interface ToggleSwitchProps {
   enabled: boolean;
@@ -46,13 +160,13 @@ interface ToggleSwitchProps {
   icon?: React.ReactNode;
 }
 
-function ToggleSwitch({
+const ToggleSwitch = ({
   enabled,
   onChange,
   label,
   description,
   icon,
-}: ToggleSwitchProps) {
+}: ToggleSwitchProps) => {
   return (
     <motion.div
       variants={cardVariants}
@@ -99,7 +213,30 @@ function ToggleSwitch({
       </div>
     </motion.div>
   );
-}
+};
+
+// Status section component
+const StatusSection = ({
+  mockImageAnalysis,
+  mockImageGeneration,
+  mockFileUpload,
+}: {
+  mockImageAnalysis: boolean;
+  mockImageGeneration: boolean;
+  mockFileUpload: boolean;
+}) => (
+  <motion.div
+    variants={cardVariants}
+    className="bg-base-200 rounded-lg border border-base-300 p-4 mb-6"
+  >
+    <h3 className="font-medium text-base-content mb-2">Aktueller Status</h3>
+    <div className="space-y-1 text-sm">
+      <StatusItem label="Bildanalyse" isMockMode={mockImageAnalysis} />
+      <StatusItem label="Bildgenerierung" isMockMode={mockImageGeneration} />
+      <StatusItem label="Datei-Upload" isMockMode={mockFileUpload} />
+    </div>
+  </motion.div>
+);
 
 export default function SettingsPage() {
   const {
@@ -109,21 +246,9 @@ export default function SettingsPage() {
     setMockImageAnalysis,
     setMockImageGeneration,
     setMockFileUpload,
-    resetSettings,
   } = useSettingsStore();
 
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-
-  const handleReset = () => {
-    if (showResetConfirm) {
-      resetSettings();
-      setShowResetConfirm(false);
-    } else {
-      setShowResetConfirm(true);
-      // Auto-hide confirmation after 3 seconds
-      setTimeout(() => setShowResetConfirm(false), 3000);
-    }
-  };
+  const { showResetConfirm, handleReset } = useResetConfirmation();
 
   return (
     <motion.div
@@ -139,43 +264,13 @@ export default function SettingsPage() {
           href="/"
           className="inline-flex items-center gap-2 text-base-content/60 hover:text-base-content transition-colors mb-4 group"
         >
-          <svg
-            className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
+          <BackIconSmall />
           Zurück zur Startseite
         </Link>
 
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-primary/10 rounded-lg">
-            <svg
-              className="w-6 h-6 text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
+            <SettingsIcon />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-base-content">
             Entwickler-Einstellungen
@@ -200,27 +295,7 @@ export default function SettingsPage() {
           onChange={setMockImageAnalysis}
           label="Mock Bildanalyse"
           description="Verwendet Mock-Daten anstelle der OpenAI Vision API für die Raumanalyse. Spart API-Kosten während der Entwicklung."
-          icon={
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </svg>
-          }
+          icon={<EyeIcon />}
         />
 
         <ToggleSwitch
@@ -228,170 +303,39 @@ export default function SettingsPage() {
           onChange={setMockImageGeneration}
           label="Mock Bildgenerierung"
           description="Verwendet vorhandene Beispielbilder anstelle der Replicate API für die Bildgenerierung. Spart API-Kosten während der Entwicklung."
-          icon={
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          }
+          icon={<ImageIcon />}
         />
 
-        {/* Mock Image Generation Preview */}
-        <AnimatePresence>
-          {mockImageGeneration && (
-            <motion.div
-              variants={previewVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ duration: 0.2 }}
-              className="bg-base-200/50 rounded-lg border border-base-300/50 p-3 ml-4"
-            >
-              <h4 className="text-sm font-medium text-base-content mb-2 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                Beispielbilder werden generiert
-              </h4>
-              <div className="flex gap-2">
-                <div className="w-16 h-16 rounded-lg overflow-hidden border border-base-300">
-                  <img
-                    src="/assets/images/mockResult.png"
-                    alt="Mock Ergebnis 1"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="w-16 h-16 rounded-lg overflow-hidden border border-base-300">
-                  <img
-                    src="/assets/images/hero.png"
-                    alt="Mock Ergebnis 2"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <PreviewSection
+          isVisible={mockImageGeneration}
+          title="Beispielbilder werden generiert"
+          icon={<ImageIcon />}
+          images={mockGenerationImages}
+          isMultiple={true}
+        />
 
         <ToggleSwitch
           enabled={mockFileUpload}
           onChange={setMockFileUpload}
           label="Mock Datei-Upload"
           description="Simuliert das Hochladen von Dateien ohne tatsächlich Supabase Storage zu verwenden. Spart API-Kosten und ermöglicht Offline-Entwicklung."
-          icon={
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
-          }
+          icon={<UploadIconSmall />}
         />
 
-        {/* Mock File Upload Preview */}
-        <AnimatePresence>
-          {mockFileUpload && (
-            <motion.div
-              variants={previewVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ duration: 0.2 }}
-              className="bg-base-200/50 rounded-lg border border-base-300/50 p-3 ml-4"
-            >
-              <h4 className="text-sm font-medium text-base-content mb-2 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                Beispielbild wird verwendet
-              </h4>
-              <div className="w-16 h-16 rounded-lg overflow-hidden border border-base-300">
-                <img
-                  src="https://media.istockphoto.com/id/2175713816/de/foto/elegantes-wohnzimmer-mit-beigem-sofa-und-kamin.jpg?s=2048x2048&w=is&k=20&c=E9JrU7zYWFLQsEJQf0fXJyiVECM6tsIyKgSNNp-cEkc%3D"
-                  alt="Mock Upload Beispiel"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <PreviewSection
+          isVisible={mockFileUpload}
+          title="Beispielbild wird verwendet"
+          icon={<UploadIconSmall />}
+          images={[mockUploadImage]}
+        />
       </motion.div>
 
       {/* Status Info */}
-      <motion.div
-        variants={cardVariants}
-        className="bg-base-200 rounded-lg border border-base-300 p-4 mb-6"
-      >
-        <h3 className="font-medium text-base-content mb-2">Aktueller Status</h3>
-        <div className="space-y-1 text-sm">
-          <div className="flex justify-between">
-            <span className="text-base-content/60">Bildanalyse:</span>
-            <span
-              className={`font-medium ${
-                mockImageAnalysis ? "text-warning" : "text-success"
-              }`}
-            >
-              {mockImageAnalysis ? "Mock-Modus" : "Live API"}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-base-content/60">Bildgenerierung:</span>
-            <span
-              className={`font-medium ${
-                mockImageGeneration ? "text-warning" : "text-success"
-              }`}
-            >
-              {mockImageGeneration ? "Mock-Modus" : "Live API"}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-base-content/60">Datei-Upload:</span>
-            <span
-              className={`font-medium ${
-                mockFileUpload ? "text-warning" : "text-success"
-              }`}
-            >
-              {mockFileUpload ? "Mock-Modus" : "Live API"}
-            </span>
-          </div>
-        </div>
-      </motion.div>
+      <StatusSection
+        mockImageAnalysis={mockImageAnalysis}
+        mockImageGeneration={mockImageGeneration}
+        mockFileUpload={mockFileUpload}
+      />
 
       {/* Actions */}
       <motion.div variants={cardVariants} className="flex gap-3">
