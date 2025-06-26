@@ -26,6 +26,17 @@ const nextConfig: NextConfig = {
         port: "3000",
         pathname: "/**",
       },
+      // Add Google's image domains for profile pictures
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
+        pathname: "/**",
+      },
     ],
   },
 };
