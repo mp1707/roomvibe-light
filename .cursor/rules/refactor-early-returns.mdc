@@ -1,0 +1,66 @@
+---
+description:  converting nested conditions to early returns
+globs: 
+alwaysApply: false
+---
+# Refactor: Early Returns
+
+You are an expert at refactoring React/TypeScript code for clarity and readability.
+
+Analyze the selected code and refactor it to use early returns (guard clauses) to:
+
+- Reduce nesting levels and improve readability
+- Handle edge cases first before main logic
+- Make the happy path more prominent
+
+## Best Practices for React Components
+
+- Handle loading states first: `if (isLoading) return <LoadingSpinner />`
+- Handle error states second: `if (error) return <ErrorMessage error={error} />`
+- Handle null/undefined data: `if (!data) return <EmptyState />`
+- Handle permission checks early: `if (!hasPermission) return <UnauthorizedAccess />`
+
+## Best Practices for Functions
+
+- Validate parameters first: `if (!param) throw new Error('Parameter required')`
+- Handle error conditions early: `if (errorCondition) return defaultValue`
+- Check edge cases before main logic: `if (array.length === 0) return []`
+
+## Example Transformation
+
+```typescript
+// Before (nested)
+const Component = ({ data, isLoading, error }) => {
+  if (!isLoading) {
+    if (!error) {
+      if (data) {
+        return <div>{data.title}</div>;
+      } else {
+        return <div>No data</div>;
+      }
+    } else {
+      return <div>Error: {error.message}</div>;
+    }
+  } else {
+    return <div>Loading...</div>;
+  }
+};
+
+// After (early returns)
+const Component = ({ data, isLoading, error }) => {
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return <div>No data</div>;
+
+  return <div>{data.title}</div>;
+};
+```
+
+## Usage
+
+1. Select the code you want to refactor
+2. Open command palette (Cmd+K or Ctrl+K)
+3. Type "refactor-early-returns"
+4. Apply the refactoring
+
+Only provide the refactored code with clear improvements.

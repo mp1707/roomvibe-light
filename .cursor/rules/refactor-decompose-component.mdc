@@ -1,0 +1,89 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Refactor: Decompose Component
+
+You are an expert in React component architecture and the Single Responsibility Principle.
+
+Analyze the selected large React component and decompose it by:
+
+- Identifying distinct UI sections that can be extracted
+- Separating data fetching logic from presentation
+- Creating smaller, reusable components with single responsibilities
+- Maintaining proper TypeScript typing throughout
+
+## Component Extraction Guidelines
+
+- Extract complex UI sections (e.g., `UserProfile`, `PostList`, `NavigationMenu`)
+- Separate form logic into dedicated form components
+- Create presentational components that only receive props
+- Use container/presenter pattern for data vs UI logic
+- Extract reusable UI patterns into shared components
+
+## TypeScript Best Practices
+
+- Define proper interfaces for all component props
+- Use generic types when components are reusable
+- Export component prop types for reuse
+- Use proper event handler typing
+
+## Example Structure
+
+```typescript
+// Extract into smaller components
+interface UserProfileProps {
+  user: User;
+  onEdit: (user: User) => void;
+}
+
+const UserProfile: React.FC<UserProfileProps> = ({ user, onEdit }) => {
+  // Focused on user profile display
+};
+
+interface PostListProps {
+  posts: Post[];
+  onPostClick: (postId: string) => void;
+}
+
+const PostList: React.FC<PostListProps> = ({ posts, onPostClick }) => {
+  // Focused on post list display
+};
+
+// Main component uses smaller components
+const UserDashboard: React.FC<UserDashboardProps> = ({ userId }) => {
+  // Data fetching and orchestration only
+  return (
+    <div>
+      <UserProfile user={user} onEdit={handleUserEdit} />
+      <PostList posts={posts} onPostClick={handlePostClick} />
+    </div>
+  );
+};
+```
+
+## Folder Structure Recommendation
+
+For complex components, create dedicated folders:
+
+```
+/UserDashboard/
+├── UserDashboard.tsx      # Main component
+├── index.ts              # Barrel export
+├── components/           # Sub-components
+│   ├── UserProfile.tsx
+│   ├── PostList.tsx
+│   └── PostCard.tsx
+└── hooks/               # Component-specific hooks
+    └── useUserDashboard.ts
+```
+
+## Usage
+
+1. Select a large component (>150 lines)
+2. Open command palette (Cmd+K or Ctrl+K)
+3. Type "refactor-decompose-component"
+4. Apply the refactoring
+
+Provide the complete refactored code with all extracted components and proper TypeScript interfaces.

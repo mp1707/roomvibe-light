@@ -1,0 +1,145 @@
+---
+description: extracting component logic into custom hooks
+globs: 
+alwaysApply: false
+---
+# Refactor: Extract Hook
+
+You are an expert in React Hooks and state management patterns.
+
+Analyze the selected React component and extract reusable logic into custom hooks:
+
+- Identify state management patterns (useState, useReducer, useContext)
+- Extract side effects and data fetching logic (useEffect)
+- Create reusable business logic hooks
+- Maintain proper TypeScript typing
+
+## Hook Extraction Guidelines
+
+- Create hooks for data fetching: `useUserData`, `useApiCall`, `usePagination`
+- Extract form management: `useFormState`, `useFormValidation`
+- Create UI state hooks: `useModal`, `useToggle`, `useLocalStorage`
+- Extract complex business logic into domain-specific hooks
+- Handle loading, error, and success states consistently
+
+## TypeScript Best Practices
+
+- Define return types for custom hooks
+- Use generic types for reusable hooks
+- Create proper interfaces for hook parameters and return values
+- Use discriminated unions for complex state
+
+## Example Extraction
+
+```typescript
+// Before (logic in component)
+const UserProfile = ({ userId }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const userData = await api.getUser(userId);
+        setUser(userData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  // Component JSX...
+};
+
+// After (extracted custom hook)
+interface UseUserDataReturn {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+const useUserData = (userId: string): UseUserDataReturn => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchUser = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userData = await api.getUser(userId);
+      setUser(userData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  return { user, loading, error, refetch: fetchUser };
+};
+
+// Updated component
+const UserProfile = ({ userId }: { userId: string }) => {
+  const { user, loading, error, refetch } = useUserData(userId);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!user) return <div>User not found</div>;
+
+  // Component JSX with user data...
+};
+```
+
+## Common Hook Patterns
+
+```typescript
+// Form management hook
+const useFormState = <T>(initialValues: T) => {
+  const [values, setValues] = useState<T>(initialValues);
+  const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
+
+  const handleChange = useCallback((field: keyof T, value: T[keyof T]) => {
+    setValues(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: undefined }));
+  }, []);
+
+  const reset = useCallback(() => {
+    setValues(initialValues);
+    setErrors({});
+  }, [initialValues]);
+
+  return { values, errors, handleChange, setErrors, reset };
+};
+
+// Toggle hook
+const useToggle = (initialValue = false) => {
+  const [value, setValue] = useState(initialValue);
+  
+  const toggle = useCallback(() => setValue(prev => !prev), []);
+  const setTrue = useCallback(() => setValue(true), []);
+  const setFalse = useCallback(() => setValue(false), []);
+
+  return { value, toggle, setTrue, setFalse };
+};
+```
+
+## Usage
+
+1. Select a component with complex state logic
+2. Open command palette (Cmd+K or Ctrl+K)
+3. Type "refactor-extract-hook"
+4. Apply the refactoring
+
+Provide the complete refactored code with custom hook and updated component.

@@ -1,0 +1,198 @@
+---
+description: Accessibility requirements - WCAG 2.2 AA compliance patterns, ARIA requirements, and keyboard navigation
+globs: 
+alwaysApply: false
+---
+# Accessibility Requirements (WCAG 2.2 AA)
+
+## Essential Patterns
+
+```typescript
+// ✅ Focus states
+className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+
+// ✅ Color contrast - ensure 4.5:1 ratio
+// Test all color combinations
+
+// ✅ Keyboard navigation
+onKeyDown={(e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    handleClick()
+  }
+}}
+
+// ✅ Screen reader support
+<button aria-label="Apply this color suggestion to walls">
+  <span aria-hidden="true">✓</span>
+</button>
+```
+
+## Required ARIA Patterns
+
+- Use semantic HTML first
+- Add ARIA only when semantic HTML isn't sufficient
+- Always provide meaningful labels
+
+### Interactive Elements
+
+```typescript
+// ✅ Proper button with accessibility
+<button
+  type="button"
+  className="
+    px-4 py-2 bg-primary text-primary-content rounded-lg
+    focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+    hover:bg-primary/90 transition-colors
+  "
+  onClick={handleClick}
+  aria-label="Submit form data"
+  tabIndex={0}
+>
+  Click me
+</button>
+
+// ❌ Bad - div with onClick
+<div className="button" onClick={handleClick}>
+  Click me
+</div>
+```
+
+### Modal/Dialog Accessibility
+
+```typescript
+{isOpen && (
+  <div
+    className="fixed inset-0 bg-black/50 flex items-center justify-center"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-describedby="modal-description"
+  >
+    <div className="bg-base-100 rounded-lg p-6 max-w-md w-full mx-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 id="modal-title" className="text-xl font-bold">
+          Modal Title
+        </h2>
+        <button
+          type="button"
+          onClick={closeModal}
+          className="
+            p-1 hover:bg-base-200 rounded
+            focus:outline-none focus:ring-2 focus:ring-primary
+          "
+          aria-label="Close modal"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <p id="modal-description">
+        Modal content that describes what this dialog is for
+      </p>
+    </div>
+  </div>
+)}
+```
+
+### Form Accessibility
+
+```typescript
+<form onSubmit={handleSubmit} aria-label="User registration form">
+  <div className="mb-4">
+    <label htmlFor="email" className="block text-sm font-medium mb-2">
+      Email Address
+    </label>
+    <input
+      id="email"
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="
+        w-full p-2 border border-base-300 rounded-lg
+        focus:ring-2 focus:ring-primary focus:border-primary
+      "
+      aria-describedby={emailError ? "email-error" : undefined}
+      aria-invalid={!!emailError}
+      required
+    />
+    {emailError && (
+      <div id="email-error" role="alert" className="text-error text-sm mt-1">
+        {emailError}
+      </div>
+    )}
+  </div>
+
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className="
+      w-full py-2 px-4 bg-primary text-primary-content rounded-lg
+      disabled:opacity-50 disabled:cursor-not-allowed
+      focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+    "
+    aria-describedby="submit-status"
+  >
+    {isSubmitting ? 'Wird verarbeitet...' : 'Registrieren'}
+  </button>
+
+  <div id="submit-status" className="sr-only" aria-live="polite">
+    {submitStatus}
+  </div>
+</form>
+```
+
+### Focus Management
+
+```typescript
+const Modal = ({ isOpen, onClose, children }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      modalRef.current?.focus();
+    } else {
+      previousFocusRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      ref={modalRef}
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      className="modal-overlay"
+    >
+      {children}
+    </div>
+  );
+};
+```
+
+## Required Checks
+
+- [ ] Color contrast meets WCAG 2.2 AA standards (4.5:1 ratio)
+- [ ] Components work in both light and dark themes
+- [ ] Animations respect `prefers-reduced-motion`
+- [ ] All interactive elements are keyboard accessible
+- [ ] Loading states are implemented for all async operations
+- [ ] Error boundaries are in place
+- [ ] Screen reader announcements for dynamic content
+
+## Accessibility Standards
+
+- **Focus ring**: 2px solid primary with 2px offset
+- **Contrast**: 4.5:1 minimum for normal text
+- **Font size**: 16px minimum for body text
+- **Touch targets**: 44px minimum for mobile
+- **Heading hierarchy**: Proper h1 → h2 → h3 structure

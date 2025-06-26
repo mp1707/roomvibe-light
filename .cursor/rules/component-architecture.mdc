@@ -1,0 +1,154 @@
+---
+description:  File organization, naming conventions, TypeScript standards, and folder structures
+globs: 
+alwaysApply: false
+---
+# Component Architecture
+
+## File Organization
+
+```
+src/
+├── app/                    # Next.js app directory
+├── components/            # Shared UI components
+├── utils/                 # Utilities and stores
+└── types/                 # TypeScript definitions
+```
+
+## Component Naming & Structure
+
+- **PascalCase** for component files and names
+- **Descriptive names** that reflect purpose, not appearance
+- **Single responsibility** - each component should have one clear purpose
+
+```typescript
+// ✅ Good
+export function SuggestionCard({ suggestion, onToggle }: SuggestionCardProps) {
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="bg-base-100 rounded-lg border border-base-300 p-6"
+    >
+      {/* Implementation */}
+    </motion.div>
+  );
+}
+
+// ❌ Bad
+export function BlueCard() {} // Not descriptive
+export function Card() {} // Too generic
+```
+
+## Import Organization
+
+```typescript
+// 1. React/Next.js imports
+import { useState } from "react";
+import { NextPage } from "next";
+
+// 2. Third-party libraries
+import { motion } from "framer-motion";
+
+// 3. Internal utilities/stores
+import { useImageStore } from "@/utils/store";
+
+// 4. Components (from most general to most specific)
+import { Button } from "@/components/Button";
+import { SuggestionCard } from "@/components/SuggestionCard";
+
+// 5. Types
+import type { AISuggestion } from "@/types/suggestions";
+```
+
+## TypeScript Standards
+
+- Use strict TypeScript configuration
+- Define proper interfaces for all props
+- Use `type` for unions, `interface` for objects
+- Prefer explicit return types for functions
+
+```typescript
+// ✅ Good
+interface SuggestionCardProps {
+  suggestion: AISuggestion;
+  isSelected: boolean;
+  onToggle: (id: string) => void;
+}
+
+export function SuggestionCard({
+  suggestion,
+  isSelected,
+  onToggle,
+}: SuggestionCardProps): JSX.Element {
+  // Implementation
+}
+```
+
+## Folder-per-Component Structure
+
+For complex components (>150 lines, multiple responsibilities, inline sub-components, complex state/logic), organize into dedicated folders:
+
+```
+/ComponentName/
+├── ComponentName.tsx      # Main component logic
+├── index.ts              # Barrel export
+├── components/           # Child components
+│   ├── SubComponent1.tsx
+│   └── SubComponent2.tsx
+└── hooks/               # Component-specific hooks
+    └── useComponentLogic.ts
+```
+
+Example structure:
+```typescript
+// index.ts
+export { SuggestionCard } from './SuggestionCard';
+
+// SuggestionCard.tsx
+export function SuggestionCard() {
+  return (
+    <div>
+      <SuggestionHeader />
+      <SuggestionBody />
+      <SuggestionActions />
+    </div>
+  );
+}
+```
+
+## Performance Patterns
+
+```typescript
+// ✅ Use React.memo for frequently re-rendering components
+const SuggestionCard = React.memo<SuggestionCardProps>(({ suggestion, onToggle }) => {
+  // Implementation
+});
+
+// ✅ Use useCallback for event handlers passed as props
+const handleToggle = useCallback((id: string) => {
+  onToggle(id);
+}, [onToggle]);
+
+// ✅ Use useMemo for expensive calculations
+const processedSuggestions = useMemo(() => 
+  suggestions.map(s => ({ ...s, processed: true })),
+  [suggestions]
+);
+```
+
+## Loading States
+
+Implement contextual loading patterns:
+
+```typescript
+// ✅ Skeleton loading for image analysis
+<div className="animate-pulse bg-base-300 rounded-lg h-48" />
+
+// ✅ Progressive loading messages
+const loadingMessages = [
+  "Analysiere Raumlayout und Proportionen...",
+  "Bewerte Beleuchtung und Schattenwurf...",
+  "Wähle komplementäre Möbel aus...",
+  "Rendere das finale Bild...",
+];
+```

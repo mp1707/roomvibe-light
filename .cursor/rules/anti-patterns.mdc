@@ -1,0 +1,262 @@
+---
+description: Comprehensive list of what NOT to do with better alternatives
+globs: 
+alwaysApply: false
+---
+# Anti-Patterns to Avoid
+
+This rule documents common anti-patterns and their better alternatives for the RoomVibe codebase.
+
+## ❌ Don't Do
+
+### Generic Loading Spinners
+```typescript
+// ❌ Bad
+<div className="spinner" />
+
+// ✅ Good - Contextual loading with skeleton
+<SuggestionCardSkeleton />
+```
+
+### Hardcoded Colors
+```typescript
+// ❌ Bad
+className="bg-blue-500 text-white"
+
+// ✅ Good - Design system colors
+className="bg-primary text-primary-content"
+```
+
+### Linear Animations
+```typescript
+// ❌ Bad
+transition={{ duration: 0.3, ease: "linear" }}
+
+// ✅ Good - Physics-based animations
+transition={{ type: "spring", stiffness: 400, damping: 30 }}
+```
+
+### Generic Component Names
+```typescript
+// ❌ Bad
+function Card() {} // Too generic
+function BlueCard() {} // Not descriptive
+
+// ✅ Good - Descriptive component names
+function SuggestionCard() {}
+function UserProfileCard() {}
+```
+
+### Missing AI Explanations
+```typescript
+// ❌ Bad
+<AIResult result={result} />
+
+// ✅ Good - Explainable AI
+<AISuggestion 
+  suggestion={suggestion} 
+  reasoning={reasoning}
+  confidence={confidence}
+/>
+```
+
+### Binary AI Interactions
+```typescript
+// ❌ Bad
+<button>Accept All</button>
+
+// ✅ Good - Granular controls
+<SuggestionToggle 
+  onToggle={toggle} 
+  onRefine={refine} 
+  onExplore={explore}
+/>
+```
+
+### Non-Accessible Interactive Elements
+```typescript
+// ❌ Bad
+<div className="button" onClick={handleClick}>
+  Click me
+</div>
+
+// ✅ Good - Proper button with accessibility
+<button
+  type="button"
+  className="focus:outline-none focus:ring-2 focus:ring-primary"
+  onClick={handleClick}
+  aria-label="Submit form data"
+>
+  Click me
+</button>
+```
+
+### Loose TypeScript Typing
+```typescript
+// ❌ Bad
+interface User {
+  id: any;
+  data: any;
+}
+
+// ✅ Good - Strict typing
+interface User {
+  id: string;
+  data: UserData;
+}
+```
+
+### Poor Import Organization
+```typescript
+// ❌ Bad - Mixed imports
+import { SuggestionCard } from "@/components/SuggestionCard";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import type { AISuggestion } from "@/types/suggestions";
+
+// ✅ Good - Organized imports
+// 1. React/Next.js imports
+import { useState } from "react";
+
+// 2. Third-party libraries
+import { motion } from "framer-motion";
+
+// 3. Internal utilities/stores
+import { useImageStore } from "@/utils/store";
+
+// 4. Components
+import { SuggestionCard } from "@/components/SuggestionCard";
+
+// 5. Types
+import type { AISuggestion } from "@/types/suggestions";
+```
+
+### English UI Text
+```typescript
+// ❌ Bad - English UI text
+const labels = {
+  upload: "Upload Image",
+  analyze: "Analyze Room",
+  suggestions: "Suggestions",
+};
+
+// ✅ Good - German UI text
+const labels = {
+  upload: "Bild hochladen",
+  analyze: "Raum analysieren",
+  suggestions: "Vorschläge",
+};
+```
+
+### Off-Scale Design Values
+```typescript
+// ❌ Bad - Custom values
+className="p-5 rounded-md text-17px"
+
+// ✅ Good - Design system scale
+className="p-6 rounded-lg text-lg"
+```
+
+### Missing Error Handling
+```typescript
+// ❌ Bad - No error handling
+const fetchData = async () => {
+  const data = await api.getData();
+  return data;
+};
+
+// ✅ Good - Proper error handling
+const fetchData = async (): Promise<ApiResponse<Data>> => {
+  try {
+    const data = await api.getData();
+    return { success: true, data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    };
+  }
+};
+```
+
+### Performance Issues
+```typescript
+// ❌ Bad - No memoization
+const ExpensiveComponent = ({ items, onItemClick }) => {
+  const processedItems = items.map(item => processItem(item));
+  
+  return (
+    <div>
+      {processedItems.map(item => (
+        <div key={item.id} onClick={() => onItemClick(item.id)}>
+          {item.name}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ✅ Good - Proper memoization
+const ExpensiveComponent = React.memo(({ items, onItemClick }) => {
+  const processedItems = useMemo(
+    () => items.map(item => processItem(item)),
+    [items]
+  );
+  
+  const handleClick = useCallback((id: string) => {
+    onItemClick(id);
+  }, [onItemClick]);
+
+  return (
+    <div>
+      {processedItems.map(item => (
+        <ItemCard key={item.id} item={item} onClick={handleClick} />
+      ))}
+    </div>
+  );
+});
+```
+
+### Nested Conditionals
+```typescript
+// ❌ Bad - Nested conditionals
+const Component = ({ data, isLoading, error }) => {
+  if (!isLoading) {
+    if (!error) {
+      if (data) {
+        return <div>{data.title}</div>;
+      } else {
+        return <div>No data</div>;
+      }
+    } else {
+      return <div>Error: {error.message}</div>;
+    }
+  } else {
+    return <div>Loading...</div>;
+  }
+};
+
+// ✅ Good - Early returns
+const Component = ({ data, isLoading, error }) => {
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return <div>No data</div>;
+
+  return <div>{data.title}</div>;
+};
+```
+
+## Quality Checklist
+
+Before committing code, ensure:
+
+- [ ] Color contrast meets WCAG 2.2 AA standards
+- [ ] Components work in both light and dark themes
+- [ ] Animations respect `prefers-reduced-motion`
+- [ ] All interactive elements are keyboard accessible
+- [ ] Loading states are implemented for all async operations
+- [ ] Error boundaries are in place
+- [ ] German text is used for all user-facing content
+- [ ] Design system tokens are used consistently
+- [ ] TypeScript is strict and properly typed
+- [ ] Performance optimizations are in place where needed

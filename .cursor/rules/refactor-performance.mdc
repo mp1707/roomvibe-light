@@ -1,0 +1,216 @@
+---
+description:  React performance optimization
+globs: 
+alwaysApply: false
+---
+# Refactor: Performance Optimization
+
+You are a React performance optimization expert focused on render optimization and bundle efficiency.
+
+Analyze the selected code and implement performance optimizations:
+
+- Add proper memoization (React.memo, useMemo, useCallback)
+- Optimize re-renders and dependency arrays
+- Implement code splitting and lazy loading
+- Reduce bundle size through efficient imports
+- Add virtualization for large data sets
+
+## Performance Optimization Strategies
+
+- Use `React.memo` for components that re-render frequently with same props
+- Optimize `useEffect` dependency arrays to prevent unnecessary re-runs
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for event handlers passed as props
+- Implement route-based code splitting with `React.lazy` and `Suspense`
+
+## Bundle Optimization
+
+- Use dynamic imports for large dependencies
+- Import only needed functions from large libraries
+- Optimize image loading with Next.js Image component
+- Use proper import patterns to enable tree shaking
+
+## Example Optimizations
+
+```typescript
+// Before (performance issues)
+const ExpensiveComponent = ({ items, onItemClick, theme }) => {
+  const processedItems = items.map((item) => ({
+    ...item,
+    displayName: `${item.firstName} ${item.lastName}`.toUpperCase(),
+    isActive: item.status === "active",
+  }));
+
+  const handleClick = (id) => {
+    onItemClick(id);
+  };
+
+  return (
+    <div>
+      {processedItems.map((item) => (
+        <div key={item.id} onClick={() => handleClick(item.id)}>
+          {item.displayName}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// After (optimized)
+interface Item {
+  id: string;
+  firstName: string;
+  lastName: string;
+  status: "active" | "inactive";
+}
+
+interface ProcessedItem extends Item {
+  displayName: string;
+  isActive: boolean;
+}
+
+interface ExpensiveComponentProps {
+  items: Item[];
+  onItemClick: (id: string) => void;
+  theme: "light" | "dark";
+}
+
+const ExpensiveComponent = React.memo<ExpensiveComponentProps>(
+  ({ items, onItemClick, theme }) => {
+    // Memoize expensive calculations
+    const processedItems = useMemo<ProcessedItem[]>(
+      () =>
+        items.map((item) => ({
+          ...item,
+          displayName: `${item.firstName} ${item.lastName}`.toUpperCase(),
+          isActive: item.status === "active",
+        })),
+      [items]
+    );
+
+    // Memoize event handlers
+    const handleClick = useCallback(
+      (id: string) => {
+        onItemClick(id);
+      },
+      [onItemClick]
+    );
+
+    return (
+      <div className={`theme-${theme}`}>
+        {processedItems.map((item) => (
+          <ItemRow key={item.id} item={item} onClick={handleClick} />
+        ))}
+      </div>
+    );
+  }
+);
+
+// Separate memoized row component
+interface ItemRowProps {
+  item: ProcessedItem;
+  onClick: (id: string) => void;
+}
+
+const ItemRow = React.memo<ItemRowProps>(({ item, onClick }) => {
+  const handleClick = useCallback(() => {
+    onClick(item.id);
+  }, [item.id, onClick]);
+
+  return (
+    <div
+      onClick={handleClick}
+      className={`item-row ${item.isActive ? "active" : "inactive"}`}
+    >
+      {item.displayName}
+    </div>
+  );
+});
+```
+
+## Code Splitting Example
+
+```typescript
+// Before (large bundle)
+import { HeavyChart } from "./HeavyChart";
+import { ComplexForm } from "./ComplexForm";
+
+// After (code splitting)
+const HeavyChart = React.lazy(() => import("./HeavyChart"));
+const ComplexForm = React.lazy(() => import("./ComplexForm"));
+
+const Dashboard = () => {
+  const [showChart, setShowChart] = useState(false);
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+
+      {showChart && (
+        <Suspense fallback={<div>Loading chart...</div>}>
+          <HeavyChart />
+        </Suspense>
+      )}
+
+      <Suspense fallback={<div>Loading form...</div>}>
+        <ComplexForm />
+      </Suspense>
+    </div>
+  );
+};
+```
+
+## Virtualization for Large Lists
+
+```typescript
+// Virtual scrolling for large datasets
+import { FixedSizeList as List } from "react-window";
+
+const VirtualizedList = ({ items }: { items: Item[] }) => {
+  const Row = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+  }) => (
+    <div style={style}>
+      <ItemRow item={items[index]} onClick={handleItemClick} />
+    </div>
+  );
+
+  return (
+    <List height={600} itemCount={items.length} itemSize={50} itemData={items}>
+      {Row}
+    </List>
+  );
+};
+```
+
+## Bundle Size Optimization
+
+```typescript
+// ❌ Bad - imports entire library
+import _ from 'lodash';
+
+// ✅ Good - imports only what's needed
+import { debounce } from 'lodash';
+
+// ✅ Even better - use tree-shakable imports
+import debounce from 'lodash/debounce';
+
+// ✅ Dynamic imports for large dependencies
+const loadHeavyLibrary = async () => {
+  const { heavyFunction } = await import('./heavyLibrary');
+  return heavyFunction;
+};
+```
+
+## Usage
+
+1. Select a component with performance issues
+2. Open command palette (Cmd+K or Ctrl+K)
+3. Type "refactor-performance"
+4. Apply the optimization
+
+Provide optimized code with better performance characteristics and reduced bundle size.

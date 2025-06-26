@@ -1,0 +1,79 @@
+---
+description: Core project philosophy, AI principles, and technical stack requirements
+globs: 
+alwaysApply: false
+---
+# RoomVibe - AI Interior Design App
+
+## Project Overview
+
+This is a premium AI-powered interior design application built with Next.js, featuring Apple-inspired "Liquid Glass" aesthetics and human-centered AI principles. The app transforms spaces through AI collaboration, not just AI tools.
+
+## Core Philosophy & Design Principles
+
+### AI Interaction Paradigm
+
+- **KI-Kollaborateur (AI Collaborator)**: Design interactions as dialogues, not transactions
+- **Transparent AI**: Always explain why AI makes suggestions (XAI - Explainable AI)
+- **User Control**: Users must feel they're the final arbiters of taste
+- **Trust Building**: Provide context, reasoning, and easy override options
+
+### UI Philosophy
+
+- **Unobtrusive but Transparent**: UI recedes when focusing on content, emerges elegantly when guidance needed
+- **Sensory Coherence**: All interactions (visual, haptic, audio) must feel like they belong to the same family
+- **Apple-Inspired Quality**: Premium feel through attention to detail, not just minimalism
+
+## Technical Stack
+
+- **Framework**: Next.js 15 with TypeScript (strict mode)
+- **Styling**: Tailwind CSS 4 + DaisyUI 5 with custom "aura" theme
+- **Animations**: Framer Motion 12 with physics-based transitions
+- **State**: Zustand for state management
+- **Backend**: Supabase (auth, storage, database)
+- **Language**: German for UI text (primary), English for code
+
+## AI Integration Requirements
+
+### Explainable AI (XAI) Implementation
+
+Always provide reasoning for AI suggestions:
+
+```typescript
+interface AISuggestion {
+  id: string;
+  title: string;
+  description: string;
+  reasoning: string; // Always include reasoning
+  confidence?: number;
+  category: "color" | "furniture" | "layout" | "lighting";
+}
+```
+
+### User Control Patterns
+
+Provide granular controls, not just binary accept/reject:
+
+```typescript
+<SuggestionCard
+  suggestion={suggestion}
+  onToggle={handleToggle}
+  onRefine={handleRefine} // Allow refinement
+  onExplore={handleExplore} // Show variations
+/>
+```
+
+## German UI Language
+
+All user-facing text must be in German:
+
+```typescript
+const labels = {
+  upload: "Bild hochladen",
+  analyze: "Raum analysieren",
+  suggestions: "Vorschläge",
+  apply: "Anwenden",
+  why: "Warum?",
+  newStart: "Neu beginnen",
+};
+```

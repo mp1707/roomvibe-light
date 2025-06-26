@@ -1,0 +1,108 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Design System Compliance
+
+## Colors (Always use design tokens)
+
+```typescript
+// ✅ Good - Use design tokens
+className = "bg-primary text-primary-content";
+className = "text-base-content bg-base-100";
+
+// ❌ Bad - Direct color values
+className = "bg-blue-500 text-white";
+```
+
+## Typography
+
+- **Font**: Inter (already configured)
+- **Hierarchy**: Use defined h1, h2, body, caption styles
+- **Rendering**: Always include font smoothing classes
+
+```typescript
+// ✅ Good
+className = "text-2xl font-semibold tracking-tight antialiased";
+
+// ❌ Bad
+className = "text-2xl font-bold"; // Missing tracking and anti-aliasing
+```
+
+## Spacing & Layout
+
+- **Scale**: Use xs(0.25rem), sm(0.5rem), base(1rem), lg(1.5rem), xl(2rem), 2xl(3rem), 3xl(4rem)
+- **Border Radius**: sm(8px), base(12px), lg(16px), xl(20px), 2xl(24px), 3xl(32px)
+
+```typescript
+// ✅ Good
+className = "p-6 rounded-lg gap-4 rounded-xl";
+
+// ❌ Bad
+className = "p-5 rounded-md"; // Off-scale values
+```
+
+## Animation Standards
+
+### Framer Motion Patterns
+
+- **Physics-Based**: Always use spring animations over ease curves
+- **Reduced Motion**: Respect `prefers-reduced-motion`
+- **Sensory Coherence**: Use predefined animation variants
+
+```typescript
+// ✅ Good - Use predefined variants
+import { cardVariants, buttonVariants } from '@/utils/animations'
+
+<motion.div variants={cardVariants} whileHover="hover" whileTap="tap">
+
+// ✅ Good - Physics-based transitions
+transition={{ type: "spring", stiffness: 400, damping: 30 }}
+
+// ❌ Bad - Linear animations
+transition={{ duration: 0.3, ease: "linear" }}
+```
+
+### Required Animation Patterns
+
+```typescript
+// Page transitions
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: { opacity: 0, y: -20 },
+};
+
+// Staggered children (for suggestion cards)
+const containerVariants = {
+  visible: { transition: { staggerChildren: 0.05 } },
+};
+```
+
+## Glass Effects Implementation
+
+```typescript
+// ✅ Good - Proper glass effect
+className = "backdrop-blur-sm bg-white/70 border border-white/20";
+
+// For dark mode support
+className = "backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 border border-white/20 dark:border-white/10";
+```
+
+## Quick Reference
+
+### Design Tokens
+- **Primary**: #007AFF (Apple blue)
+- **Base**: #FFFFFF (light), #1C1C1E (dark)
+- **Border Radius**: 8px, 12px, 16px, 20px, 24px, 32px
+- **Spacing**: 0.25rem, 0.5rem, 1rem, 1.5rem, 2rem, 3rem, 4rem
+
+### Animation Timing
+- **Page transitions**: 0.4s with apple easing [0.22, 1, 0.36, 1]
+- **Micro-interactions**: Spring with stiffness: 400, damping: 30
+- **Stagger delay**: 0.05s between children
