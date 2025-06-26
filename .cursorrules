@@ -388,3 +388,1315 @@ function SuggestionCard() {}
 - **Font size**: 16px minimum for body text
 
 Remember: Every interaction should feel premium, intentional, and part of a cohesive experience that builds trust in the AI collaboration process.
+
+# =======================
+
+# CURSOR REFACTORING RULES
+
+# Next.js/React/TypeScript/TailwindCSS Stack
+
+# =======================
+
+# Manually activate these rules by selecting code and using Cmd+K (Mac) or Ctrl+K (Windows)
+
+# Then type the rule name to apply specific refactoring patterns
+
+# Rule: refactor-early-returns
+
+# Refactor components and functions to use early returns and guard clauses
+
+You are an expert at refactoring React/TypeScript code for clarity and readability.
+
+Analyze the selected code and refactor it to use early returns (guard clauses) to:
+
+- Reduce nesting levels and improve readability
+- Handle edge cases first before main logic
+- Make the happy path more prominent
+
+Best practices for React components:
+
+- Handle loading states first: `if (isLoading) return <LoadingSpinner />`
+- Handle error states second: `if (error) return <ErrorMessage error={error} />`
+- Handle null/undefined data: `if (!data) return <EmptyState />`
+- Handle permission checks early: `if (!hasPermission) return <UnauthorizedAccess />`
+
+Best practices for functions:
+
+- Validate parameters first: `if (!param) throw new Error('Parameter required')`
+- Handle error conditions early: `if (errorCondition) return defaultValue`
+- Check edge cases before main logic: `if (array.length === 0) return []`
+
+Example transformation:
+
+```typescript
+// Before (nested)
+const Component = ({ data, isLoading, error }) => {
+  if (!isLoading) {
+    if (!error) {
+      if (data) {
+        return <div>{data.title}</div>;
+      } else {
+        return <div>No data</div>;
+      }
+    } else {
+      return <div>Error: {error.message}</div>;
+    }
+  } else {
+    return <div>Loading...</div>;
+  }
+};
+
+// After (early returns)
+const Component = ({ data, isLoading, error }) => {
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return <div>No data</div>;
+
+  return <div>{data.title}</div>;
+};
+```
+
+Only provide the refactored code with clear improvements.
+
+---
+
+# Rule: refactor-self-closing
+
+# Convert elements to self-closing tags and optimize JSX structure
+
+You are an expert in React/JSX syntax and optimization.
+
+Review the selected JSX code and optimize it by:
+
+- Converting elements with no children to self-closing form
+- Removing unnecessary React.Fragment wrappers
+- Optimizing JSX structure for readability
+- Ensuring consistent formatting
+
+Best practices:
+
+- Use `<Component />` instead of `<Component></Component>`
+- Remove empty `<React.Fragment>` or `<>` wrappers when there's only one child
+- Use semantic HTML elements when appropriate
+- Maintain proper indentation and spacing
+- Keep consistent prop ordering (data props, event handlers, styling)
+
+Example transformations:
+
+```jsx
+// Before
+<div className="container">
+  <Button onClick={handleClick}></Button>
+  <Input type="text" value={value}></Input>
+  <React.Fragment>
+    <span>Single child</span>
+  </React.Fragment>
+</div>
+
+// After
+<div className="container">
+  <Button onClick={handleClick} />
+  <Input type="text" value={value} />
+  <span>Single child</span>
+</div>
+```
+
+Only provide the optimized JSX code.
+
+---
+
+# Rule: refactor-decompose-component
+
+# Break down large components into smaller, focused components
+
+You are an expert in React component architecture and the Single Responsibility Principle.
+
+Analyze the selected large React component and decompose it by:
+
+- Identifying distinct UI sections that can be extracted
+- Separating data fetching logic from presentation
+- Creating smaller, reusable components with single responsibilities
+- Maintaining proper TypeScript typing throughout
+
+Component extraction guidelines:
+
+- Extract complex UI sections (e.g., `UserProfile`, `PostList`, `NavigationMenu`)
+- Separate form logic into dedicated form components
+- Create presentational components that only receive props
+- Use container/presenter pattern for data vs UI logic
+- Extract reusable UI patterns into shared components
+
+TypeScript best practices:
+
+- Define proper interfaces for all component props
+- Use generic types when components are reusable
+- Export component prop types for reuse
+- Use proper event handler typing
+
+Example structure:
+
+```typescript
+// Extract into smaller components
+interface UserProfileProps {
+  user: User;
+  onEdit: (user: User) => void;
+}
+
+const UserProfile: React.FC<UserProfileProps> = ({ user, onEdit }) => {
+  // Focused on user profile display
+};
+
+interface PostListProps {
+  posts: Post[];
+  onPostClick: (postId: string) => void;
+}
+
+const PostList: React.FC<PostListProps> = ({ posts, onPostClick }) => {
+  // Focused on post list display
+};
+
+// Main component uses smaller components
+const UserDashboard: React.FC<UserDashboardProps> = ({ userId }) => {
+  // Data fetching and orchestration only
+  return (
+    <div>
+      <UserProfile user={user} onEdit={handleUserEdit} />
+      <PostList posts={posts} onPostClick={handlePostClick} />
+    </div>
+  );
+};
+```
+
+Provide the complete refactored code with all extracted components and proper TypeScript interfaces.
+
+---
+
+# Rule: refactor-extract-pure-function
+
+# Extract complex logic into pure functions
+
+You are an expert at writing clean, functional TypeScript code.
+
+Analyze the selected code and extract complex logic into pure functions:
+
+- Move calculations, data transformations, and formatting outside components
+- Create utility functions that are testable in isolation
+- Ensure functions are pure (same input = same output, no side effects)
+- Use proper TypeScript typing with generics when appropriate
+
+Best practices:
+
+- Place utility functions in utils/ directory or at file top
+- Use descriptive function names that explain the purpose
+- Add JSDoc comments for complex functions
+- Create generic functions when possible for reusability
+- Handle edge cases and validation within the function
+- Use functional programming patterns (map, filter, reduce)
+
+For React components:
+
+- Move data transformations to utility functions
+- Extract complex calculations from render methods
+- Create formatting helpers (dates, currency, text)
+- Use React.useMemo for expensive pure functions in components
+
+Example extraction:
+
+```typescript
+// Before (logic in component)
+const Component = ({ orders }) => {
+  const totalRevenue = orders
+    .filter((order) => order.status === "completed")
+    .reduce((sum, order) => sum + order.amount, 0);
+
+  const formattedDate = new Date(order.createdAt).toLocaleDateString("de-DE", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <div>
+      {totalRevenue} - {formattedDate}
+    </div>
+  );
+};
+
+// After (extracted pure functions)
+/**
+ * Calculates total revenue from completed orders
+ */
+const calculateCompletedOrdersRevenue = (orders: Order[]): number => {
+  return orders
+    .filter((order) => order.status === "completed")
+    .reduce((sum, order) => sum + order.amount, 0);
+};
+
+/**
+ * Formats date to German locale
+ */
+const formatDateGerman = (date: Date | string): string => {
+  return new Date(date).toLocaleDateString("de-DE", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const Component = ({ orders }) => {
+  const totalRevenue = useMemo(
+    () => calculateCompletedOrdersRevenue(orders),
+    [orders]
+  );
+  const formattedDate = formatDateGerman(order.createdAt);
+
+  return (
+    <div>
+      {totalRevenue} - {formattedDate}
+    </div>
+  );
+};
+```
+
+Provide the complete refactored code with extracted pure functions and updated component.
+
+---
+
+# Rule: refactor-extract-hook
+
+# Extract component logic into custom hooks
+
+You are an expert in React Hooks and state management patterns.
+
+Analyze the selected React component and extract reusable logic into custom hooks:
+
+- Identify state management patterns (useState, useReducer, useContext)
+- Extract side effects and data fetching logic (useEffect)
+- Create reusable business logic hooks
+- Maintain proper TypeScript typing
+
+Hook extraction guidelines:
+
+- Create hooks for data fetching: `useUserData`, `useApiCall`, `usePagination`
+- Extract form management: `useFormState`, `useFormValidation`
+- Create UI state hooks: `useModal`, `useToggle`, `useLocalStorage`
+- Extract complex business logic into domain-specific hooks
+- Handle loading, error, and success states consistently
+
+TypeScript best practices:
+
+- Define return types for custom hooks
+- Use generic types for reusable hooks
+- Create proper interfaces for hook parameters and return values
+- Use discriminated unions for complex state
+
+Example extraction:
+
+```typescript
+// Before (logic in component)
+const UserProfile = ({ userId }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const userData = await api.getUser(userId);
+        setUser(userData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  // Component JSX...
+};
+
+// After (extracted custom hook)
+interface UseUserDataReturn {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+const useUserData = (userId: string): UseUserDataReturn => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchUser = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userData = await api.getUser(userId);
+      setUser(userData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  return { user, loading, error, refetch: fetchUser };
+};
+
+// Updated component
+const UserProfile = ({ userId }: { userId: string }) => {
+  const { user, loading, error, refetch } = useUserData(userId);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!user) return <div>User not found</div>;
+
+  // Component JSX with user data...
+};
+```
+
+Provide the complete refactored code with custom hook and updated component.
+
+---
+
+# Rule: refactor-dry-code
+
+# Eliminate repetition using DRY principles
+
+You are an expert at writing DRY (Don't Repeat Yourself) React/TypeScript code.
+
+Analyze the selected code and eliminate repetition by:
+
+- Creating reusable components for repeated UI patterns
+- Extracting common logic into shared utilities
+- Using configuration objects for similar data structures
+- Creating generic components with props for variations
+
+DRY strategies:
+
+- Replace repeated JSX with configurable components
+- Use .map() with configuration arrays for similar elements
+- Create higher-order components or render props for shared behavior
+- Extract common TailwindCSS class combinations
+- Use constants for repeated strings, numbers, or configurations
+
+TailwindCSS optimization:
+
+- Create component variants using props instead of duplicating classes
+- Extract frequently used class combinations into CSS components
+- Use conditional classes efficiently with clsx or similar
+
+Example transformations:
+
+```typescript
+// Before (repetitive)
+<div>
+  <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+    Save
+  </button>
+  <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+    Cancel
+  </button>
+  <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+    Submit
+  </button>
+</div>;
+
+// After (DRY with reusable component)
+interface ButtonProps {
+  variant: "primary" | "danger" | "success";
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+const Button: React.FC<ButtonProps> = ({ variant, children, onClick }) => {
+  const baseClasses = "text-white px-4 py-2 rounded transition-colors";
+  const variantClasses = {
+    primary: "bg-blue-500 hover:bg-blue-600",
+    danger: "bg-red-500 hover:bg-red-600",
+    success: "bg-green-500 hover:bg-green-600",
+  };
+
+  return (
+    <button
+      className={`${baseClasses} ${variantClasses[variant]}`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Usage
+<div>
+  <Button variant="primary">Save</Button>
+  <Button variant="danger">Cancel</Button>
+  <Button variant="success">Submit</Button>
+</div>;
+```
+
+For data structures, use configuration arrays:
+
+```typescript
+// Before (repetitive)
+const navItems = (
+  <>
+    <Link href="/dashboard">Dashboard</Link>
+    <Link href="/profile">Profile</Link>
+    <Link href="/settings">Settings</Link>
+  </>
+);
+
+// After (configuration-driven)
+const navigationItems = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/profile", label: "Profile" },
+  { href: "/settings", label: "Settings" },
+] as const;
+
+const Navigation = () => (
+  <nav>
+    {navigationItems.map(({ href, label }) => (
+      <Link key={href} href={href}>
+        {label}
+      </Link>
+    ))}
+  </nav>
+);
+```
+
+Provide the complete refactored code showing how repetition was eliminated while maintaining type safety.
+
+---
+
+# Rule: refactor-typescript-optimization
+
+# Optimize TypeScript usage for better type safety
+
+You are a TypeScript expert focused on type safety and developer experience.
+
+Analyze the selected code and improve TypeScript usage:
+
+- Replace loose typing with strict, specific types
+- Use discriminated unions for better type narrowing
+- Implement proper generic constraints
+- Add utility types for common patterns
+- Use const assertions and template literals where beneficial
+
+TypeScript improvements:
+
+- Replace `any` types with proper type definitions
+- Use `unknown` instead of `any` for safer handling
+- Implement proper error types and handling
+- Use template literal types for string patterns
+- Add proper function overloads when needed
+- Use branded types for IDs and special values
+
+React-specific TypeScript:
+
+- Use proper event handler types: `React.MouseEvent<HTMLButtonElement>`
+- Implement proper ref typing: `React.RefObject<HTMLDivElement>`
+- Use `React.ComponentProps<'button'>` for component extension
+- Add proper children typing: `React.ReactNode`
+
+Example optimizations:
+
+```typescript
+// Before (loose typing)
+interface User {
+  id: any;
+  name: string;
+  role: string;
+  settings: any;
+}
+
+const handleClick = (e: any) => {
+  // Handle click
+};
+
+// After (strict typing)
+type UserId = string & { readonly brand: unique symbol };
+type UserRole = "admin" | "user" | "moderator";
+
+interface UserSettings {
+  theme: "light" | "dark";
+  notifications: boolean;
+  language: "en" | "de" | "fr";
+}
+
+interface User {
+  id: UserId;
+  name: string;
+  role: UserRole;
+  settings: UserSettings;
+}
+
+const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // Handle click with proper event typing
+};
+
+// Generic utility types
+type ApiResponse<T> =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+// Template literal types
+type EventName = `user:${string}` | `system:${string}`;
+```
+
+Provide refactored code with enhanced type safety and better TypeScript patterns.
+
+---
+
+# Rule: refactor-tailwind-optimization
+
+# Optimize TailwindCSS usage and responsive design
+
+You are a TailwindCSS expert focused on maintainable, responsive design.
+
+Analyze the selected code and optimize Tailwind usage:
+
+- Remove redundant or conflicting classes
+- Implement consistent responsive design patterns
+- Use semantic class groupings and proper ordering
+- Create reusable class combinations
+- Optimize for maintainability and readability
+
+TailwindCSS best practices:
+
+- Group related utilities logically (layout → spacing → colors → typography → effects)
+- Use responsive prefixes consistently (sm:, md:, lg:, xl:, 2xl:)
+- Prefer utility classes over custom CSS
+- Use CSS custom properties for dynamic values
+- Implement proper dark mode support with dark: prefix
+
+Class ordering convention:
+
+1. Display & Position: `flex`, `absolute`, `relative`
+2. Layout: `w-full`, `h-screen`, `grid-cols-3`
+3. Spacing: `p-4`, `m-2`, `gap-4`
+4. Typography: `text-lg`, `font-bold`, `text-center`
+5. Colors: `bg-blue-500`, `text-white`, `border-gray-300`
+6. Effects: `shadow-lg`, `rounded-lg`, `opacity-50`
+7. Responsive & States: `md:flex`, `hover:bg-blue-600`, `focus:outline-none`
+
+Example optimization:
+
+```jsx
+// Before (unorganized, redundant)
+<div className="bg-white text-black p-4 rounded shadow-md w-full flex flex-col md:w-1/2 lg:w-1/3 hover:shadow-lg transition-shadow">
+  <h2 className="text-xl font-bold mb-4 text-gray-800">Title</h2>
+  <p className="text-gray-600 text-base leading-relaxed">Content</p>
+</div>
+
+// After (organized, responsive, maintainable)
+<div className="
+  flex flex-col
+  w-full md:w-1/2 lg:w-1/3
+  p-4
+  bg-white text-black
+  rounded shadow-md hover:shadow-lg
+  transition-shadow
+">
+  <h2 className="text-xl font-bold text-gray-800 mb-4">
+    Title
+  </h2>
+  <p className="text-base leading-relaxed text-gray-600">
+    Content
+  </p>
+</div>
+```
+
+For component variants, create systematic patterns:
+
+```typescript
+// Component with proper Tailwind variants
+interface CardProps {
+  variant?: "default" | "primary" | "warning";
+  size?: "sm" | "md" | "lg";
+  children: React.ReactNode;
+}
+
+const Card: React.FC<CardProps> = ({
+  variant = "default",
+  size = "md",
+  children,
+}) => {
+  const baseClasses = "rounded-lg shadow-md transition-shadow";
+
+  const variantClasses = {
+    default: "bg-white border border-gray-200",
+    primary: "bg-blue-50 border border-blue-200",
+    warning: "bg-yellow-50 border border-yellow-200",
+  };
+
+  const sizeClasses = {
+    sm: "p-3",
+    md: "p-4",
+    lg: "p-6",
+  };
+
+  return (
+    <div
+      className={`
+      ${baseClasses}
+      ${variantClasses[variant]}
+      ${sizeClasses[size]}
+    `}
+    >
+      {children}
+    </div>
+  );
+};
+```
+
+Provide optimized code with better Tailwind organization, responsive design, and maintainable patterns.
+
+---
+
+# Rule: refactor-accessibility
+
+# Add comprehensive accessibility improvements
+
+You are an accessibility expert focused on WCAG 2.1 AA compliance and inclusive design.
+
+Analyze the selected code and add accessibility improvements:
+
+- Add proper ARIA labels, descriptions, and landmarks
+- Implement comprehensive keyboard navigation
+- Ensure semantic HTML usage
+- Add focus management and visual indicators
+- Implement proper color contrast and screen reader support
+
+Accessibility enhancements:
+
+- Add `aria-label`, `aria-describedby`, `aria-expanded` where needed
+- Implement proper heading hierarchy (h1 → h2 → h3)
+- Add keyboard event handlers for Enter/Space on interactive elements
+- Use semantic HTML elements (`button`, `nav`, `main`, `section`, `article`)
+- Add skip links and focus traps for complex interactions
+- Implement live regions for dynamic content announcements
+
+Interactive elements requirements:
+
+- Ensure all interactive elements are keyboard accessible
+- Add proper `tabindex` values (0 for focusable, -1 for programmatic focus)
+- Implement visible focus indicators
+- Add loading states with proper screen reader announcements
+- Handle error states accessibly with `aria-live` regions
+
+Example accessibility improvements:
+
+```jsx
+// Before (not accessible)
+<div className="button" onClick={handleClick}>
+  Click me
+</div>
+
+<div className="modal" style={{ display: isOpen ? 'block' : 'none' }}>
+  <div className="modal-content">
+    <span className="close" onClick={closeModal}>×</span>
+    <h3>Modal Title</h3>
+    <p>Modal content</p>
+  </div>
+</div>
+
+// After (accessible)
+<button
+  type="button"
+  className="
+    px-4 py-2 bg-blue-500 text-white rounded
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+    hover:bg-blue-600 transition-colors
+  "
+  onClick={handleClick}
+  aria-label="Submit form data"
+>
+  Click me
+</button>
+
+{isOpen && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-describedby="modal-description"
+  >
+    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 id="modal-title" className="text-xl font-bold">
+          Modal Title
+        </h2>
+        <button
+          type="button"
+          onClick={closeModal}
+          className="
+            p-1 hover:bg-gray-100 rounded
+            focus:outline-none focus:ring-2 focus:ring-gray-500
+          "
+          aria-label="Close modal"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <p id="modal-description">
+        Modal content that describes what this dialog is for
+      </p>
+    </div>
+  </div>
+)}
+
+// Form with proper accessibility
+<form onSubmit={handleSubmit} aria-label="User registration form">
+  <div className="mb-4">
+    <label htmlFor="email" className="block text-sm font-medium mb-2">
+      Email Address
+    </label>
+    <input
+      id="email"
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+      aria-describedby={emailError ? "email-error" : undefined}
+      aria-invalid={!!emailError}
+      required
+    />
+    {emailError && (
+      <div id="email-error" role="alert" className="text-red-600 text-sm mt-1">
+        {emailError}
+      </div>
+    )}
+  </div>
+
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className="
+      w-full py-2 px-4 bg-blue-500 text-white rounded
+      disabled:opacity-50 disabled:cursor-not-allowed
+      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+    "
+    aria-describedby="submit-status"
+  >
+    {isSubmitting ? 'Submitting...' : 'Register'}
+  </button>
+
+  <div id="submit-status" className="sr-only" aria-live="polite">
+    {submitStatus}
+  </div>
+</form>
+```
+
+For complex interactions, add proper focus management:
+
+```typescript
+const Modal = ({ isOpen, onClose, children }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      modalRef.current?.focus();
+    } else {
+      previousFocusRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      ref={modalRef}
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      className="modal-overlay"
+    >
+      {children}
+    </div>
+  );
+};
+```
+
+Provide code with comprehensive accessibility improvements that meet WCAG 2.1 AA standards.
+
+---
+
+# Rule: refactor-performance
+
+# Optimize React performance and bundle size
+
+You are a React performance optimization expert focused on render optimization and bundle efficiency.
+
+Analyze the selected code and implement performance optimizations:
+
+- Add proper memoization (React.memo, useMemo, useCallback)
+- Optimize re-renders and dependency arrays
+- Implement code splitting and lazy loading
+- Reduce bundle size through efficient imports
+- Add virtualization for large data sets
+
+Performance optimization strategies:
+
+- Use `React.memo` for components that re-render frequently with same props
+- Optimize `useEffect` dependency arrays to prevent unnecessary re-runs
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for event handlers passed as props
+- Implement route-based code splitting with `React.lazy` and `Suspense`
+
+Bundle optimization:
+
+- Use dynamic imports for large dependencies
+- Import only needed functions from large libraries
+- Optimize image loading with Next.js Image component
+- Use proper import patterns to enable tree shaking
+
+Example optimizations:
+
+```typescript
+// Before (performance issues)
+const ExpensiveComponent = ({ items, onItemClick, theme }) => {
+  const processedItems = items.map((item) => ({
+    ...item,
+    displayName: `${item.firstName} ${item.lastName}`.toUpperCase(),
+    isActive: item.status === "active",
+  }));
+
+  const handleClick = (id) => {
+    onItemClick(id);
+  };
+
+  return (
+    <div>
+      {processedItems.map((item) => (
+        <div key={item.id} onClick={() => handleClick(item.id)}>
+          {item.displayName}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// After (optimized)
+interface Item {
+  id: string;
+  firstName: string;
+  lastName: string;
+  status: "active" | "inactive";
+}
+
+interface ProcessedItem extends Item {
+  displayName: string;
+  isActive: boolean;
+}
+
+interface ExpensiveComponentProps {
+  items: Item[];
+  onItemClick: (id: string) => void;
+  theme: "light" | "dark";
+}
+
+const ExpensiveComponent = React.memo<ExpensiveComponentProps>(
+  ({ items, onItemClick, theme }) => {
+    // Memoize expensive calculations
+    const processedItems = useMemo<ProcessedItem[]>(
+      () =>
+        items.map((item) => ({
+          ...item,
+          displayName: `${item.firstName} ${item.lastName}`.toUpperCase(),
+          isActive: item.status === "active",
+        })),
+      [items]
+    );
+
+    // Memoize event handlers
+    const handleClick = useCallback(
+      (id: string) => {
+        onItemClick(id);
+      },
+      [onItemClick]
+    );
+
+    return (
+      <div className={`theme-${theme}`}>
+        {processedItems.map((item) => (
+          <ItemRow key={item.id} item={item} onClick={handleClick} />
+        ))}
+      </div>
+    );
+  }
+);
+
+// Separate memoized row component
+interface ItemRowProps {
+  item: ProcessedItem;
+  onClick: (id: string) => void;
+}
+
+const ItemRow = React.memo<ItemRowProps>(({ item, onClick }) => {
+  const handleClick = useCallback(() => {
+    onClick(item.id);
+  }, [item.id, onClick]);
+
+  return (
+    <div
+      onClick={handleClick}
+      className={`item-row ${item.isActive ? "active" : "inactive"}`}
+    >
+      {item.displayName}
+    </div>
+  );
+});
+```
+
+For large lists, implement virtualization:
+
+```typescript
+// Virtual scrolling for large datasets
+import { FixedSizeList as List } from "react-window";
+
+const VirtualizedList = ({ items }: { items: Item[] }) => {
+  const Row = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+  }) => (
+    <div style={style}>
+      <ItemRow item={items[index]} onClick={handleItemClick} />
+    </div>
+  );
+
+  return (
+    <List height={600} itemCount={items.length} itemSize={50} itemData={items}>
+      {Row}
+    </List>
+  );
+};
+```
+
+Code splitting example:
+
+```typescript
+// Before (large bundle)
+import { HeavyChart } from "./HeavyChart";
+import { ComplexForm } from "./ComplexForm";
+
+// After (code splitting)
+const HeavyChart = React.lazy(() => import("./HeavyChart"));
+const ComplexForm = React.lazy(() => import("./ComplexForm"));
+
+const Dashboard = () => {
+  const [showChart, setShowChart] = useState(false);
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+
+      {showChart && (
+        <Suspense fallback={<div>Loading chart...</div>}>
+          <HeavyChart />
+        </Suspense>
+      )}
+
+      <Suspense fallback={<div>Loading form...</div>}>
+        <ComplexForm />
+      </Suspense>
+    </div>
+  );
+};
+```
+
+Provide optimized code with better performance characteristics and reduced bundle size.
+
+---
+
+# Rule: refactor-nextjs-patterns
+
+# Optimize for Next.js App Router and modern patterns
+
+You are a Next.js expert focused on App Router patterns, Server Components, and performance optimization.
+
+Analyze the selected code and optimize for Next.js App Router:
+
+- Implement proper Server/Client Component patterns
+- Optimize data fetching with Server Components
+- Use proper Next.js navigation and routing patterns
+- Implement SEO optimization with metadata
+- Add proper loading and error handling
+
+App Router best practices:
+
+- Use Server Components by default, Client Components when needed
+- Implement proper `loading.tsx` and `error.tsx` files
+- Use file-based routing with proper conventions
+- Implement parallel routes and route groups when beneficial
+- Add proper metadata and OpenGraph tags
+
+Server vs Client Component decisions:
+
+- Server Components: Data fetching, static content, SEO content
+- Client Components: User interactions, browser APIs, state management
+- Use `"use client"` directive only when necessary
+
+Example patterns:
+
+```typescript
+// Server Component (default) - page.tsx
+import { Metadata } from "next";
+import { UserProfile } from "./UserProfile";
+import { PostList } from "./PostList";
+
+interface PageProps {
+  params: { userId: string };
+  searchParams: { tab?: string };
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const user = await getUserData(params.userId);
+
+  return {
+    title: `${user.name} - User Profile`,
+    description: `View ${user.name}'s profile and posts`,
+    openGraph: {
+      title: `${user.name} - User Profile`,
+      description: `View ${user.name}'s profile and posts`,
+      images: [{ url: user.avatar }],
+    },
+  };
+}
+
+export default async function UserPage({ params, searchParams }: PageProps) {
+  // Data fetching in Server Component
+  const [user, posts] = await Promise.all([
+    getUserData(params.userId),
+    getUserPosts(params.userId),
+  ]);
+
+  return (
+    <div className="container mx-auto py-8">
+      <UserProfile user={user} />
+      <PostList posts={posts} activeTab={searchParams.tab || "recent"} />
+    </div>
+  );
+}
+
+// Client Component when interaction needed
+("use client");
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+
+interface PostListProps {
+  posts: Post[];
+  activeTab: string;
+}
+
+export function PostList({ posts, activeTab }: PostListProps) {
+  const [selectedTab, setSelectedTab] = useState(activeTab);
+
+  const filteredPosts = posts.filter((post) =>
+    selectedTab === "recent" ? true : post.category === selectedTab
+  );
+
+  return (
+    <div>
+      <div className="flex space-x-4 mb-6">
+        {["recent", "popular", "archived"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setSelectedTab(tab)}
+            className={`px-4 py-2 rounded ${
+              selectedTab === tab
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <motion.div layout className="space-y-4">
+        {filteredPosts.map((post) => (
+          <motion.div
+            key={post.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 bg-white rounded-lg shadow"
+          >
+            {post.title}
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+```
+
+Loading and error states:
+
+```typescript
+// loading.tsx
+export default function Loading() {
+  return (
+    <div className="container mx-auto py-8">
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-32 bg-gray-200 rounded"></div>
+        <div className="space-y-2">
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// error.tsx
+("use client");
+
+interface ErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
+export default function Error({ error, reset }: ErrorProps) {
+  return (
+    <div className="container mx-auto py-8 text-center">
+      <h2 className="text-2xl font-bold text-red-600 mb-4">
+        Something went wrong!
+      </h2>
+      <p className="text-gray-600 mb-4">
+        {error.message || "An unexpected error occurred"}
+      </p>
+      <button
+        onClick={reset}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
+```
+
+Route groups and parallel routes:
+
+```
+app/
+├── (dashboard)/
+│   ├── analytics/
+│   │   └── page.tsx
+│   ├── settings/
+│   │   └── page.tsx
+│   └── layout.tsx
+├── @modal/
+│   ├── (.)user/
+│   │   └── [id]/
+│   │       └── page.tsx
+│   └── default.tsx
+└── layout.tsx
+```
+
+Data fetching patterns:
+
+```typescript
+// Optimized data fetching
+async function getUserData(userId: string): Promise<User> {
+  const res = await fetch(`${process.env.API_URL}/users/${userId}`, {
+    next: { revalidate: 300 }, // Cache for 5 minutes
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch user data");
+  }
+
+  return res.json();
+}
+
+// Static generation
+export async function generateStaticParams() {
+  const users = await fetch(`${process.env.API_URL}/users`).then((res) =>
+    res.json()
+  );
+
+  return users.map((user: User) => ({
+    userId: user.id,
+  }));
+}
+```
+
+Provide Next.js optimized code with modern App Router patterns, proper Server/Client Component usage, and performance optimizations.
+
+# Rule: Enforce Folder-per-Component Structure for Complex React Components
+
+## Description
+This rule helps maintain a clean and scalable codebase by enforcing the best practice of organizing complex React/Next.js components into their own dedicated folders. This improves maintainability, readability, and the co-location of related files (logic, sub-components, styles, tests, etc.).
+
+## When to apply this rule
+Apply this rule when editing a React component file (`.tsx` or `.jsx`) and you identify one or more of the following signs of increasing complexity:
+
+1.  **High Line Count:** The component file grows beyond 150 lines of code.
+2.  **Multiple Responsibilities:** The component appears to be handling multiple distinct tasks or rendering several logically separate UI blocks. For example, a single component file that contains a form, a data grid, and a modal.
+3.  **Inline Sub-components:** You notice smaller, helper components being defined and used only within the main component file. These are prime candidates for extraction.
+4.  **Complex State/Logic:** The component involves multiple `useState` or `useReducer` hooks, complex `useEffect` hooks, or significant business logic that makes the main component body hard to read.
+
+## The recommended action
+When a component is identified as complex, recommend refactoring it into a dedicated folder. The AI should propose this change and be prepared to execute it for the user.
+
+### Suggested Folder Structure:
+Propose creating a new directory named after the component (e.g., `UploadForm`). The file structure inside this new directory should follow this pattern:
+
+-   **/UploadForm**
+    -   `index.ts` (or `index.js`): A barrel file that exports the main component for clean, consistent imports from other parts of the app.
+    -   `UploadForm.tsx` (or `.jsx`): The main component logic and JSX.
+    -   **/components**: A sub-directory to house all child components that are specific to `UploadForm`.
+        -   `ProgressIndicator.tsx`
+        -   `FilePreview.tsx`
+    -   `UploadForm.module.css` (Optional): For component-specific CSS Modules.
+    -   `hooks/` (Optional): For custom hooks that are only used by this component and its children.
+
+### Example Suggestion Dialogue for the AI:
+"I've noticed that the `[ComponentName]` component is growing in complexity. To improve organization and make it easier to maintain, I recommend refactoring it into its own dedicated folder.
+
+This would involve creating the following structure:
+`/[current-path]/[ComponentName]/`
+`├── [ComponentName].tsx`
+`├── index.ts`
+`└── components/`
+`    └── (extracted sub-components here)`
+
+This practice, known as co-location, will keep all the related logic, child components, and styles together. Shall I proceed with this refactoring?"
+
+## What to avoid
+-   Do not apply this rule to simple, purely presentational components (e.g., a generic `<Button />` or `<Icon />`) that are meant to be reused globally and have minimal logic.
+-   Avoid suggesting this for every component. Use it as a tool to manage complexity, not as a rigid requirement for all components.
+
