@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
 import { useCreditsStore } from "@/utils/creditsStore";
 import { CreditTransaction, UserProfile } from "@/types/credits";
+import { OverviewIcon, TransactionsIcon, ImagesIcon } from "@/components/Icons";
 import {
   staggerContainer,
   staggerItem,
@@ -217,18 +218,18 @@ export default function ProfilePage() {
       variants={reducedMotion ? {} : staggerContainer}
       initial="hidden"
       animate="visible"
-      className="min-h-screen bg-base-100 py-8 px-4"
+      className="min-h-screen bg-base-100 py-8 px-4 antialiased"
     >
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header Section */}
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="bg-base-100 backdrop-blur-sm border border-base-300 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-lg"
+          className="backdrop-blur-sm bg-base-100/70 border border-base-100/20 rounded-3xl p-6 lg:p-8 shadow-lg"
         >
           <div className="flex flex-col md:flex-row items-center md:items-center gap-4 md:gap-6">
             {/* Avatar */}
             <motion.div
-              className="w-24 h-24 bg-primary/20 rounded-2xl flex items-center justify-center flex-shrink-0"
+              className="w-24 h-24 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0 border border-primary/20"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
             >
@@ -249,10 +250,10 @@ export default function ProfilePage() {
 
             {/* User Info */}
             <div className="flex-1 space-y-2 text-center md:text-left">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-content">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-content tracking-tight">
                 {displayName}
               </h1>
-              <p className="text-base-content/60 text-base sm:text-lg break-all sm:break-normal">
+              <p className="text-base-content/60 text-base sm:text-lg break-all sm:break-normal font-medium">
                 {user.email}
               </p>
               <p className="text-base-content/50 text-sm">
@@ -262,11 +263,11 @@ export default function ProfilePage() {
 
             {/* Credits Display */}
             <motion.div
-              className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-4 sm:p-6 border border-primary/20 w-full md:w-auto"
+              className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-6 border border-primary/10 w-full md:w-auto backdrop-blur-sm"
               variants={reducedMotion ? {} : cardVariants}
             >
-              <div className="text-center space-y-2">
-                <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="text-center space-y-3">
+                <div className="flex items-center justify-center gap-2 mb-4">
                   <svg
                     className="w-6 h-6 text-warning"
                     fill="currentColor"
@@ -274,7 +275,7 @@ export default function ProfilePage() {
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
-                  <span className="text-lg font-semibold text-base-content">
+                  <span className="text-lg font-semibold text-base-content tracking-tight">
                     Ihre Credits
                   </span>
                 </div>
@@ -309,12 +310,12 @@ export default function ProfilePage() {
         {/* Navigation Tabs */}
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="flex flex-col sm:flex-row gap-2 bg-base-200 rounded-2xl p-2"
+          className="flex flex-col sm:flex-row gap-2 bg-base-200/50 backdrop-blur-sm rounded-2xl p-2 border border-base-300/50"
         >
           {[
-            { id: "overview", label: "Übersicht", icon: "👤" },
-            { id: "history", label: "Transaktionen", icon: "📊" },
-            { id: "images", label: "Generierte Bilder", icon: "🖼️" },
+            { id: "overview", label: "Übersicht", Icon: OverviewIcon },
+            { id: "history", label: "Transaktionen", Icon: TransactionsIcon },
+            { id: "images", label: "Generierte Bilder", Icon: ImagesIcon },
           ].map((tab) => (
             <motion.button
               key={tab.id}
@@ -322,17 +323,19 @@ export default function ProfilePage() {
                 console.log("Tab clicked:", tab.id);
                 setActiveTab(tab.id);
               }}
-              className={`flex items-center justify-center sm:justify-start gap-2 px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-1 sm:flex-none ${
+              className={`flex items-center justify-center sm:justify-start gap-3 px-4 sm:px-6 py-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-1 sm:flex-none ${
                 activeTab === tab.id
-                  ? "bg-primary text-primary-content shadow-md"
-                  : "text-base-content/70 hover:text-base-content hover:bg-base-300"
+                  ? "bg-primary text-primary-content shadow-md backdrop-blur-sm"
+                  : "text-base-content/70 hover:text-base-content hover:bg-base-300/50 hover:backdrop-blur-sm"
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
             >
-              <span className="text-lg sm:text-base">{tab.icon}</span>
-              <span className="text-sm sm:text-base">{tab.label}</span>
+              <tab.Icon />
+              <span className="text-sm sm:text-base font-medium tracking-tight">
+                {tab.label}
+              </span>
             </motion.button>
           ))}
         </motion.div>
@@ -356,9 +359,9 @@ export default function ProfilePage() {
                   duration: 0.4,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="bg-base-100 border border-base-300 rounded-2xl p-6 space-y-4"
+                className="backdrop-blur-sm bg-base-100/70 border border-base-100/20 rounded-2xl p-6 space-y-4 shadow-lg"
               >
-                <h3 className="text-xl font-semibold text-base-content">
+                <h3 className="text-xl font-semibold text-base-content tracking-tight">
                   Schnelle Statistiken
                 </h3>
                 <div className="space-y-3">
@@ -404,9 +407,9 @@ export default function ProfilePage() {
                   duration: 0.4,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="bg-base-100 border border-base-300 rounded-2xl p-6 space-y-4"
+                className="backdrop-blur-sm bg-base-100/70 border border-base-100/20 rounded-2xl p-6 space-y-4 shadow-lg"
               >
-                <h3 className="text-xl font-semibold text-base-content">
+                <h3 className="text-xl font-semibold text-base-content tracking-tight">
                   Letzte Aktivitäten
                 </h3>
                 <div className="space-y-3">
@@ -418,12 +421,12 @@ export default function ProfilePage() {
                       <div
                         className={`w-2 h-2 rounded-full ${
                           transaction.type === "purchase"
-                            ? "bg-green-500"
+                            ? "bg-success"
                             : transaction.type === "deduction"
-                            ? "bg-red-500"
+                            ? "bg-error"
                             : transaction.type === "bonus"
-                            ? "bg-blue-500"
-                            : "bg-gray-500"
+                            ? "bg-info"
+                            : "bg-base-content/50"
                         }`}
                       />
                       <div className="flex-1 min-w-0">
@@ -438,9 +441,7 @@ export default function ProfilePage() {
                       </div>
                       <span
                         className={`text-sm font-medium ${
-                          transaction.amount > 0
-                            ? "text-green-600"
-                            : "text-red-600"
+                          transaction.amount > 0 ? "text-success" : "text-error"
                         }`}
                       >
                         {transaction.amount > 0 ? "+" : ""}
@@ -465,12 +466,12 @@ export default function ProfilePage() {
                   duration: 0.4,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10 rounded-2xl p-6 space-y-4"
+                className="backdrop-blur-sm bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10 rounded-2xl p-6 space-y-4 shadow-lg"
               >
-                <h3 className="text-xl font-semibold text-base-content">
+                <h3 className="text-xl font-semibold text-base-content tracking-tight">
                   Schnellaktionen
                 </h3>
-                <div className="space-y-3">
+                <div className="flex flex-col gap-2">
                   <Link href="/">
                     <motion.button
                       variants={reducedMotion ? {} : buttonVariants}
@@ -560,9 +561,9 @@ export default function ProfilePage() {
           {activeTab === "history" && (
             <motion.div
               variants={reducedMotion ? {} : cardVariants}
-              className="bg-base-100 border border-base-300 rounded-2xl p-6"
+              className="backdrop-blur-sm bg-base-100/70 border border-base-100/20 rounded-2xl p-6 shadow-lg"
             >
-              <h3 className="text-2xl font-semibold text-base-content mb-6">
+              <h3 className="text-2xl font-semibold text-base-content tracking-tight mb-6">
                 Transaktionshistorie
               </h3>
 
@@ -571,7 +572,7 @@ export default function ProfilePage() {
                   {transactions.map((transaction) => (
                     <motion.div
                       key={transaction.id}
-                      className="flex items-center justify-between p-4 bg-base-200 rounded-xl"
+                      className="flex items-center justify-between p-4 bg-base-200/50 backdrop-blur-sm rounded-xl border border-base-300/30"
                       whileHover={{ scale: 1.01 }}
                       transition={{
                         type: "spring",
@@ -583,12 +584,12 @@ export default function ProfilePage() {
                         <div
                           className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                             transaction.type === "purchase"
-                              ? "bg-green-100 text-green-600"
+                              ? "bg-success/10 text-success"
                               : transaction.type === "deduction"
-                              ? "bg-red-100 text-red-600"
+                              ? "bg-error/10 text-error"
                               : transaction.type === "bonus"
-                              ? "bg-blue-100 text-blue-600"
-                              : "bg-gray-100 text-gray-600"
+                              ? "bg-info/10 text-info"
+                              : "bg-base-300/50 text-base-content/60"
                           }`}
                         >
                           {transaction.type === "purchase"
@@ -621,8 +622,8 @@ export default function ProfilePage() {
                         <p
                           className={`text-lg font-bold ${
                             transaction.amount > 0
-                              ? "text-green-600"
-                              : "text-red-600"
+                              ? "text-success"
+                              : "text-error"
                           }`}
                         >
                           {transaction.amount > 0 ? "+" : ""}
@@ -664,11 +665,11 @@ export default function ProfilePage() {
           {activeTab === "images" && (
             <motion.div
               variants={reducedMotion ? {} : cardVariants}
-              className="bg-base-100 border border-base-300 rounded-2xl p-6"
+              className="backdrop-blur-sm bg-base-100/70 border border-base-100/20 rounded-2xl p-6 shadow-lg"
             >
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-2xl font-semibold text-base-content">
+                  <h3 className="text-2xl font-semibold text-base-content tracking-tight">
                     Generierte Bilder
                   </h3>
                   {!isLoadingImages && generatedImages.length > 0 && (
@@ -685,7 +686,7 @@ export default function ProfilePage() {
                   variants={reducedMotion ? {} : buttonVariants}
                   whileHover={reducedMotion ? {} : "hover"}
                   whileTap={reducedMotion ? {} : "tap"}
-                  className="flex items-center gap-2 px-4 py-2 bg-base-100 border border-base-300 hover:bg-base-200 hover:border-base-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium text-base-content transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
+                  className="flex items-center gap-2 px-4 py-2 bg-base-200/50 border border-base-300/50 hover:bg-base-200 hover:border-base-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium text-base-content transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 backdrop-blur-sm"
                 >
                   <svg
                     className={`w-4 h-4 ${
@@ -711,13 +712,13 @@ export default function ProfilePage() {
                   {Array.from({ length: 6 }).map((_, index) => (
                     <div
                       key={index}
-                      className="bg-base-200 rounded-2xl overflow-hidden animate-pulse"
+                      className="bg-base-200/50 backdrop-blur-sm rounded-2xl overflow-hidden animate-pulse border border-base-300/30"
                     >
-                      <div className="aspect-[4/3] bg-base-300" />
+                      <div className="aspect-[4/3] bg-base-300/50" />
                       <div className="p-4 space-y-2">
-                        <div className="h-4 bg-base-300 rounded w-3/4" />
-                        <div className="h-3 bg-base-300 rounded w-1/2" />
-                        <div className="h-3 bg-base-300 rounded w-1/4" />
+                        <div className="h-4 bg-base-300/50 rounded w-3/4" />
+                        <div className="h-3 bg-base-300/50 rounded w-1/2" />
+                        <div className="h-3 bg-base-300/50 rounded w-1/4" />
                       </div>
                     </div>
                   ))}
@@ -727,7 +728,7 @@ export default function ProfilePage() {
                   {generatedImages.map((image, index) => (
                     <motion.div
                       key={`${image.path}-${index}`}
-                      className="bg-base-200 rounded-2xl overflow-hidden group cursor-pointer"
+                      className="bg-base-200/50 backdrop-blur-sm rounded-2xl overflow-hidden group cursor-pointer border border-base-300/30 shadow-lg"
                       whileHover={{ scale: 1.02 }}
                       transition={{
                         type: "spring",
@@ -744,9 +745,9 @@ export default function ProfilePage() {
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-base-content/0 group-hover:bg-base-content/20 transition-colors duration-200 flex items-center justify-center">
                           <svg
-                            className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            className="w-8 h-8 text-base-100 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -844,7 +845,7 @@ export default function ProfilePage() {
           {activeTab !== "overview" &&
             activeTab !== "history" &&
             activeTab !== "images" && (
-              <div className="bg-base-100 border border-base-300 rounded-2xl p-6 text-center">
+              <div className="backdrop-blur-sm bg-base-100/70 border border-base-100/20 rounded-2xl p-6 text-center shadow-lg">
                 <p className="text-base-content">Unknown tab: {activeTab}</p>
               </div>
             )}
