@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 const MOCK_ROOM_IMAGE_URL =
   "https://media.istockphoto.com/id/2175713816/de/foto/elegantes-wohnzimmer-mit-beigem-sofa-und-kamin.jpg?s=2048x2048&w=is&k=20&c=E9JrU7zYWFLQsEJQf0fXJyiVECM6tsIyKgSNNp-cEkc%3D";
 
-const FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10MB
 const SUPPORTED_TYPES = ["image/"];
 
 // Pure functions for file validation
@@ -18,22 +17,11 @@ export const validateFileType = (file: File): boolean => {
   return SUPPORTED_TYPES.some((type) => file.type.startsWith(type));
 };
 
-export const validateFileSize = (file: File): boolean => {
-  return file.size <= FILE_SIZE_LIMIT;
-};
-
 export const validateFile = (
   file: File
 ): { isValid: boolean; error?: string } => {
   if (!validateFileType(file)) {
     return { isValid: false, error: "Bitte wählen Sie eine Bilddatei aus." };
-  }
-
-  if (!validateFileSize(file)) {
-    return {
-      isValid: false,
-      error: "Die Datei ist zu groß. Bitte wählen Sie ein Bild unter 10MB.",
-    };
   }
 
   return { isValid: true };

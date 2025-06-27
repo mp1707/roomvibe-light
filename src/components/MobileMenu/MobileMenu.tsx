@@ -25,6 +25,7 @@ const MobileMenu = ({ className = "" }: MobileMenuProps) => {
     buttonPosition,
     menuRef,
     buttonRef,
+    menuContentRef,
     handleToggleMenu,
     handleKeyDown,
     handleNavigationClick,
@@ -124,6 +125,7 @@ const MobileMenu = ({ className = "" }: MobileMenuProps) => {
           <AnimatePresence>
             {isOpen && (
               <motion.div
+                ref={menuContentRef}
                 variants={menuVariants}
                 initial="closed"
                 animate="open"
@@ -134,6 +136,7 @@ const MobileMenu = ({ className = "" }: MobileMenuProps) => {
                   top: buttonPosition.top,
                   right: buttonPosition.right,
                 }}
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-4 space-y-4">
                   {/* User Section */}

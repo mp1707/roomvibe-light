@@ -12,6 +12,7 @@ export const useMenuState = () => {
   );
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuContentRef = useRef<HTMLDivElement>(null);
 
   const handleToggleMenu = () => {
     if (!isOpen && buttonRef.current) {
@@ -45,7 +46,15 @@ export const useMenuState = () => {
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      // Check if click is outside both the button and the menu content
+      const isOutsideButton =
+        menuRef.current && !menuRef.current.contains(target);
+      const isOutsideMenuContent =
+        menuContentRef.current && !menuContentRef.current.contains(target);
+
+      if (isOutsideButton && isOutsideMenuContent) {
         setIsOpen(false);
       }
     };
@@ -72,6 +81,7 @@ export const useMenuState = () => {
     buttonPosition,
     menuRef,
     buttonRef,
+    menuContentRef,
     handleToggleMenu,
     handleKeyDown,
     handleNavigationClick,

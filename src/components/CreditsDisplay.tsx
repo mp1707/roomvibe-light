@@ -22,11 +22,47 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({ className = "" }) => {
 
       if (session?.user) {
         await fetchCredits();
+      } else {
+        // Reset credits if no user session
+        useCreditsStore.getState().reset();
       }
     };
 
     checkAuthAndFetchCredits();
+
+    // Listen for auth state changes
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session?.user) {
+        useCreditsStore.getState().reset();
+      } else if (event === "SIGNED_IN" && session?.user) {
+        fetchCredits();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [fetchCredits]);
+
+  // Additional auth check to ensure we have a valid session
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user && credits !== null) {
+        // If no session but credits exist, reset them
+        useCreditsStore.getState().reset();
+      }
+    };
+
+    checkAuth();
+  }, [credits]);
 
   // Don't render if user is not authenticated (credits is null and not loading)
   if (credits === null && !isLoading) {
