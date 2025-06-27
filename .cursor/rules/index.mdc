@@ -1,0 +1,108 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# RoomVibe Cursor Rules Index
+
+This rule serves as a comprehensive index of all available Cursor rules and refactoring patterns in this project. Use this to understand what refactoring options and coding guidelines are available.
+
+## Manual Refactoring Rules
+These rules can be triggered by selecting code and using Cmd+K (Mac) or Ctrl+K (Windows), then typing the rule name:
+
+### Core Refactoring Patterns
+- **refactor-early-returns**: Convert nested conditions to early returns/guard clauses for better readability
+- **refactor-self-closing**: Convert elements to self-closing tags and optimize JSX structure  
+- **refactor-decompose-component**: Break down large components (>150 lines) into smaller, focused components
+- **refactor-extract-pure-function**: Extract complex logic into pure, testable utility functions
+- **refactor-extract-hook**: Extract component state and effect logic into reusable custom hooks
+- **refactor-dry-code**: Eliminate repetition using DRY principles and configuration patterns
+- **refactor-typescript-optimization**: Improve TypeScript usage with strict typing and better patterns
+- **refactor-tailwind-optimization**: Optimize TailwindCSS usage and responsive design patterns
+- **refactor-accessibility**: Add comprehensive WCAG 2.2 AA accessibility improvements
+- **refactor-performance**: Optimize React performance with memoization and bundle optimization
+- **refactor-nextjs-patterns**: Optimize for Next.js App Router with Server/Client Component patterns
+
+## Fetchable Workspace Rules
+These rules can be fetched using the fetch_rules tool when needed:
+
+### Architecture & Standards
+- **accessibility-requirements**: WCAG 2.2 AA compliance patterns, ARIA requirements, and keyboard navigation
+- **anti-patterns**: Comprehensive list of what NOT to do with better alternatives
+- **component-architecture**: File organization, naming conventions, TypeScript standards, and folder structures
+- **roomvibe-project-overview**: Core project philosophy, AI principles, and technical stack requirements
+
+### Specific Refactoring Guides
+- **refactor-early-returns**: Detailed guide for converting nested conditions to early returns
+- **refactor-extract-hook**: Step-by-step process for extracting component logic into custom hooks  
+- **refactor-performance**: React performance optimization techniques and patterns
+
+### Meta Rules
+- **cursor-rules**: How to add or edit Cursor rules in this project
+
+## Always Applied Rules
+These rules are automatically applied to all code in the workspace:
+
+### Refactoring Principles & Best Practices
+- Use early returns for clarity and reduced nesting
+- Embrace self-closing tags for components without children
+- Follow Single Responsibility Principle for components and functions
+- Create pure functions for calculations and data transformations
+- Adhere to DRY principles when practical and beneficial
+- Extract complex component logic into custom hooks
+
+## Project-Specific Guidelines
+
+### RoomVibe Technical Stack
+- **Framework**: Next.js 15 with TypeScript (strict mode)
+- **Styling**: Tailwind CSS 4 + DaisyUI 5 with custom "aura" theme
+- **Animations**: Framer Motion 12 with physics-based transitions
+- **State**: Zustand for state management
+- **Backend**: Supabase (auth, storage, database)
+- **Language**: German for UI text, English for code
+
+### Design System Compliance
+- Always use design tokens: `bg-primary`, `text-base-content`
+- Use Inter font with anti-aliasing: `antialiased`
+- Follow spacing scale: xs(0.25rem), sm(0.5rem), base(1rem), lg(1.5rem), xl(2rem), 2xl(3rem), 3xl(4rem)
+- Use physics-based animations with spring transitions
+
+### AI Integration Patterns
+- Implement Explainable AI (XAI) with reasoning for suggestions
+- Provide granular user controls, not binary accept/reject
+- Always include "Why?" tooltips or expandable explanations
+- Build trust through transparency and user control
+
+## Usage Examples
+
+### For Large Components
+```typescript
+// Select a large component and use:
+// Cmd+K → "refactor-decompose-component"
+```
+
+### For Nested Conditions  
+```typescript
+// Select nested if/else blocks and use:
+// Cmd+K → "refactor-early-returns"
+```
+
+### For Component Logic
+```typescript
+// Select useState/useEffect logic and use:
+// Cmd+K → "refactor-extract-hook"
+```
+
+### For Performance Issues
+```typescript
+// Select performance-critical components and use:
+// Cmd+K → "refactor-performance"
+```
+
+## Rule Creation Guidelines
+- Place new rules in `.cursor/rules/` directory
+- Use kebab-case filenames with `.mdc` extension
+- Include proper frontmatter with description and globs
+- Follow the project's coding standards and German UI language requirements
+
+This index ensures Cursor always knows what refactoring options are available and can suggest appropriate rules based on the code context.
