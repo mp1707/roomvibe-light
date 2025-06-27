@@ -94,7 +94,6 @@ export const useFileUpload = () => {
         formData.append("file", file);
 
         // Upload using the updated API with user-specific folder structure
-        const fileExt = file.name.split(".").pop();
         const response = await fetch(
           `/api/uploadImage?filename=${encodeURIComponent(
             file.name

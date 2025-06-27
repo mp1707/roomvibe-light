@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build",
+    "dev:fast": "next dev --experimental-https",
+    "clean": "rm -rf .next && rm -rf out"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

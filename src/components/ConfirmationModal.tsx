@@ -51,9 +51,12 @@ export const ConfirmationModal = () => {
         handleCancel();
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onCancel]);
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isOpen, onCancel]);
 
   const handleConfirm = () => {
     if (onConfirm) {

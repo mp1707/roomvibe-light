@@ -1,8 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /* Performance optimizations */
+
+
+  // Moved from experimental as per Next.js warning
+  serverExternalPackages: ["stripe", "replicate", "openai"],
+
+  // Compiler optimizations
+  compiler: {
+    // Remove console.logs in production
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+
+  // Performance optimizations
+  poweredByHeader: false,
+
   images: {
+    // Optimize image loading
+    formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+
     remotePatterns: [
       new URL("https://kxrfeixhctmklevy.public.blob.vercel-storage.com/**"),
       new URL("https://img.daisyui.com/**"),
@@ -39,6 +58,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // Bundle analysis (uncomment for debugging)
+  // webpack: (config, { dev, isServer }) => {
+  //   if (!dev && !isServer) {
+  //     config.resolve.alias = {
+  //       ...config.resolve.alias,
+  //       '@/components': path.resolve(__dirname, 'src/components'),
+  //       '@/utils': path.resolve(__dirname, 'src/utils'),
+  //     };
+  //   }
+  //   return config;
+  // },
 };
 
 export default nextConfig;

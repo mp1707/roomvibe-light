@@ -3,6 +3,7 @@
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { memo, useMemo } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useMenuState } from "./hooks/useMenuState";
 import { UserSection } from "./components/UserSection";
@@ -13,12 +14,14 @@ interface MobileMenuProps {
   className?: string;
 }
 
-const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
+const MenuIcon = memo(({ isOpen }: { isOpen: boolean }) => {
   const IconComponent = isOpen ? XMarkIcon : Bars3Icon;
   return <IconComponent className="w-5 h-5 text-base-content" />;
-};
+});
 
-const MobileMenu = ({ className = "" }: MobileMenuProps) => {
+MenuIcon.displayName = "MenuIcon";
+
+const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
   const { user, loading } = useAuth();
   const {
     isOpen,
@@ -32,41 +35,51 @@ const MobileMenu = ({ className = "" }: MobileMenuProps) => {
     handleAuthRedirect,
   } = useMenuState();
 
-  // Animation variants
-  const menuVariants = {
-    closed: {
-      opacity: 0,
-      scale: 0.95,
-      y: -10,
-      transition: { stiffness: 400, damping: 30 },
-    },
-    open: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { stiffness: 400, damping: 30 },
-    },
-  };
+  // Memoize animation variants to prevent recreation on each render
+  const animationVariants = useMemo(
+    () => ({
+      menuVariants: {
+        closed: {
+          opacity: 0,
+          scale: 0.95,
+          y: -10,
+          transition: { stiffness: 400, damping: 30 },
+        },
+        open: {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          transition: { stiffness: 400, damping: 30 },
+        },
+      },
+      backdropVariants: {
+        closed: { opacity: 0 },
+        open: { opacity: 1 },
+      },
+      buttonVariants: {
+        hover: { scale: 1.05 },
+        tap: { scale: 0.95 },
+      },
+    }),
+    []
+  );
 
-  const backdropVariants = {
-    closed: { opacity: 0 },
-    open: { opacity: 1 },
-  };
-
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 },
-  };
+  // Memoize button classes
+  const buttonClasses = useMemo(
+    () =>
+      "flex items-center justify-center w-10 h-10 rounded-lg bg-base-200/50 hover:bg-base-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border border-base-300/30",
+    []
+  );
 
   // Server-side rendering fallback
   if (typeof window === "undefined") {
     return (
       <div className={`relative ${className}`}>
         <motion.button
-          variants={buttonVariants}
+          variants={animationVariants.buttonVariants}
           whileHover="hover"
           whileTap="tap"
-          className="flex items-center justify-center w-10 h-10 rounded-lg bg-base-200/50 hover:bg-base-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border border-base-300/30"
+          className={buttonClasses}
           aria-label="Menü öffnen"
           aria-expanded={false}
         >
@@ -78,40 +91,30 @@ const MobileMenu = ({ className = "" }: MobileMenuProps) => {
 
   return (
     <>
-      {/* Backdrop - Portal to body for full-screen coverage */}
-      {createPortal(
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              variants={backdropVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              className="fixed inset-0 bg-black/50 backdrop-blur-lg z-[998]"
-              onClick={handleToggleMenu}
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              }}
-            />
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      {/* Backdrop - Only render when open */}
+      {isOpen &&
+        createPortal(
+          <motion.div
+            variants={animationVariants.backdropVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="fixed inset-0 bg-black/50 backdrop-blur-lg z-[998]"
+            onClick={handleToggleMenu}
+          />,
+          document.body
+        )}
 
       <div ref={menuRef} className={`relative ${className}`}>
         {/* Menu Button */}
         <motion.button
           ref={buttonRef}
-          variants={buttonVariants}
+          variants={animationVariants.buttonVariants}
           whileHover="hover"
           whileTap="tap"
           onClick={handleToggleMenu}
           onKeyDown={handleKeyDown}
-          className="flex items-center justify-center w-10 h-10 rounded-lg bg-base-200/50 hover:bg-base-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border border-base-300/30"
+          className={buttonClasses}
           aria-label={isOpen ? "Menü schließen" : "Menü öffnen"}
           aria-expanded={isOpen}
         >
@@ -119,50 +122,49 @@ const MobileMenu = ({ className = "" }: MobileMenuProps) => {
         </motion.button>
       </div>
 
-      {/* Menu Content - Portal to body */}
-      {buttonPosition &&
+      {/* Menu Content - Only render when open and buttonPosition exists */}
+      {isOpen &&
+        buttonPosition &&
         createPortal(
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                ref={menuContentRef}
-                variants={menuVariants}
-                initial="closed"
-                animate="open"
-                exit="closed"
-                className="fixed w-80 bg-base-100/90 backdrop-blur-sm border border-base-300/50 rounded-xl shadow-lg z-[999] overflow-hidden"
-                style={{
-                  position: "fixed",
-                  top: buttonPosition.top,
-                  right: buttonPosition.right,
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-4 space-y-4">
-                  {/* User Section */}
-                  {!loading && (
-                    <UserSection user={user} onAuthClick={handleAuthRedirect} />
-                  )}
+          <motion.div
+            ref={menuContentRef}
+            variants={animationVariants.menuVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="fixed w-80 bg-base-100/90 backdrop-blur-sm border border-base-300/50 rounded-xl shadow-lg z-[999] overflow-hidden"
+            style={{
+              position: "fixed",
+              top: buttonPosition.top,
+              right: buttonPosition.right,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 space-y-4">
+              {/* User Section */}
+              {!loading && (
+                <UserSection user={user} onAuthClick={handleAuthRedirect} />
+              )}
 
-                  {/* Navigation Links */}
-                  <NavigationSection
-                    user={user}
-                    onNavigationClick={handleNavigationClick}
-                  />
+              {/* Navigation Links */}
+              <NavigationSection
+                user={user}
+                onNavigationClick={handleNavigationClick}
+              />
 
-                  {/* Bottom Section */}
-                  <BottomSection
-                    user={user}
-                    onNavigationClick={handleNavigationClick}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
+              {/* Bottom Section */}
+              <BottomSection
+                user={user}
+                onNavigationClick={handleNavigationClick}
+              />
+            </div>
+          </motion.div>,
           document.body
         )}
     </>
   );
-};
+});
+
+MobileMenu.displayName = "MobileMenu";
 
 export default MobileMenu;

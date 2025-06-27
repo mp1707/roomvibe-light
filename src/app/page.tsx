@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import UploadForm from "@/components/UploadForm";
-import WelcomeScreen from "@/components/WelcomeScreen";
+import WelcomeScreen from "@/components/WelcomeScreen/WelcomeScreen";
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
 import {
   CreditState,
   CreditDeductionResponse,
@@ -38,203 +39,229 @@ const initialState: CreditState = {
 
 let optimisticCreditsBackup: number | null = null;
 
-export const useCreditsStore = create<CreditsStore>((set, get) => ({
-  ...initialState,
+// Cache management
+let fetchPromise: Promise<void> | null = null;
+const CACHE_DURATION = 30000; // 30 seconds instead of 5 seconds
 
-  fetchCredits: async () => {
-    const currentState = get();
+export const useCreditsStore = create<CreditsStore>()(
+  subscribeWithSelector((set, get) => ({
+    ...initialState,
 
-    // Don't fetch if already loading or recently updated (within 5 seconds)
-    if (
-      currentState.isLoading ||
-      (currentState.lastUpdated && Date.now() - currentState.lastUpdated < 5000)
-    ) {
-      return;
-    }
+    fetchCredits: async () => {
+      const currentState = get();
 
-    set({ isLoading: true, error: null });
-
-    try {
-      const response = await fetch("/api/credits/balance", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Return existing promise if already fetching
+      if (fetchPromise) {
+        return fetchPromise;
       }
 
-      const data: CreditBalanceResponse = await response.json();
-
-      if (data.success && typeof data.credits === "number") {
-        set({
-          credits: data.credits,
-          isLoading: false,
-          error: null,
-          lastUpdated: Date.now(),
-        });
-      } else {
-        throw new CreditOperationError(
-          "fetch",
-          data.error || "Unbekannter Fehler beim Laden der Credits"
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching credits:", error);
-      set({
-        isLoading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Fehler beim Laden der Credits",
-      });
-    }
-  },
-
-  deductCredits: async (
-    amount: number,
-    description: string,
-    referenceId?: string
-  ): Promise<boolean> => {
-    const currentState = get();
-
-    // Check if user has enough credits
-    if (!get().hasEnoughCredits(amount)) {
-      const error = new InsufficientCreditsError(
-        amount,
-        currentState.credits || 0
-      );
-      set({ error: error.message });
-      throw error;
-    }
-
-    // Optimistic update - store backup first
-    if (currentState.credits !== null) {
-      optimisticCreditsBackup = currentState.credits;
-      set({
-        credits: currentState.credits - amount,
-        isLoading: true,
-        error: null,
-      });
-    }
-
-    try {
-      const response = await fetch("/api/credits/deduct", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          amount,
-          description,
-          reference_id: referenceId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data: CreditDeductionResponse = await response.json();
-
-      if (data.success && typeof data.credits === "number") {
-        // Update with actual server response
-        set({
-          credits: data.credits,
-          isLoading: false,
-          error: null,
-          lastUpdated: Date.now(),
-        });
-        optimisticCreditsBackup = null;
-        return true;
-      } else {
-        // Rollback optimistic update
-        get().rollbackOptimisticUpdate();
-        const errorMessage =
-          data.error || "Unbekannter Fehler beim Abziehen der Credits";
-
-        if (data.error === "Insufficient credits") {
-          const error = new InsufficientCreditsError(
-            data.required || amount,
-            data.credits || 0
-          );
-          set({ error: error.message });
-          throw error;
-        } else {
-          const error = new CreditOperationError("deduct", errorMessage);
-          set({ error: error.message });
-          throw error;
-        }
-      }
-    } catch (error) {
-      console.error("Error deducting credits:", error);
-
-      // Rollback optimistic update
-      get().rollbackOptimisticUpdate();
-
+      // Don't fetch if recently updated (within cache duration)
       if (
-        error instanceof InsufficientCreditsError ||
-        error instanceof CreditOperationError
+        currentState.lastUpdated &&
+        Date.now() - currentState.lastUpdated < CACHE_DURATION
       ) {
+        return;
+      }
+
+      // Don't fetch if already loading
+      if (currentState.isLoading) {
+        return;
+      }
+
+      set({ isLoading: true, error: null });
+
+      fetchPromise = (async () => {
+        try {
+          const response = await fetch("/api/credits/balance", {
+            method: "GET",
+            credentials: "include",
+            // Add cache headers to prevent unnecessary requests
+            cache: "no-cache",
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data: CreditBalanceResponse = await response.json();
+
+          if (data.success && typeof data.credits === "number") {
+            set({
+              credits: data.credits,
+              isLoading: false,
+              error: null,
+              lastUpdated: Date.now(),
+            });
+          } else {
+            throw new CreditOperationError(
+              "fetch",
+              data.error || "Unbekannter Fehler beim Laden der Credits"
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching credits:", error);
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Fehler beim Laden der Credits",
+          });
+        } finally {
+          fetchPromise = null;
+        }
+      })();
+
+      return fetchPromise;
+    },
+
+    deductCredits: async (
+      amount: number,
+      description: string,
+      referenceId?: string
+    ): Promise<boolean> => {
+      const currentState = get();
+
+      // Check if user has enough credits
+      if (!get().hasEnoughCredits(amount)) {
+        const error = new InsufficientCreditsError(
+          amount,
+          currentState.credits || 0
+        );
+        set({ error: error.message });
         throw error;
       }
 
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Fehler beim Abziehen der Credits";
-      set({ error: errorMessage });
-      throw new CreditOperationError("deduct", errorMessage);
-    }
-  },
+      // Optimistic update - store backup first
+      if (currentState.credits !== null) {
+        optimisticCreditsBackup = currentState.credits;
+        set({
+          credits: currentState.credits - amount,
+          isLoading: true,
+          error: null,
+        });
+      }
 
-  refreshCredits: async () => {
-    // Force refresh by clearing lastUpdated
-    set({ lastUpdated: null });
-    await get().fetchCredits();
-  },
+      try {
+        const response = await fetch("/api/credits/deduct", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            amount,
+            description,
+            reference_id: referenceId,
+          }),
+        });
 
-  reset: () => {
-    optimisticCreditsBackup = null;
-    set({ ...initialState });
-  },
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-  // Utility functions
-  hasEnoughCredits: (amount: number): boolean => {
-    const { credits } = get();
-    return credits !== null && credits >= amount;
-  },
+        const data: CreditDeductionResponse = await response.json();
 
-  canAnalyzeImage: (): boolean => {
-    return true; // Analysis is now free, so always return true
-  },
+        if (data.success && typeof data.credits === "number") {
+          // Update with actual server response
+          set({
+            credits: data.credits,
+            isLoading: false,
+            error: null,
+            lastUpdated: Date.now(),
+          });
+          optimisticCreditsBackup = null;
+          return true;
+        } else {
+          // Rollback optimistic update
+          get().rollbackOptimisticUpdate();
+          const errorMessage =
+            data.error || "Unbekannter Fehler beim Abziehen der Credits";
 
-  canApplySuggestion: (): boolean => {
-    return get().hasEnoughCredits(CREDIT_COSTS.APPLY_SUGGESTION);
-  },
+          if (data.error === "Insufficient credits") {
+            const error = new InsufficientCreditsError(
+              data.required || amount,
+              data.credits || 0
+            );
+            set({ error: error.message });
+            throw error;
+          } else {
+            const error = new CreditOperationError("deduct", errorMessage);
+            set({ error: error.message });
+            throw error;
+          }
+        }
+      } catch (error) {
+        console.error("Error deducting credits:", error);
 
-  // Optimistic update helpers
-  setOptimisticCredits: (newCredits: number) => {
-    const currentCredits = get().credits;
-    if (currentCredits !== null && optimisticCreditsBackup === null) {
-      optimisticCreditsBackup = currentCredits;
-    }
-    set({ credits: newCredits });
-  },
+        // Rollback optimistic update
+        get().rollbackOptimisticUpdate();
 
-  rollbackOptimisticUpdate: () => {
-    if (optimisticCreditsBackup !== null) {
-      set({
-        credits: optimisticCreditsBackup,
-        isLoading: false,
-      });
+        if (
+          error instanceof InsufficientCreditsError ||
+          error instanceof CreditOperationError
+        ) {
+          throw error;
+        }
+
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Fehler beim Abziehen der Credits";
+        set({ error: errorMessage });
+        throw new CreditOperationError("deduct", errorMessage);
+      }
+    },
+
+    refreshCredits: async () => {
+      // Force refresh by clearing lastUpdated and cache
+      set({ lastUpdated: null });
+      fetchPromise = null;
+      await get().fetchCredits();
+    },
+
+    reset: () => {
       optimisticCreditsBackup = null;
-    } else {
-      set({ isLoading: false });
-    }
-  },
-}));
+      fetchPromise = null;
+      set({ ...initialState });
+    },
+
+    // Utility functions - memoized for better performance
+    hasEnoughCredits: (amount: number): boolean => {
+      const { credits } = get();
+      return credits !== null && credits >= amount;
+    },
+
+    canAnalyzeImage: (): boolean => {
+      return true; // Analysis is now free, so always return true
+    },
+
+    canApplySuggestion: (): boolean => {
+      return get().hasEnoughCredits(CREDIT_COSTS.APPLY_SUGGESTION);
+    },
+
+    // Optimistic update helpers
+    setOptimisticCredits: (newCredits: number) => {
+      const currentCredits = get().credits;
+      if (currentCredits !== null && optimisticCreditsBackup === null) {
+        optimisticCreditsBackup = currentCredits;
+      }
+      set({ credits: newCredits });
+    },
+
+    rollbackOptimisticUpdate: () => {
+      if (optimisticCreditsBackup !== null) {
+        set({
+          credits: optimisticCreditsBackup,
+          isLoading: false,
+        });
+        optimisticCreditsBackup = null;
+      } else {
+        set({ isLoading: false });
+      }
+    },
+  }))
+);
 
 // Helper hook for credit operations with error handling
 export const useCreditOperations = () => {
