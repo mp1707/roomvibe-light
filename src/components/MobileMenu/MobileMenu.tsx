@@ -2,7 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MenuIcon } from "../Icons";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "./hooks/useAuth";
 import { useMenuState } from "./hooks/useMenuState";
 import { UserSection } from "./components/UserSection";
@@ -12,6 +12,11 @@ import { BottomSection } from "./components/BottomSection";
 interface MobileMenuProps {
   className?: string;
 }
+
+const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
+  const IconComponent = isOpen ? XMarkIcon : Bars3Icon;
+  return <IconComponent className="w-5 h-5 text-base-content" />;
+};
 
 const MobileMenu = ({ className = "" }: MobileMenuProps) => {
   const { user, loading } = useAuth();

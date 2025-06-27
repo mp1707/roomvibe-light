@@ -2,7 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useSettingsStore } from "@/utils/settingsStore";
-import { EyeIcon, ImageIcon, UploadIconSmall } from "@/components/Icons";
+import {
+  EyeIcon,
+  PhotoIcon,
+  CloudArrowUpIcon,
+} from "@heroicons/react/24/outline";
 
 // Extracted components
 import { SettingsHeader } from "./components/SettingsHeader";
@@ -54,7 +58,7 @@ export default function Settings() {
           onChange={setMockImageAnalysis}
           label="Mock Bildanalyse"
           description="Verwendet Mock-Daten anstelle der OpenAI Vision API für die Raumanalyse. Spart API-Kosten während der Entwicklung."
-          icon={<EyeIcon />}
+          icon={<EyeIcon className="w-5 h-5" />}
         />
 
         <ToggleSwitch
@@ -62,13 +66,13 @@ export default function Settings() {
           onChange={setMockImageGeneration}
           label="Mock Bildgenerierung"
           description="Verwendet vorhandene Beispielbilder anstelle der Replicate API für die Bildgenerierung. Spart API-Kosten während der Entwicklung."
-          icon={<ImageIcon />}
+          icon={<PhotoIcon className="w-5 h-5" />}
         />
 
         <PreviewSection
           isVisible={mockImageGeneration}
           title="Beispielbilder werden generiert"
-          icon={<ImageIcon />}
+          icon={<PhotoIcon className="w-5 h-5" />}
           images={mockGenerationImages}
           isMultiple={true}
         />
@@ -78,13 +82,13 @@ export default function Settings() {
           onChange={setMockFileUpload}
           label="Mock Datei-Upload"
           description="Simuliert das Hochladen von Dateien ohne tatsächlich Supabase Storage zu verwenden. Spart API-Kosten und ermöglicht Offline-Entwicklung."
-          icon={<UploadIconSmall />}
+          icon={<CloudArrowUpIcon className="w-5 h-5" />}
         />
 
         <PreviewSection
           isVisible={mockFileUpload}
           title="Beispielbild wird verwendet"
-          icon={<UploadIconSmall />}
+          icon={<CloudArrowUpIcon className="w-5 h-5" />}
           images={[mockUploadImage]}
         />
       </motion.div>

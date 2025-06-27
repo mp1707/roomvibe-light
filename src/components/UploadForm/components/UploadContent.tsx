@@ -1,10 +1,27 @@
 import { motion } from "framer-motion";
-import { UploadIcon } from "../../Icons";
+import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
 
 interface UploadContentProps {
   isDragging: boolean;
   mockFileUpload: boolean;
 }
+
+const UploadIcon = ({ isDragging }: { isDragging: boolean }) => (
+  <motion.div
+    animate={isDragging ? "dragging" : "initial"}
+    variants={{
+      initial: { scale: 1, y: 0 },
+      dragging: {
+        scale: 1.1,
+        y: -5,
+        transition: { type: "spring", stiffness: 300, damping: 20 },
+      },
+    }}
+    aria-hidden="true"
+  >
+    <CloudArrowUpIcon className="size-12 sm:size-16 md:size-20 text-base-content/40" />
+  </motion.div>
+);
 
 export const UploadContent = ({
   isDragging,

@@ -6,7 +6,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import AILoadingScreen from "@/components/AILoadingScreen";
 import DiffSlider from "@/components/DiffSlider";
-import { BackIcon } from "@/components/Icons";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useMotionPreference, buttonVariants } from "@/utils/animations";
 import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
@@ -189,7 +189,7 @@ const ImageDisplaySection = ({
                 className="flex items-center gap-2 px-6 py-3 bg-base-200 text-base-content font-semibold rounded-xl border border-base-300 transition-all duration-300 hover:bg-base-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[160px] justify-center"
                 aria-label="Neues Bild hochladen"
               >
-                <BackIcon />
+                <ArrowLeftIcon className="w-5 h-5" />
                 Neues Bild
               </motion.button>
             </motion.div>
@@ -240,7 +240,7 @@ const ImageDisplaySection = ({
                 className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-content font-semibold rounded-xl shadow-lg transition-all duration-300 hover:bg-primary-focus hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[160px] justify-center"
                 aria-label="Neues Bild hochladen"
               >
-                <BackIcon />
+                <ArrowLeftIcon className="w-5 h-5" />
                 Neues Bild
               </motion.button>
             </motion.div>

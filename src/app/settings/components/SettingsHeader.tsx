@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SettingsIcon, BackIconSmall } from "@/components/Icons";
+import { CogIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 export const SettingsHeader = () => {
   return (
@@ -10,13 +10,13 @@ export const SettingsHeader = () => {
         href="/"
         className="inline-flex items-center gap-2 text-base-content/60 hover:text-base-content transition-colors mb-4 group"
       >
-        <BackIconSmall />
+        <ArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Zurück zur Startseite
       </Link>
 
       <div className="flex items-center gap-3 mb-2">
         <div className="p-2 bg-primary/10 rounded-lg">
-          <SettingsIcon />
+          <CogIcon className="w-6 h-6 text-primary" />
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-base-content">
           Entwickler-Einstellungen

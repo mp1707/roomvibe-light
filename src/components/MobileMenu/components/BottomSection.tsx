@@ -1,6 +1,9 @@
 import React from "react";
 import ThemeToggle from "../../ThemeToggle";
-import { MoonIcon, SignOutIcon } from "../../Icons";
+import {
+  MoonIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 import { signOut } from "@/app/auth/login/actions";
 import type { User } from "../hooks/useAuth";
 
@@ -18,7 +21,7 @@ export const BottomSection = ({
     <div className="flex items-center justify-between px-3 py-2">
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-base-200">
-          <MoonIcon />
+          <MoonIcon className="w-4 h-4 text-base-content/70" />
         </div>
         <span className="font-medium text-base-content">Dark Mode</span>
       </div>
@@ -34,7 +37,7 @@ export const BottomSection = ({
           className="flex items-center gap-3 px-3 py-3 w-full text-error hover:bg-error/10 rounded-lg transition-colors group"
         >
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-error/20 group-hover:bg-error/30 transition-colors">
-            <SignOutIcon />
+            <ArrowRightOnRectangleIcon className="w-4 h-4 text-error" />
           </div>
           <span className="font-medium">Abmelden</span>
         </button>

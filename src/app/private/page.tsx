@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
 import { useCreditsStore } from "@/utils/creditsStore";
 import { CreditTransaction, UserProfile } from "@/types/credits";
-import { OverviewIcon, TransactionsIcon, ImagesIcon } from "@/components/Icons";
+import { UserIcon, ChartBarIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import {
   staggerContainer,
   staggerItem,
@@ -313,9 +313,9 @@ export default function ProfilePage() {
           className="flex bg-base-200/50 rounded-xl p-1 mb-6 border border-base-300/50"
         >
           {[
-            { id: "overview", label: "Übersicht", Icon: OverviewIcon },
-            { id: "history", label: "Historie", Icon: TransactionsIcon },
-            { id: "images", label: "Bilder", Icon: ImagesIcon },
+            { id: "overview", label: "Übersicht", Icon: UserIcon },
+            { id: "history", label: "Historie", Icon: ChartBarIcon },
+            { id: "images", label: "Bilder", Icon: PhotoIcon },
           ].map((tab) => (
             <motion.button
               key={tab.id}
@@ -332,7 +332,7 @@ export default function ProfilePage() {
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
             >
-              <tab.Icon />
+              <tab.Icon className="w-5 h-5" />
               <span className="text-sm font-medium hidden sm:inline">
                 {tab.label}
               </span>

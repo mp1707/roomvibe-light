@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { EnlargeIcon } from "./Icons";
+import { MagnifyingGlassPlusIcon } from "@heroicons/react/24/outline";
 import { useState, useRef, useCallback, useEffect } from "react";
 
 interface DiffSliderProps {
@@ -151,7 +151,7 @@ const DiffSlider: React.FC<DiffSliderProps> = ({
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.2 }}
         >
-          <EnlargeIcon />
+          <MagnifyingGlassPlusIcon className="w-4 h-4" />
           {beforeLabel}
         </motion.div>
       )}
@@ -164,7 +164,7 @@ const DiffSlider: React.FC<DiffSliderProps> = ({
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.2 }}
         >
-          <EnlargeIcon />
+          <MagnifyingGlassPlusIcon className="w-4 h-4" />
           {afterLabel}
         </motion.div>
       )}
