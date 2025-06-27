@@ -471,7 +471,7 @@ export default function ProfilePage() {
                 <h3 className="text-lg lg:text-xl font-semibold text-base-content mb-4">
                   Aktionen
                 </h3>
-                <div className="space-y-2">
+                <div className="flex flex-col gap-2">
                   <Link href="/">
                     <motion.button
                       variants={reducedMotion ? {} : buttonVariants}
