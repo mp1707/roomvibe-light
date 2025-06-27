@@ -12,7 +12,7 @@ import {
   buttonVariants,
   useMotionPreference,
 } from "@/utils/animations";
-import resizeImage from "@/utils/resizeImage";
+
 import { getAnalyzeEndpoint } from "@/utils/apiHelpers";
 import AILoadingScreen from "../../components/AILoadingScreen";
 
@@ -189,31 +189,8 @@ export default function AnalyzePage() {
         throw new Error("Kein Bild zum Analysieren gefunden");
       }
 
-      // Compress image if it's too large (> 5MB) to prevent 413 errors
-      let processedImageFile = imageFile;
-      if (imageFile.size > 5 * 1024 * 1024) {
-        // 5MB
-        console.log("Image is large, compressing...", imageFile.size);
-        try {
-          const compressedBlob = await resizeImage(imageFile, 1920, 1080, 0.8);
-          processedImageFile = new File([compressedBlob], imageFile.name, {
-            type: compressedBlob.type,
-            lastModified: Date.now(),
-          });
-          console.log(
-            "Image compressed from",
-            imageFile.size,
-            "to",
-            processedImageFile.size
-          );
-        } catch (compressionError) {
-          console.warn(
-            "Image compression failed, using original:",
-            compressionError
-          );
-          // Continue with original file if compression fails
-        }
-      }
+      // Use image directly - already optimized during upload
+      const processedImageFile = imageFile;
 
       // Prepare form data for API call
       const formData = new FormData();

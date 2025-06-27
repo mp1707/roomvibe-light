@@ -22,6 +22,18 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
+    // Convert request body to buffer to check file size
+    const buffer = await request.arrayBuffer();
+    const file = new Uint8Array(buffer);
+    const fileSizeMB = (file.length / 1024 / 1024).toFixed(2);
+
+    console.log(
+      `📂 [UPLOAD] Receiving ${folder} image: ${filename} (${fileSizeMB} MB) for user ${userId.substring(
+        0,
+        8
+      )}...`
+    );
+
     // Initialize Supabase client
     const supabase = await createClient();
 
@@ -30,10 +42,6 @@ export async function POST(request: Request): Promise<NextResponse> {
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2);
     const fileName = `${userId}/${folder}/${timestamp}-${randomId}.${fileExt}`;
-
-    // Convert request body to buffer
-    const buffer = await request.arrayBuffer();
-    const file = new Uint8Array(buffer);
 
     // Upload to Supabase storage
     const { data, error } = await supabase.storage
@@ -53,6 +61,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     const {
       data: { publicUrl },
     } = supabase.storage.from("room-images").getPublicUrl(data.path);
+
+    console.log(
+      `✅ [UPLOAD] Successfully stored ${folder} image (${fileSizeMB} MB) → ${data.path}`
+    );
 
     return NextResponse.json({
       url: publicUrl,

@@ -92,6 +92,9 @@ export async function POST(req: Request) {
     const { imageUrl, prompt } = validatedData;
 
     console.log("Using pre-generated prompt:", prompt);
+    console.log(
+      `🎨 [GENERATE] Creating image with Flux model using optimized input image`
+    );
 
     const prediction = await replicate.predictions.create({
       model: "black-forest-labs/flux-kontext-pro",
@@ -101,6 +104,7 @@ export async function POST(req: Request) {
       },
     });
 
+    console.log(`✅ [GENERATE] Prediction created with ID: ${prediction.id}`);
     return NextResponse.json(prediction, { status: 201 });
   } catch (error) {
     console.error("Fehler beim Aufruf der Replicate API:", error);

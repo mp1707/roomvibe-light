@@ -19,10 +19,22 @@ export async function GET(
   try {
     const { id } = await params;
 
+    console.log(`🔄 [PREDICTION] Checking status for prediction: ${id}`);
     const prediction = await replicate.predictions.get(id);
 
     if (prediction?.error) {
+      console.log(`❌ [PREDICTION] Error for ${id}: ${prediction.error}`);
       return NextResponse.json({ detail: prediction.error }, { status: 500 });
+    }
+
+    if (prediction?.status === "succeeded" && prediction?.output) {
+      console.log(
+        `✅ [PREDICTION] Completed for ${id} - image ready for download`
+      );
+    } else if (prediction?.status === "failed") {
+      console.log(`❌ [PREDICTION] Failed for ${id}`);
+    } else {
+      console.log(`⏳ [PREDICTION] Status for ${id}: ${prediction?.status}`);
     }
 
     return NextResponse.json(prediction);

@@ -135,11 +135,20 @@ QUALITÄTS-ANFORDERUNGEN:
 Antworte NUR mit dem JSON-Format!
 `;
 
-    console.log("File info:", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    });
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+    console.log(
+      `🔍 [ANALYZE] Processing image: ${file.name} (${fileSizeMB} MB, ${file.type})`
+    );
+
+    if (file.size <= 4 * 1024 * 1024) {
+      console.log(
+        `✅ [OPTIMIZE] Image was within 4MB limit - no client-side compression applied`
+      );
+    } else {
+      console.log(
+        `⚡ [OPTIMIZE] Image was >4MB - client-side optimization was applied`
+      );
+    }
 
     // Call OpenAI Vision API
     console.log("Calling OpenAI API...");

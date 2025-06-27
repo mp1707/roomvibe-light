@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useAppState } from "@/utils/store";
 import { useSettingsStore } from "@/utils/settingsStore";
 import { useImageModalStore } from "@/utils/useImageModalStore";
+import { smartOptimizeImage } from "@/utils/resizeImage";
 import toast from "react-hot-toast";
 
 // Constants
@@ -146,13 +147,16 @@ export const useFileUpload = () => {
       setUploadProgress(0);
 
       try {
+        // Smart optimization - only if needed
+        const optimizedFile = await smartOptimizeImage(file, 2);
+
         let publicUrl: string;
 
         if (mockFileUpload) {
           console.log("🎭 Mock file upload enabled - simulating upload...");
-          publicUrl = await simulateUpload(file);
+          publicUrl = await simulateUpload(optimizedFile);
 
-          // Create mock file for local storage
+          // Create mock file for local storage using optimized version
           try {
             const response = await fetch(publicUrl, {
               mode: "cors",
@@ -170,14 +174,12 @@ export const useFileUpload = () => {
             }
           } catch (error) {
             console.warn("Could not create mock file object:", error);
-            const placeholderFile = new File([""], "mock-placeholder.jpg", {
-              type: "image/jpeg",
-            });
-            setLocalImageUrl(placeholderFile);
+            // Use the optimized file as fallback instead of empty placeholder
+            setLocalImageUrl(optimizedFile);
           }
         } else {
-          publicUrl = await uploadToSupabase(file);
-          setLocalImageUrl(file);
+          publicUrl = await uploadToSupabase(optimizedFile);
+          setLocalImageUrl(optimizedFile);
         }
 
         setHostedImageUrl(publicUrl);
