@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 import {
   staggerContainer,
   staggerItem,
@@ -21,9 +23,45 @@ import { InteractiveDemo } from "./components/InteractiveDemo";
 const WelcomeScreen = () => {
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [supabase] = useState(() => createClient());
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setUser(user);
+      } catch (error) {
+        console.error("Error getting user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUser();
+
+    // Listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   const handleGetStarted = (): void => {
-    router.push("/auth/login");
+    if (user) {
+      // Authenticated user - go to upload
+      router.push("/upload");
+    } else {
+      // Unauthenticated user - go to login
+      router.push("/auth/login");
+    }
   };
 
   const handleViewInspiration = (): void => {
@@ -45,6 +83,8 @@ const WelcomeScreen = () => {
             onGetStarted={handleGetStarted}
             onViewInspiration={handleViewInspiration}
             reducedMotion={reducedMotion}
+            user={user}
+            loading={loading}
           />
 
           {/* Right Side - Interactive Demo */}

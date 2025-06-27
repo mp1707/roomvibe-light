@@ -8,12 +8,16 @@ interface HeroContentProps {
   onGetStarted: () => void;
   onViewInspiration: () => void;
   reducedMotion: boolean;
+  user: any;
+  loading: boolean;
 }
 
 export const HeroContent = ({
   onGetStarted,
   onViewInspiration,
   reducedMotion,
+  user,
+  loading,
 }: HeroContentProps) => (
   <motion.div
     variants={reducedMotion ? {} : staggerItem}
@@ -61,6 +65,8 @@ export const HeroContent = ({
       onGetStarted={onGetStarted}
       onViewInspiration={onViewInspiration}
       reducedMotion={reducedMotion}
+      user={user}
+      loading={loading}
     />
   </motion.div>
 );
