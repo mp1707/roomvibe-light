@@ -18,7 +18,7 @@ export const CallToAction = ({
       whileHover={reducedMotion ? {} : "hover"}
       whileTap={reducedMotion ? {} : "tap"}
       onClick={onGetStarted}
-      className="inline-flex items-center px-8 py-4 bg-primary hover:bg-primary-focus text-primary-content font-semibold text-lg rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 w-full sm:w-auto justify-center"
+      className="inline-flex items-center px-6 py-3 sm:px-8 sm:py-4 bg-primary hover:bg-primary-focus text-primary-content font-semibold text-base sm:text-lg rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 w-full sm:w-auto justify-center"
     >
       <svg
         className="w-5 h-5 mr-3"

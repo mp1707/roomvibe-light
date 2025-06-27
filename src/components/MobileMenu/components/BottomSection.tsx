@@ -33,8 +33,7 @@ export const BottomSection = ({
       <form action={signOut}>
         <button
           type="submit"
-          onClick={onNavigationClick}
-          className="flex items-center gap-3 px-3 py-3 w-full text-error hover:bg-error/10 rounded-lg transition-colors group"
+          className="flex items-center gap-3 px-3 py-3 w-full text-error hover:bg-error/10 rounded-lg transition-colors group focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 focus:ring-offset-base-100"
         >
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-error/20 group-hover:bg-error/30 transition-colors">
             <ArrowRightOnRectangleIcon className="w-4 h-4 text-error" />
