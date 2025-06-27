@@ -25,9 +25,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeInitializerScript = `
+    (function() {
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+      } catch (e) {
+        // Silently fail if localStorage is not available
+      }
+    })();
+  `;
   return (
-    <html lang="de" className="bg-base-100">
-      <body className="min-h-screen w-full bg-base-100 text-base-content">
+    <html lang="de" className="bg-base-100" suppressHydrationWarning>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
         <main
           className={`${inter.variable} font-sans min-h-screen w-full antialiased flex flex-col bg-base-100`}
         >
