@@ -41,7 +41,7 @@ export const UploadContent = ({
         <span className="text-primary">Foto auswählen</span> oder hierher ziehen
       </p>
       <p id="file-upload-description" className="text-sm text-base-content/40">
-        PNG, JPG, WEBP bis 10MB
+        JPG, PNG, WEBP, GIF und andere Bildformate
       </p>
       {mockFileUpload && (
         <div className="flex items-center justify-center gap-2 mt-2 px-3 py-1 bg-warning/10 border border-warning/20 rounded-lg">
