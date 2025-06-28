@@ -25,6 +25,17 @@ export const validateFile = (
     return { isValid: false, error: "Bitte wählen Sie eine Bilddatei aus." };
   }
 
+  // Check for extremely large files that can't be reasonably optimized
+  const maxReasonableSize = 20 * 1024 * 1024; // 20MB - anything larger is unreasonable
+  if (file.size > maxReasonableSize) {
+    return {
+      isValid: false,
+      error: `Das Bild ist zu groß (${(file.size / 1024 / 1024).toFixed(
+        1
+      )}MB). Bitte wählen Sie ein Bild unter 20MB.`,
+    };
+  }
+
   return { isValid: true };
 };
 
@@ -107,6 +118,14 @@ export const useFileUpload = () => {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
+
+          // Handle specific 413 error (Request Entity Too Large)
+          if (response.status === 413) {
+            throw new Error(
+              "Das Bild ist zu groß für den Upload (Server-Limit erreicht). Bitte wählen Sie ein Bild mit weniger Details oder niedrigerer Auflösung."
+            );
+          }
+
           throw new Error(errorData.error || "Upload failed");
         }
 
@@ -147,8 +166,23 @@ export const useFileUpload = () => {
       setUploadProgress(0);
 
       try {
-        // Smart optimization - only if needed
-        const optimizedFile = await smartOptimizeImage(file, 2);
+        // Consistent optimization for all environments - what customers see
+        const targetSize = 0.8; // Consistent 0.8MB for optimal Vercel compatibility
+        const optimizedFile = await smartOptimizeImage(file, targetSize);
+
+        // Consistent size check for all environments
+        const maxUploadSize = 1 * 1024 * 1024; // 1MB limit everywhere
+        if (optimizedFile.size > maxUploadSize) {
+          throw new Error(
+            `Das Bild konnte nicht ausreichend komprimiert werden (${(
+              optimizedFile.size /
+              1024 /
+              1024
+            ).toFixed(
+              1
+            )}MB von 1MB maximal). Bitte wählen Sie ein Bild mit weniger Details oder niedrigerer Auflösung.`
+          );
+        }
 
         let publicUrl: string;
 

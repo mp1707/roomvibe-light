@@ -58,9 +58,13 @@ const resizeImage = (
         canvas.width = newWidth;
         canvas.height = newHeight;
 
-        // Use better image rendering
+        // Use highest quality image rendering for best results
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
+
+        // Additional canvas optimizations for quality
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, newWidth, newHeight);
 
         // Draw the scaled image onto the canvas
         ctx.drawImage(img, 0, 0, newWidth, newHeight);
@@ -105,19 +109,18 @@ const resizeImage = (
  * Maintains premium quality while ensuring reasonable file sizes.
  *
  * @param file The original image file
- * @param targetSizeMB Target file size in MB (default: 4MB)
+ * @param targetSizeMB Target file size in MB (default: 0.8MB for optimal Vercel compatibility)
  * @returns The optimized file or original if no optimization needed
  */
 export const smartOptimizeImage = async (
   file: File,
-  targetSizeMB: number = 2
+  targetSizeMB: number = 0.8
 ): Promise<File> => {
   const targetBytes = targetSizeMB * 1024 * 1024;
   const originalSizeMB = (file.size / 1024 / 1024).toFixed(2);
 
   console.log("originalSizeMB", originalSizeMB);
   console.log("targetSizeMB", targetSizeMB);
-
 
   // Return original file if already within target size
   if (file.size <= targetBytes) {
@@ -137,22 +140,61 @@ export const smartOptimizeImage = async (
     );
   }
 
-  // Smart compression settings for premium quality
-  const maxWidth = 2048; // Higher resolution for premium feel
-  const maxHeight = 1536; // Maintain aspect ratios well
-  const quality = 0.92; // High quality (92%)
+  // Progressive optimization strategy for best quality within size limits
+  const optimizationSteps = [
+    { maxWidth: 1920, maxHeight: 1440, quality: 0.92 }, // High quality, good resolution
+    { maxWidth: 1600, maxHeight: 1200, quality: 0.88 }, // Slightly reduced
+    { maxWidth: 1400, maxHeight: 1050, quality: 0.85 }, // More compression
+    { maxWidth: 1200, maxHeight: 900, quality: 0.82 }, // Final fallback
+  ];
 
-  // Determine best output format
-  const outputFormat = file.type === "image/png" ? "image/png" : "image/jpeg";
+  // Always use JPEG for better compression (even for PNG inputs)
+  const outputFormat = "image/jpeg";
 
-  // Perform single optimization
-  const optimizedBlob = await resizeImage(
-    file,
-    maxWidth,
-    maxHeight,
-    quality,
-    outputFormat
-  );
+  let optimizedBlob: Blob | null = null;
+
+  // Try each optimization step until we hit target size
+  for (const step of optimizationSteps) {
+    const testBlob = await resizeImage(
+      file,
+      step.maxWidth,
+      step.maxHeight,
+      step.quality,
+      outputFormat
+    );
+
+    if (testBlob.size <= targetBytes) {
+      optimizedBlob = testBlob;
+      if (process.env.NODE_ENV === "development") {
+        console.log(
+          `✅ [CLIENT-OPTIMIZE] Achieved target with ${step.maxWidth}x${
+            step.maxHeight
+          } @ ${(step.quality * 100).toFixed(0)}% quality`
+        );
+      }
+      break;
+    }
+  }
+
+  // If no step worked, use the most compressed version
+  if (!optimizedBlob) {
+    const finalStep = optimizationSteps[optimizationSteps.length - 1];
+    optimizedBlob = await resizeImage(
+      file,
+      finalStep.maxWidth,
+      finalStep.maxHeight,
+      finalStep.quality,
+      outputFormat
+    );
+
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `⚠️ [CLIENT-OPTIMIZE] Used most aggressive compression: ${
+          finalStep.maxWidth
+        }x${finalStep.maxHeight} @ ${(finalStep.quality * 100).toFixed(0)}%`
+      );
+    }
+  }
 
   // Development-only logging for results
   if (process.env.NODE_ENV === "development") {
@@ -160,8 +202,9 @@ export const smartOptimizeImage = async (
     const compressionRatio = Math.round(
       (1 - optimizedBlob.size / file.size) * 100
     );
+    const withinTarget = optimizedBlob.size <= targetBytes ? "✅" : "⚠️";
     console.log(
-      `✅ [CLIENT-OPTIMIZE] ${file.name} optimized: ${originalSizeMB} MB → ${optimizedSizeMB} MB (${compressionRatio}% reduction)`
+      `${withinTarget} [CLIENT-OPTIMIZE] ${file.name} optimized: ${originalSizeMB} MB → ${optimizedSizeMB} MB (${compressionRatio}% reduction)`
     );
   }
 
