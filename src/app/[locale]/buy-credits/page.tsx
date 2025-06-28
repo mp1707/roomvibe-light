@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
@@ -41,6 +42,7 @@ const SearchParamsHandler = () => {
 
 const BuyCreditsContent = () => {
   const router = useRouter();
+  const locale = useLocale();
   const { credits, isLoading, fetchCredits } = useCreditsStore();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
@@ -81,8 +83,8 @@ const BuyCreditsContent = () => {
         credentials: "include",
         body: JSON.stringify({
           packageId,
-          successUrl: `${window.location.origin}/buy-credits?success=true&session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${window.location.origin}/buy-credits?canceled=true`,
+          successUrl: `${window.location.origin}/${locale}/buy-credits?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/${locale}/buy-credits?canceled=true`,
         }),
       });
 
