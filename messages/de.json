@@ -1,0 +1,34 @@
+{
+  "Navigation": {
+    "home": "Startseite",
+    "upload": "Hochladen",
+    "analyze": "Analysieren",
+    "inspiration": "Inspiration",
+    "settings": "Einstellungen",
+    "buyCredits": "Credits kaufen",
+    "login": "Anmelden",
+    "logout": "Abmelden"
+  },
+  "HomePage": {
+    "title": "Verwandeln Sie Ihren Raum mit KI",
+    "subtitle": "Laden Sie ein Foto Ihres Zimmers hoch und erhalten Sie personalisierte Designvorschläge, die von künstlicher Intelligenz erstellt werden",
+    "uploadButton": "Raumfoto hochladen",
+    "getStarted": "Loslegen",
+    "howItWorks": "So funktioniert's"
+  },
+  "UploadForm": {
+    "title": "Laden Sie Ihr Raumfoto hoch",
+    "subtitle": "Machen Sie ein klares Foto Ihres Zimmers oder laden Sie es hoch, um zu beginnen",
+    "uploadZone": "Ziehen Sie Ihr Bild hier hinein oder klicken Sie zum Auswählen",
+    "analyzing": "Analysiere Ihren Raum...",
+    "supportedFormats": "Unterstützte Formate: JPG, PNG, WebP (max. 10MB)"
+  },
+  "Common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "tryAgain": "Erneut versuchen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "cancel": "Abbrechen"
+  }
+}

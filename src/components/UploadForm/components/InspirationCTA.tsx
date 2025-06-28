@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { buttonVariants, useMotionPreference } from "@/utils/animations";
 
 export const InspirationCTA = () => {

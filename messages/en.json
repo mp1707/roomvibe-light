@@ -1,0 +1,34 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "upload": "Upload",
+    "analyze": "Analyze",
+    "inspiration": "Inspiration",
+    "settings": "Settings",
+    "buyCredits": "Buy Credits",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "HomePage": {
+    "title": "Transform Your Space with AI",
+    "subtitle": "Upload a photo of your room and get personalized design suggestions powered by artificial intelligence",
+    "uploadButton": "Upload Room Photo",
+    "getStarted": "Get Started",
+    "howItWorks": "How It Works"
+  },
+  "UploadForm": {
+    "title": "Upload Your Room Photo",
+    "subtitle": "Take or upload a clear photo of your room to get started",
+    "uploadZone": "Drag and drop your image here, or click to select",
+    "analyzing": "Analyzing your room...",
+    "supportedFormats": "Supported formats: JPG, PNG, WebP (max 10MB)"
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "back": "Back",
+    "next": "Next",
+    "cancel": "Cancel"
+  }
+}

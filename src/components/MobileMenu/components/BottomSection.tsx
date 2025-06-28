@@ -4,7 +4,7 @@ import {
   MoonIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { signOut } from "@/app/auth/login/actions";
+import { signOut } from "@/app/[locale]/auth/login/actions";
 import type { User } from "../hooks/useAuth";
 
 interface BottomSectionProps {

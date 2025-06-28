@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAppState } from "@/utils/store";
 
 export function StateGuard({ children }: { children: React.ReactNode }) {

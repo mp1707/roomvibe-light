@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCreditsStore } from "@/utils/creditsStore";
 import { createClient } from "@/utils/supabase/client";
 

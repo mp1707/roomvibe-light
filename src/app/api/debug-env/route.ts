@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     hasOpenAIKey: !!process.env.OPENAI_API_KEY,
     openAIKeyLength: process.env.OPENAI_API_KEY?.length || 0,
     hasReplicateToken: !!process.env.REPLICATE_API_TOKEN,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
     timestamp: new Date().toISOString(),
   });
 }

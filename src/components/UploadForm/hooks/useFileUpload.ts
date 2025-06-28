@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useAppState } from "@/utils/store";
 import { useSettingsStore } from "@/utils/settingsStore";

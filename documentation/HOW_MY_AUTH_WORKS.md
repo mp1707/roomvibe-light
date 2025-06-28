@@ -170,7 +170,7 @@ if (!user) {
 
 ### 1. **Authentication Settings**
 
-- **URL Configuration**: Set your site URL to `http://localhost:3002` (dev) and your production URL
+- **URL Configuration**: Set your site URL to `http://localhost:3000` (dev) and your production URL
 - **Redirect URLs**: Add `/auth/callback` to allowed redirect URLs
 - **Email Templates**: Default templates work, but you can customize them
 
@@ -193,7 +193,7 @@ if (!user) {
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://[your-project].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[your-anon-key]
-NEXT_PUBLIC_SITE_URL=http://localhost:3002  # (or your production URL)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000  # (or your production URL)
 ```
 
 ### 5. **Row Level Security (RLS)**

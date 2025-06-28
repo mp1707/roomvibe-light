@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { signOut } from "@/app/auth/login/actions";
+import { signOut } from "@/app/[locale]/auth/login/actions";
 
 export default function AuthButton() {
   const [user, setUser] = useState<any>(null);
@@ -63,7 +63,9 @@ export default function AuthButton() {
 
   if (!user) {
     const handleSignIn = () => {
-      window.location.href = "/auth/login";
+      // Get current locale from URL or default to 'de'
+      const locale = window.location.pathname.split("/")[1] || "de";
+      window.location.href = `/${locale}/auth/login`;
     };
 
     return (
@@ -149,7 +151,11 @@ export default function AuthButton() {
           {/* Menu Items */}
           <div className="py-1">
             <a
-              href="/private"
+              href={`/${
+                typeof window !== "undefined"
+                  ? window.location.pathname.split("/")[1] || "de"
+                  : "de"
+              }/private`}
               className="flex items-center px-4 py-2 text-sm text-base-content hover:bg-base-200 transition-colors duration-150"
             >
               <svg
