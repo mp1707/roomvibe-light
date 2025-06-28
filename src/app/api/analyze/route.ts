@@ -43,43 +43,42 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const data = await request.formData();
-    const file: File | null = data.get("file") as unknown as File;
+    const body = await request.json();
+    const { imageUrl } = body;
 
-    if (!file) {
+    if (!imageUrl) {
       return NextResponse.json(
-        { error: "Keine Datei hochgeladen" },
+        { error: "Keine Bild-URL bereitgestellt" },
         { status: 400 }
       );
     }
 
-    // Check file size (limit to 10MB to be safe)
-    const maxFileSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxFileSize) {
-      console.error(`File too large: ${file.size} bytes (max: ${maxFileSize})`);
+    // Validate that it's a valid URL or data URL
+    if (
+      !imageUrl.startsWith("data:image/") &&
+      !imageUrl.startsWith("http://") &&
+      !imageUrl.startsWith("https://")
+    ) {
       return NextResponse.json(
         {
-          error: "Das Bild ist zu groß",
-          details: `Maximale Dateigröße: ${Math.round(
-            maxFileSize / (1024 * 1024)
-          )}MB. Ihr Bild: ${Math.round(file.size / (1024 * 1024))}MB`,
+          error:
+            "Ungültige Bild-URL. Muss eine HTTP/HTTPS-URL oder data:image/ URL sein.",
         },
-        { status: 413 }
-      );
-    }
-
-    // Check file type
-    if (!file.type.startsWith("image/")) {
-      return NextResponse.json(
-        { error: "Ungültiger Dateityp. Bitte laden Sie ein Bild hoch." },
         { status: 400 }
       );
     }
 
-    // Convert file to base64
-    const bytes = await file.arrayBuffer();
-    const base64 = Buffer.from(bytes).toString("base64");
-    const imageUrl = `data:${file.type};base64,${base64}`;
+    // Additional validation for HTTP URLs
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      try {
+        new URL(imageUrl);
+      } catch {
+        return NextResponse.json(
+          { error: "Ungültige HTTP-URL" },
+          { status: 400 }
+        );
+      }
+    }
 
     // German prompt for room analysis
     const prompt = `
@@ -135,20 +134,9 @@ QUALITÄTS-ANFORDERUNGEN:
 Antworte NUR mit dem JSON-Format!
 `;
 
-    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
     console.log(
-      `🔍 [ANALYZE] Processing image: ${file.name} (${fileSizeMB} MB, ${file.type})`
+      `🔍 [ANALYZE] Processing image from URL: ${imageUrl.substring(0, 50)}...`
     );
-
-    if (file.size <= 4 * 1024 * 1024) {
-      console.log(
-        `✅ [OPTIMIZE] Image was within 4MB limit - no client-side compression applied`
-      );
-    } else {
-      console.log(
-        `⚡ [OPTIMIZE] Image was >4MB - client-side optimization was applied`
-      );
-    }
 
     // Call OpenAI Vision API
     console.log("Calling OpenAI API...");

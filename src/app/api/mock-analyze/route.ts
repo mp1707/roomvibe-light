@@ -77,29 +77,32 @@ export async function POST(request: NextRequest) {
   console.log("=== MOCK ANALYZE API START ===");
 
   try {
-    const data = await request.formData();
-    const file: File | null = data.get("file") as unknown as File;
+    const body = await request.json();
+    const { imageUrl } = body;
 
-    if (!file) {
+    if (!imageUrl) {
       return NextResponse.json(
-        { error: "Keine Datei hochgeladen" },
+        { error: "Keine Bild-URL bereitgestellt" },
         { status: 400 }
       );
     }
 
-    // Check file type
-    if (!file.type.startsWith("image/")) {
+    // Validate that it's a valid URL or data URL
+    if (
+      !imageUrl.startsWith("data:image/") &&
+      !imageUrl.startsWith("http://") &&
+      !imageUrl.startsWith("https://")
+    ) {
       return NextResponse.json(
-        { error: "Ungültiger Dateityp. Bitte laden Sie ein Bild hoch." },
+        {
+          error:
+            "Ungültige Bild-URL. Muss eine HTTP/HTTPS-URL oder data:image/ URL sein.",
+        },
         { status: 400 }
       );
     }
 
-    console.log("Mock file info:", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    });
+    console.log("Mock image URL:", imageUrl.substring(0, 50) + "...");
 
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 2000));

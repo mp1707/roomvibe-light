@@ -170,36 +170,35 @@ export default function AnalyzePage() {
         });
       }, 300);
 
-      // Get the image file for API call
-      let imageFile: File | null = null;
+      // Get the image URL for API call
+      let imageUrl: string;
 
-      if (localImageUrl) {
-        // Convert blob URL back to File if needed
+      if (hostedImageUrl) {
+        // Use the Supabase URL directly (preferred)
+        imageUrl = hostedImageUrl;
+      } else if (localImageUrl) {
+        // Convert blob URL to base64 data URL for local images
         const response = await fetch(localImageUrl);
         const blob = await response.blob();
-        imageFile = new File([blob], "room-image.jpg", { type: "image/jpeg" });
-      } else if (hostedImageUrl) {
-        // For hosted images, we need to fetch and convert to File
-        const response = await fetch(hostedImageUrl);
-        const blob = await response.blob();
-        imageFile = new File([blob], "room-image.jpg", { type: blob.type });
-      }
-
-      if (!imageFile) {
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+        imageUrl = base64;
+      } else {
         throw new Error("Kein Bild zum Analysieren gefunden");
       }
-
-      // Use image directly - already optimized during upload
-      const processedImageFile = imageFile;
-
-      // Prepare form data for API call
-      const formData = new FormData();
-      formData.append("file", processedImageFile);
 
       // Call our analysis API (real or mock based on settings)
       const response = await fetch(getAnalyzeEndpoint(), {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageUrl: imageUrl,
+        }),
       });
 
       // Read response text once and handle both success and error cases
