@@ -4,7 +4,11 @@ import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./src/i18n/routing";
 
 // Create the internationalization middleware
-const intlMiddleware = createIntlMiddleware(routing);
+const intlMiddleware = createIntlMiddleware({
+  ...routing,
+  // Ensure that the middleware handles locale detection and redirects
+  localeDetection: true,
+});
 
 export async function middleware(request: NextRequest) {
   // First handle internationalization
