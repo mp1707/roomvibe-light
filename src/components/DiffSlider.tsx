@@ -209,7 +209,9 @@ const DiffSlider = memo<DiffSliderProps>(
             className="object-cover"
             draggable={false}
             priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            // quality={95}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 70vw"
+            // unoptimized={safeAfterImageUrl.includes("replicate")}
           />
         </div>
 
@@ -222,7 +224,8 @@ const DiffSlider = memo<DiffSliderProps>(
             className="object-cover"
             draggable={false}
             priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 70vw"
+            unoptimized={safeBeforeImageUrl.includes("replicate")}
           />
         </div>
 
