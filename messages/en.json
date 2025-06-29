@@ -321,17 +321,11 @@
       }
     },
     "DiffSlider": {
+      "dragSlider": "Drag the slider",
       "before": "Before",
       "after": "After",
       "imagesLoading": "Images loading...",
       "dragToCompare": "Drag to compare"
-    },
-    "CreditPackageCard": {
-      "popular": "Popular",
-      "bestValue": "Best Value",
-      "selectPackage": "Select Package",
-      "credits": "Credits",
-      "price": "Price"
     },
     "ActionBar": {
       "suggestionSelected": "Suggestion selected:",
@@ -400,7 +394,7 @@
       "aiAnalysis": "AI Analysis",
       "colorOptimization": "Color Optimization",
       "furnitureSuggestions": "Furniture Suggestions",
-      "premium": "Premium"
+      "premium": "Premium Feedback"
     },
     "CustomSuggestionCard": {
       "customSuggestion": "Custom Suggestion",
@@ -435,7 +429,11 @@
       "processing": "Processing...",
       "buyCredits": "Buy Credits",
       "availableImmediately": "Available immediately",
-      "noExpiration": "No expiration"
+      "noExpiration": "No expiration",
+      "popular": "Popular",
+      "bestValue": "Best Value",
+      "selectPackage": "Select Package",
+      "price": "Price"
     },
     "MobileMenu": {
       "uploadPhoto": "Upload Photo",

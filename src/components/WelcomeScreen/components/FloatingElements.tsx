@@ -10,7 +10,7 @@ export const FloatingElements = () => {
     <>
       {/* Right side floating card */}
       <motion.div
-        className="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden xl:block"
+        className="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden xl:block z-20"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -33,7 +33,7 @@ export const FloatingElements = () => {
 
       {/* Left side floating badge */}
       <motion.div
-        className="absolute -left-4 bottom-8 hidden xl:block"
+        className="absolute -left-4 bottom-16 hidden xl:block z-20"
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}

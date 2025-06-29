@@ -217,10 +217,6 @@
       "confirm": "Bestätigen",
       "cancel": "Abbrechen"
     },
-    "ImageModal": {
-      "closeImage": "Bild schließen",
-      "downloadImage": "Bild herunterladen"
-    },
     "MockModeIndicator": {
       "mockMode": "Demo-Modus",
       "mockModeDescription": "Demo-Modus aktiv - Echte KI-Features sind verfügbar",
@@ -248,11 +244,6 @@
       "ariaLabel": "Eigenen Design-Vorschlag hinzufügen",
       "required": "*"
     },
-    "AILoadingScreen": {
-      "analyzing": "Analysiere...",
-      "generating": "Generiere...",
-      "please_wait": "Bitte warten"
-    },
     "AnimatedButton": {
       "loading": "Lädt..."
     },
@@ -261,24 +252,11 @@
       "howItWorks": "So funktioniert's",
       "uploadNow": "Jetzt hochladen"
     },
-    "InspirationGallery": {
-      "inspiration": "Inspiration",
-      "viewExample": "Beispiel ansehen",
-      "before": "Vorher",
-      "after": "Nachher"
-    },
     "DiffSlider": {
       "before": "Vorher",
       "after": "Nachher",
       "imagesLoading": "Bilder werden geladen...",
       "dragToCompare": "Ziehen zum Vergleichen"
-    },
-    "CreditPackageCard": {
-      "popular": "Beliebt",
-      "bestValue": "Bester Wert",
-      "selectPackage": "Paket auswählen",
-      "credits": "Credits",
-      "price": "Preis"
     },
     "ActionBar": {
       "suggestionSelected": "Vorschlag ausgewählt:",
@@ -396,7 +374,7 @@
       "aiAnalysis": "KI Analyse",
       "colorOptimization": "Farb-Optimierung",
       "furnitureSuggestions": "Möbel-Vorschläge",
-      "premium": "Premium"
+      "premium": "Professionelles Feedback"
     },
     "CustomSuggestionCard": {
       "customSuggestion": "Eigener Vorschlag",
@@ -424,13 +402,6 @@
       "or": "oder",
       "discoverInspiration": "Inspiration entdecken",
       "viewExamples": "Beispiele ansehen"
-    },
-    "CreditPackageCard": {
-      "credits": "Credits",
-      "oneTime": "einmalig",
-      "processing": "Wird verarbeitet...",
-      "availableImmediately": "Sofort verfügbar",
-      "noExpiration": "Kein Ablaufdatum"
     },
 
     "AILoadingScreen": {
@@ -471,12 +442,16 @@
       "uploadCompleted": "Upload abgeschlossen!"
     },
     "CreditPackageCard": {
-      "popular": "Beliebt",
+      "buyCredits": "Credits kaufen",
+      "credits": "Credits",
       "oneTime": "einmalig",
       "processing": "Wird verarbeitet...",
-      "buyCredits": "Credits kaufen",
       "availableImmediately": "Sofort verfügbar",
-      "noExpiration": "Kein Ablaufdatum"
+      "noExpiration": "Kein Ablaufdatum",
+      "popular": "Beliebt",
+      "bestValue": "Bester Wert",
+      "selectPackage": "Paket auswählen",
+      "price": "Preis"
     }
   }
 }

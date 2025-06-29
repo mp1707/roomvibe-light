@@ -263,12 +263,12 @@ const DiffSlider = memo<DiffSliderProps>(
         {/* Instruction Text */}
         {showInstructionText && (
           <motion.div
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-base-100/90 backdrop-blur-sm rounded-full px-4 py-2 text-xs font-medium text-base-content/70 shadow-sm border border-base-100/20"
+            className="absolute bottom-4 left-1/2 z-20 transform -translate-x-1/2 bg-base-100/90 backdrop-blur-sm rounded-full px-4 py-2 text-xs font-medium text-base-content/70 shadow-sm border border-base-100/20 "
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.3 }}
           >
-            Ziehe den Regler hin und her
+            {t("dragToCompare")}
           </motion.div>
         )}
       </motion.figure>
