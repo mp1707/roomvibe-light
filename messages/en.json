@@ -175,7 +175,11 @@
     "Header": {
       "uploadPhoto": "Upload Photo",
       "inspiration": "Inspiration",
-      "settings": "Settings"
+      "settings": "Settings",
+      "devSettings": "Developer Settings",
+      "closeMenu": "Close menu",
+      "theme": "Theme",
+      "language": "Language"
     },
     "AuthButton": {
       "signIn": "Sign In",

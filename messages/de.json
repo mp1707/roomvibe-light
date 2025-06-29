@@ -175,7 +175,11 @@
     "Header": {
       "uploadPhoto": "Foto hochladen",
       "inspiration": "Inspiration",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "devSettings": "Entwickler-Einstellungen",
+      "closeMenu": "Menü schließen",
+      "theme": "Theme",
+      "language": "Sprache"
     },
     "AuthButton": {
       "signIn": "Anmelden",
