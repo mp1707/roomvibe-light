@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   cardVariants,
   buttonVariants,
@@ -139,6 +140,7 @@ const ExplanationArea = ({
   isExpanded: boolean;
   isApplied?: boolean;
 }) => {
+  const t = useTranslations("Components.SuggestionCard");
   const reducedMotion = useMotionPreference();
 
   return (
@@ -176,7 +178,7 @@ const ExplanationArea = ({
                     isApplied ? "text-success" : "text-primary"
                   } mb-3 sm:mb-2`}
                 >
-                  Warum diese Empfehlung?
+                  {t("whyRecommendation")}
                 </h4>
                 <p className="text-sm sm:text-sm text-base-content/70 leading-relaxed">
                   {explanation}
@@ -200,6 +202,7 @@ const SuggestionCard = ({
   isGenerating = false,
   delay = 0,
 }: SuggestionCardProps) => {
+  const t = useTranslations("Components.SuggestionCard");
   const [showExplanation, setShowExplanation] = useState(false);
   const reducedMotion = useMotionPreference();
   const cardId = `suggestion-${title.toLowerCase().replace(/\s+/g, "-")}`;
@@ -242,7 +245,7 @@ const SuggestionCard = ({
       {/* Applied Badge */}
       {isApplied && (
         <div className="absolute -top-2 -right-2 px-3 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm z-10 whitespace-nowrap">
-          ✓ Angewendet
+          ✓ {t("applied")}
         </div>
       )}
 
@@ -266,7 +269,7 @@ const SuggestionCard = ({
                   onChange={handleToggle}
                   id={toggleId}
                   ariaLabel={`${title} ${
-                    selected ? "deaktivieren" : "aktivieren"
+                    selected ? t("deactivate") : t("activate")
                   }`}
                   disabled={isGenerating}
                 />
@@ -299,15 +302,15 @@ const SuggestionCard = ({
               } focus:outline-none focus:ring-2 ${
                 isApplied ? "focus:ring-success/30" : "focus:ring-primary/30"
               } focus:ring-offset-0`}
-              aria-label={`Erklärung für ${title} ${
-                showExplanation ? "ausblenden" : "anzeigen"
+              aria-label={`${t("explanationFor", { title })} ${
+                showExplanation ? t("hide") : t("show")
               }`}
               aria-expanded={showExplanation}
             >
               <InfoIcon
                 className={`w-4 h-4 ${isApplied ? "text-success" : ""}`}
               />
-              <span>{showExplanation ? "Weniger" : "Warum?"}</span>
+              <span>{showExplanation ? t("less") : t("why")}</span>
               <motion.div
                 animate={{ rotate: showExplanation ? 180 : 0 }}
                 transition={

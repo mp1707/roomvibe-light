@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   cardVariants,
   buttonVariants,
@@ -45,6 +46,7 @@ const AddForm = ({
   }) => void;
   onCancel: () => void;
 }) => {
+  const t = useTranslations("Components.AddSuggestionCard");
   const [title, setTitle] = useState("");
   const [suggestion, setSuggestion] = useState("");
   const reducedMotion = useMotionPreference();
@@ -74,11 +76,9 @@ const AddForm = ({
     >
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-base-content">
-          Eigenen Vorschlag hinzufügen
+          {t("addCustom")}
         </h3>
-        <p className="text-sm text-base-content/60">
-          Beschreiben Sie Ihre eigenen Design-Ideen
-        </p>
+        <p className="text-sm text-base-content/60">{t("description")}</p>
       </div>
 
       <div>
@@ -86,14 +86,14 @@ const AddForm = ({
           htmlFor="new-title"
           className="block text-sm font-medium text-base-content mb-2"
         >
-          Titel <span className="text-error">*</span>
+          {t("titleLabel")} <span className="text-error">{t("required")}</span>
         </label>
         <input
           id="new-title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="z.B. Wärmere Beleuchtung"
+          placeholder={t("titlePlaceholder")}
           className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200"
           autoFocus
         />
@@ -104,13 +104,14 @@ const AddForm = ({
           htmlFor="new-suggestion"
           className="block text-sm font-medium text-base-content mb-2"
         >
-          Vorschlag <span className="text-error">*</span>
+          {t("suggestionLabel")}{" "}
+          <span className="text-error">{t("required")}</span>
         </label>
         <textarea
           id="new-suggestion"
           value={suggestion}
           onChange={(e) => setSuggestion(e.target.value)}
-          placeholder="Beschreiben Sie Ihren Design-Vorschlag detailliert..."
+          placeholder={t("suggestionPlaceholder")}
           rows={4}
           className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200 resize-none"
         />
@@ -124,7 +125,7 @@ const AddForm = ({
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
         >
-          Abbrechen
+          {t("cancel")}
         </motion.button>
         <motion.button
           variants={reducedMotion ? {} : buttonVariants}
@@ -138,7 +139,7 @@ const AddForm = ({
               : "bg-base-200 text-base-content/40 cursor-not-allowed"
           }`}
         >
-          Hinzufügen
+          {t("add")}
         </motion.button>
       </div>
     </motion.div>
@@ -146,6 +147,7 @@ const AddForm = ({
 };
 
 const AddSuggestionCard = ({ onAdd, delay = 0 }: AddSuggestionCardProps) => {
+  const t = useTranslations("Components.AddSuggestionCard");
   const [isAdding, setIsAdding] = useState(false);
   const reducedMotion = useMotionPreference();
 
@@ -190,7 +192,7 @@ const AddSuggestionCard = ({ onAdd, delay = 0 }: AddSuggestionCardProps) => {
       className="relative group p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-dashed border-base-300 hover:border-primary/50 bg-base-100 hover:bg-primary/5 cursor-pointer transition-all duration-200 ease-out"
       onClick={handleAdd}
       role="button"
-      aria-label="Eigenen Design-Vorschlag hinzufügen"
+      aria-label={t("ariaLabel")}
     >
       {/* Content */}
       <div className="flex flex-col items-center justify-center text-center py-8">

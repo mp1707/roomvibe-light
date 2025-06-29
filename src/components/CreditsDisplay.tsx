@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCreditsStore } from "@/utils/creditsStore";
 import { createClient } from "@/utils/supabase/client";
@@ -11,6 +12,7 @@ interface CreditsDisplayProps {
 }
 
 const CreditsDisplay: React.FC<CreditsDisplayProps> = ({ className = "" }) => {
+  const t = useTranslations("Components.CreditsDisplay");
   const { credits, isLoading, fetchCredits, error } = useCreditsStore();
 
   useEffect(() => {
@@ -131,7 +133,7 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({ className = "" }) => {
 
       {/* Tooltip on hover */}
       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-base-content text-base-100 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 whitespace-nowrap">
-        Credits kaufen
+        {t("buyCredits")}
       </div>
 
       {/* Error indicator */}

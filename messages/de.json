@@ -138,5 +138,110 @@
     "overview": "Übersicht",
     "history": "Historie",
     "images": "Bilder"
+  },
+  "Components": {
+    "Header": {
+      "uploadPhoto": "Foto hochladen",
+      "inspiration": "Inspiration",
+      "settings": "Einstellungen"
+    },
+    "AuthButton": {
+      "signIn": "Anmelden",
+      "profile": "Profil",
+      "signOut": "Abmelden",
+      "accountMenu": "Kontomenü für {name}"
+    },
+    "CreditsDisplay": {
+      "buyCredits": "Credits kaufen"
+    },
+    "SuggestionCard": {
+      "whyRecommendation": "Warum diese Empfehlung?",
+      "toggleSuggestion": "Vorschlag umschalten",
+      "showExplanation": "Erklärung anzeigen",
+      "hideExplanation": "Erklärung ausblenden",
+      "applied": "Angewendet",
+      "activate": "aktivieren",
+      "deactivate": "deaktivieren",
+      "explanationFor": "Erklärung für {title}",
+      "show": "anzeigen",
+      "hide": "ausblenden",
+      "less": "Weniger",
+      "why": "Warum?"
+    },
+    "HeroSection": {
+      "title": "Verwandle deinen Raum",
+      "subtitle": "Lade ein Foto hoch und lass dich von Designvorschlägen inspirieren"
+    },
+    "Card": {
+      "selected": "Ausgewählt",
+      "clickToSelect": "Zum Auswählen klicken"
+    },
+    "ThemeToggle": {
+      "toggleTheme": "Design wechseln",
+      "lightMode": "Heller Modus",
+      "darkMode": "Dunkler Modus"
+    },
+    "ConfirmationModal": {
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen"
+    },
+    "ImageModal": {
+      "closeImage": "Bild schließen",
+      "downloadImage": "Bild herunterladen"
+    },
+    "MockModeIndicator": {
+      "mockMode": "Demo-Modus",
+      "mockModeDescription": "Demo-Modus aktiv - Echte KI-Features sind verfügbar",
+      "analysis": "Analyse",
+      "generation": "Generierung"
+    },
+    "CostIndicator": {
+      "cost": "Kosten",
+      "credits": "Credits",
+      "free": "Kostenlos"
+    },
+    "AddSuggestionCard": {
+      "addCustom": "Eigenen Vorschlag hinzufügen",
+      "description": "Beschreiben Sie Ihre eigenen Design-Ideen",
+      "titleLabel": "Titel",
+      "titlePlaceholder": "z.B. Wärmere Beleuchtung",
+      "suggestionLabel": "Vorschlag",
+      "suggestionPlaceholder": "Beschreiben Sie Ihren Design-Vorschlag detailliert...",
+      "cancel": "Abbrechen",
+      "add": "Hinzufügen",
+      "ariaLabel": "Eigenen Design-Vorschlag hinzufügen",
+      "required": "*"
+    },
+    "AILoadingScreen": {
+      "analyzing": "Analysiere...",
+      "generating": "Generiere...",
+      "please_wait": "Bitte warten"
+    },
+    "AnimatedButton": {
+      "loading": "Lädt..."
+    },
+    "WelcomeScreen": {
+      "getStarted": "Loslegen",
+      "howItWorks": "So funktioniert's",
+      "uploadNow": "Jetzt hochladen"
+    },
+    "InspirationGallery": {
+      "inspiration": "Inspiration",
+      "viewExample": "Beispiel ansehen",
+      "before": "Vorher",
+      "after": "Nachher"
+    },
+    "DiffSlider": {
+      "before": "Vorher",
+      "after": "Nachher",
+      "dragToCompare": "Ziehen zum Vergleichen"
+    },
+    "CreditPackageCard": {
+      "popular": "Beliebt",
+      "bestValue": "Bester Wert",
+      "selectPackage": "Paket auswählen",
+      "credits": "Credits",
+      "price": "Preis"
+    }
   }
 }

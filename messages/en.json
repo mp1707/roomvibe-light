@@ -138,5 +138,110 @@
     "overview": "Overview",
     "history": "History",
     "images": "Images"
+  },
+  "Components": {
+    "Header": {
+      "uploadPhoto": "Upload Photo",
+      "inspiration": "Inspiration",
+      "settings": "Settings"
+    },
+    "AuthButton": {
+      "signIn": "Sign In",
+      "profile": "Profile",
+      "signOut": "Sign Out",
+      "accountMenu": "Account menu for {name}"
+    },
+    "CreditsDisplay": {
+      "buyCredits": "Buy Credits"
+    },
+    "SuggestionCard": {
+      "whyRecommendation": "Why this recommendation?",
+      "toggleSuggestion": "Toggle suggestion",
+      "showExplanation": "Show explanation",
+      "hideExplanation": "Hide explanation",
+      "applied": "Applied",
+      "activate": "activate",
+      "deactivate": "deactivate",
+      "explanationFor": "Explanation for {title}",
+      "show": "show",
+      "hide": "hide",
+      "less": "Less",
+      "why": "Why?"
+    },
+    "HeroSection": {
+      "title": "Transform Your Space",
+      "subtitle": "Upload a photo and get inspired by design suggestions"
+    },
+    "Card": {
+      "selected": "Selected",
+      "clickToSelect": "Click to select"
+    },
+    "ThemeToggle": {
+      "toggleTheme": "Toggle theme",
+      "lightMode": "Light mode",
+      "darkMode": "Dark mode"
+    },
+    "ConfirmationModal": {
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "ImageModal": {
+      "closeImage": "Close image",
+      "downloadImage": "Download image"
+    },
+    "MockModeIndicator": {
+      "mockMode": "Demo Mode",
+      "mockModeDescription": "Demo mode active - Real AI features are available",
+      "analysis": "Analysis",
+      "generation": "Generation"
+    },
+    "CostIndicator": {
+      "cost": "Cost",
+      "credits": "Credits",
+      "free": "Free"
+    },
+    "AddSuggestionCard": {
+      "addCustom": "Add Custom Suggestion",
+      "description": "Describe your own design ideas",
+      "titleLabel": "Title",
+      "titlePlaceholder": "e.g. Warmer Lighting",
+      "suggestionLabel": "Suggestion",
+      "suggestionPlaceholder": "Describe your design suggestion in detail...",
+      "cancel": "Cancel",
+      "add": "Add",
+      "ariaLabel": "Add custom design suggestion",
+      "required": "*"
+    },
+    "AILoadingScreen": {
+      "analyzing": "Analyzing...",
+      "generating": "Generating...",
+      "please_wait": "Please wait"
+    },
+    "AnimatedButton": {
+      "loading": "Loading..."
+    },
+    "WelcomeScreen": {
+      "getStarted": "Get Started",
+      "howItWorks": "How It Works",
+      "uploadNow": "Upload Now"
+    },
+    "InspirationGallery": {
+      "inspiration": "Inspiration",
+      "viewExample": "View Example",
+      "before": "Before",
+      "after": "After"
+    },
+    "DiffSlider": {
+      "before": "Before",
+      "after": "After",
+      "dragToCompare": "Drag to compare"
+    },
+    "CreditPackageCard": {
+      "popular": "Popular",
+      "bestValue": "Best Value",
+      "selectPackage": "Select Package",
+      "credits": "Credits",
+      "price": "Price"
+    }
   }
 }

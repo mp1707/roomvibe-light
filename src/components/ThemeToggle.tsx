@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 const SunIcon = ({ className }: { className?: string }) => (
   <svg
@@ -38,6 +39,7 @@ const MoonIcon = ({ className }: { className?: string }) => (
 );
 
 const ThemeToggle = ({ className = "" }: { className?: string }) => {
+  const t = useTranslations("Components.ThemeToggle");
   const [theme, setTheme] = useState<string>("light");
   const [mounted, setMounted] = useState(false);
 
@@ -73,7 +75,9 @@ const ThemeToggle = ({ className = "" }: { className?: string }) => {
       } ${className}`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+      aria-label={`${t("toggleTheme")} - ${
+        theme === "light" ? t("darkMode") : t("lightMode")
+      }`}
     >
       <motion.div
         className="absolute inset-0.5 w-7 h-7 bg-base-100 rounded-full shadow-lg flex items-center justify-center"

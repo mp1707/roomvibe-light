@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/utils/supabase/client";
 import { signOut } from "@/app/[locale]/auth/login/actions";
 
 export default function AuthButton() {
+  const t = useTranslations("Components.AuthButton");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -74,7 +76,7 @@ export default function AuthButton() {
         className="btn btn-primary h-9 px-4 min-h-0 rounded-xl font-medium text-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
         aria-label="Sign in to your account"
       >
-        Sign In
+        {t("signIn")}
       </button>
     );
   }
@@ -94,7 +96,7 @@ export default function AuthButton() {
         className="flex items-center gap-3 h-9 px-3 bg-base-200 hover:bg-base-300 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
         aria-expanded={isDropdownOpen}
         aria-haspopup="true"
-        aria-label={`Account menu for ${displayName}`}
+        aria-label={t("accountMenu", { name: displayName })}
       >
         {/* Avatar */}
         <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -172,7 +174,7 @@ export default function AuthButton() {
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              Profile
+              {t("profile")}
             </a>
           </div>
 
@@ -197,7 +199,7 @@ export default function AuthButton() {
                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                   />
                 </svg>
-                Sign Out
+                {t("signOut")}
               </button>
             </form>
           </div>

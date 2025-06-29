@@ -312,7 +312,7 @@ export default function ProfilePage() {
         {/* Navigation Tabs - Mobile optimized */}
         <motion.div
           variants={reducedMotion ? {} : staggerItem}
-          className="flex bg-base-200/50 rounded-xl p-1 mb-6 border border-base-300/50"
+          className="flex gap-4 bg-base-200/50 rounded-xl p-1 mb-6 border border-base-300/50"
         >
           {[
             { id: "overview", label: t("overview"), Icon: UserIcon },

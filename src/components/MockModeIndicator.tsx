@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useSettingsStore } from "@/utils/settingsStore";
 export default function MockModeIndicator() {
+  const t = useTranslations("Components.MockModeIndicator");
   const { mockImageAnalysis, mockImageGeneration } = useSettingsStore();
 
   // Only show if at least one mock mode is active
@@ -11,8 +13,8 @@ export default function MockModeIndicator() {
   if (!showIndicator) return null;
 
   const activeMocks = [];
-  if (mockImageAnalysis) activeMocks.push("Analyse");
-  if (mockImageGeneration) activeMocks.push("Generierung");
+  if (mockImageAnalysis) activeMocks.push(t("analysis"));
+  if (mockImageGeneration) activeMocks.push(t("generation"));
 
   return (
     <motion.div
@@ -35,7 +37,9 @@ export default function MockModeIndicator() {
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"
           />
         </svg>
-        <span>Mock-Modus: {activeMocks.join(", ")}</span>
+        <span>
+          {t("mockMode")}: {activeMocks.join(", ")}
+        </span>
       </div>
     </motion.div>
   );
