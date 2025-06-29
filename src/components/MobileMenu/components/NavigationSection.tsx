@@ -4,7 +4,6 @@ import {
   HeartIcon,
   UserIcon,
   CurrencyEuroIcon,
-  CogIcon,
   PhotoIcon,
 } from "@heroicons/react/24/outline";
 import { NavigationLink } from "./NavigationLink";
@@ -16,74 +15,40 @@ interface NavigationSectionProps {
   onNavigationClick: () => void;
 }
 
-export const NavigationSection = ({
-  user,
-  onNavigationClick,
-}: NavigationSectionProps) => {
+export const NavigationSection = ({ user, onNavigationClick }: NavigationSectionProps) => {
   const t = useTranslations("Components.MobileMenu");
 
   return (
-    <nav className="space-y-2">
-      {/* Main Upload Button - Prominent styling for authenticated users */}
+    <nav className="space-y-1">
       {user && (
-        <div className="relative mb-4">
-          <Link
-            href="/upload"
-            onClick={onNavigationClick}
-            className="flex items-center gap-3 px-4 py-4 bg-primary hover:bg-primary-focus text-primary-content font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl group relative overflow-hidden"
-          >
-            <div className="flex items-center justify-center w-8 h-8 bg-primary-content/20 rounded-lg">
-              <PhotoIcon className="w-5 h-5 text-primary-content" />
-            </div>
-            <span className="font-semibold">{t("uploadPhoto")}</span>
-            <svg
-              className="w-4 h-4 ml-auto group-hover:translate-x-1 transition-transform duration-200"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-            {/* Subtle shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-content/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-          </Link>
-        </div>
+        <Link
+          href="/upload"
+          onClick={onNavigationClick}
+          className="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary font-semibold rounded-lg transition-colors duration-200 hover:bg-primary/20 mb-2"
+        >
+          <PhotoIcon className="w-5 h-5" />
+          <span>{t("uploadPhoto")}</span>
+        </Link>
       )}
-
       <NavigationLink
         href="/inspiration"
         onClick={onNavigationClick}
-        icon={<HeartIcon className="w-4 h-4 text-base-content/70" />}
+        icon={<HeartIcon className="w-5 h-5 text-base-content/70" />}
         label={t("inspiration")}
       />
-
       {user && (
         <NavigationLink
           href="/private"
           onClick={onNavigationClick}
-          icon={<UserIcon className="w-4 h-4 text-base-content/70" />}
+          icon={<UserIcon className="w-5 h-5 text-base-content/70" />}
           label={t("myArea")}
         />
       )}
-
       <NavigationLink
         href="/buy-credits"
         onClick={onNavigationClick}
-        icon={<CurrencyEuroIcon className="w-5 h-5 text-primary" />}
+        icon={<CurrencyEuroIcon className="w-5 h-5 text-base-content/70" />}
         label={t("buyBalance")}
-        variant="primary"
-      />
-
-      <NavigationLink
-        href="/settings"
-        onClick={onNavigationClick}
-        icon={<CogIcon className="w-4 h-4 text-base-content/70" />}
-        label={t("settings")}
       />
     </nav>
   );

@@ -8,7 +8,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useMenuState } from "./hooks/useMenuState";
 import { UserSection } from "./components/UserSection";
 import { NavigationSection } from "./components/NavigationSection";
-import { BottomSection } from "./components/BottomSection";
+import { SettingsSection } from "./components/SettingsSection";
 import { useTranslations } from "next-intl";
 
 interface MobileMenuProps {
@@ -37,7 +37,7 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
   } = useMenuState();
   const t = useTranslations("Components.MobileMenu");
 
-  // Memoize animation variants to prevent recreation on each render
+  // Animation variants from design system
   const animationVariants = useMemo(
     () => ({
       menuVariants: {
@@ -45,18 +45,24 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
           opacity: 0,
           scale: 0.95,
           y: -10,
-          transition: { stiffness: 400, damping: 30 },
+          transition: { type: "spring" as const, stiffness: 400, damping: 30 },
         },
         open: {
           opacity: 1,
           scale: 1,
           y: 0,
-          transition: { stiffness: 400, damping: 30 },
+          transition: { type: "spring" as const, stiffness: 400, damping: 30 },
         },
       },
       backdropVariants: {
-        closed: { opacity: 0 },
-        open: { opacity: 1 },
+        closed: {
+          opacity: 0,
+          transition: { duration: 0.2 },
+        },
+        open: {
+          opacity: 1,
+          transition: { duration: 0.3 },
+        },
       },
       buttonVariants: {
         hover: { scale: 1.05 },
@@ -66,10 +72,10 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
     []
   );
 
-  // Memoize button classes
+  // Button classes using design system tokens
   const buttonClasses = useMemo(
     () =>
-      "flex items-center justify-center w-10 h-10 rounded-lg bg-base-200/50 hover:bg-base-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border border-base-300/30",
+      "flex items-center justify-center w-10 h-10 rounded-lg bg-base-200/50 hover:bg-base-300/70 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border border-base-300/30",
     []
   );
 
@@ -93,19 +99,26 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
 
   return (
     <>
-      {/* Backdrop - Only render when open */}
-      {isOpen &&
-        createPortal(
-          <motion.div
-            variants={animationVariants.backdropVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            className="fixed inset-0 bg-black/50 backdrop-blur-lg z-[998]"
-            onClick={handleToggleMenu}
-          />,
-          document.body
-        )}
+      {/* Backdrop with glass effect */}
+      <AnimatePresence>
+        {isOpen &&
+          createPortal(
+            <motion.div
+              variants={animationVariants.backdropVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              className="
+              fixed inset-0 
+              bg-base-100/60 dark:bg-base-100/50
+              backdrop-blur-md 
+              z-[998]
+            "
+              onClick={handleToggleMenu}
+            />,
+            document.body
+          )}
+      </AnimatePresence>
 
       <div ref={menuRef} className={`relative ${className}`}>
         {/* Menu Button */}
@@ -124,45 +137,57 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
         </motion.button>
       </div>
 
-      {/* Menu Content - Only render when open and buttonPosition exists */}
-      {isOpen &&
-        buttonPosition &&
-        createPortal(
-          <motion.div
-            ref={menuContentRef}
-            variants={animationVariants.menuVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            className="fixed w-80 bg-base-100/90 backdrop-blur-sm border border-base-300/50 rounded-xl shadow-lg z-[999] overflow-hidden"
-            style={{
-              position: "fixed",
-              top: buttonPosition.top,
-              right: buttonPosition.right,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 space-y-4">
-              {/* User Section */}
-              {!loading && (
-                <UserSection user={user} onAuthClick={handleAuthRedirect} />
-              )}
+      {/* Menu Content */}
+      <AnimatePresence>
+        {isOpen &&
+          buttonPosition &&
+          createPortal(
+            <motion.div
+              ref={menuContentRef}
+              variants={animationVariants.menuVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              className="
+              fixed w-80 
+              bg-base-100/90 dark:bg-base-100/80
+              backdrop-blur-md 
+              border border-base-300/50 dark:border-base-300/30
+              rounded-2xl shadow-lg 
+              z-[999] overflow-hidden
+            "
+              style={{
+                position: "fixed",
+                top: buttonPosition.top + 8,
+                right: buttonPosition.right,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="divide-y divide-base-300/30 dark:divide-base-300/20">
+                {/* User Section */}
+                {!loading && (
+                  <div className="p-4">
+                    <UserSection user={user} onAuthClick={handleAuthRedirect} />
+                  </div>
+                )}
 
-              {/* Navigation Links */}
-              <NavigationSection
-                user={user}
-                onNavigationClick={handleNavigationClick}
-              />
+                {/* Navigation Links */}
+                <div className="p-4">
+                  <NavigationSection
+                    user={user}
+                    onNavigationClick={handleNavigationClick}
+                  />
+                </div>
 
-              {/* Bottom Section */}
-              <BottomSection
-                user={user}
-                onNavigationClick={handleNavigationClick}
-              />
-            </div>
-          </motion.div>,
-          document.body
-        )}
+                {/* SettingsSection */}
+                <div className="p-4 bg-base-200/50 dark:bg-base-200/30">
+                  <SettingsSection />
+                </div>
+              </div>
+            </motion.div>,
+            document.body
+          )}
+      </AnimatePresence>
     </>
   );
 });

@@ -256,7 +256,7 @@
       "before": "Vorher",
       "after": "Nachher",
       "imagesLoading": "Bilder werden geladen...",
-      "dragToCompare": "Ziehen zum Vergleichen"
+      "dragToCompare": "ziehen zum vergleichen"
     },
     "ActionBar": {
       "suggestionSelected": "Vorschlag ausgewählt:",
@@ -424,7 +424,8 @@
       "inspiration": "Inspiration",
       "myArea": "Mein Bereich",
       "buyBalance": "Guthaben kaufen",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "generalSettings": "Allgemeine Einstellungen"
     },
     "ImageModal": {
       "closeImage": "Bild schließen",

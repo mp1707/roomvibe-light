@@ -20,7 +20,7 @@ export const InteractiveDemo = () => {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="absolute -top-4 left-4 z-20 bg-primary text-primary-content px-4 py-2 rounded-full text-sm font-semibold shadow-lg"
       >
-        ✨ Live Demo
+        ✨ Demo
       </motion.div>
 
       {/* Diff Slider Demo */}

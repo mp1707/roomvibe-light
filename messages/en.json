@@ -446,7 +446,8 @@
       "inspiration": "Inspiration",
       "myArea": "My Area",
       "buyBalance": "Buy Credits",
-      "settings": "Settings"
+      "settings": "Settings",
+      "generalSettings": "General Settings"
     },
     "UploadZone": {
       "dragImageError": "Please drag an image file here.",
