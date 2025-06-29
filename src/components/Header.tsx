@@ -11,6 +11,7 @@ import ThemeToggle from "./ThemeToggle";
 import AuthButton from "./AuthButton";
 import CreditsDisplay from "./CreditsDisplay";
 import MobileMenu from "./MobileMenu";
+import LanguageSwitch from "./LanguageSwitch";
 
 const Header = () => {
   const t = useTranslations("Components.Header");
@@ -141,6 +142,7 @@ const Header = () => {
               </Link>
 
               <ThemeToggle />
+              <LanguageSwitch variant="icon" />
             </div>
 
             {/* Mobile Controls */}

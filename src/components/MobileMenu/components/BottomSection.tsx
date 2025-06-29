@@ -1,5 +1,6 @@
 import React from "react";
 import ThemeToggle from "../../ThemeToggle";
+import LanguageSwitch from "../../LanguageSwitch";
 import {
   MoonIcon,
   ArrowRightOnRectangleIcon,
@@ -26,6 +27,11 @@ export const BottomSection = ({
         <span className="font-medium text-base-content">Dark Mode</span>
       </div>
       <ThemeToggle />
+    </div>
+
+    {/* Language Switch */}
+    <div className="px-3 py-2">
+      <LanguageSwitch />
     </div>
 
     {/* Sign Out */}
