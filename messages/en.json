@@ -139,6 +139,38 @@
     "history": "History",
     "images": "Images"
   },
+  "SuggestionsPage": {
+    "applyError": "Error applying suggestion",
+    "notEnoughCreditsError": "Not enough credits! You need {credits} credits to apply a suggestion.",
+    "applySuggestionTitle": "Apply Suggestion",
+    "applySuggestionMessage": "Should \"{title}\" be applied?",
+    "useCredits": "Use {credits} credits",
+    "cancel": "Cancel"
+  },
+  "SettingsPage": {
+    "backToHome": "Back to Homepage",
+    "developerSettings": "Developer Settings",
+    "settingsDescription": "Configure mock APIs for development to save costs during frequent testing.",
+    "mockImageAnalysis": "Mock Image Analysis",
+    "mockImageAnalysisDesc": "Uses mock data instead of the OpenAI Vision API for room analysis. Saves API costs during development.",
+    "mockImageGeneration": "Mock Image Generation",
+    "mockImageGenerationDesc": "Uses existing sample images instead of the Replicate API for image generation. Saves API costs during development.",
+    "exampleImagesGenerated": "Example images will be generated",
+    "mockFileUpload": "Mock File Upload",
+    "mockFileUploadDesc": "Simulates file uploading without actually using Supabase Storage. Saves API costs and enables offline development.",
+    "exampleImageUsed": "Example image will be used",
+    "confirmReset": "Confirm: Reset",
+    "resetAllSettings": "Reset All Settings",
+    "note": "Note:",
+    "developmentNotice": "These settings are intended for development only. In production mode, the real APIs should always be used.",
+    "disable": "Disable",
+    "enable": "Enable"
+  },
+  "Layout": {
+    "impressum": "Legal Notice",
+    "datenschutz": "Privacy Policy",
+    "allRightsReserved": "All rights reserved"
+  },
   "Components": {
     "Header": {
       "uploadPhoto": "Upload Photo",
@@ -186,8 +218,11 @@
       "cancel": "Cancel"
     },
     "ImageModal": {
-      "closeImage": "Close image",
-      "downloadImage": "Download image"
+      "closeImage": "Close Image",
+      "downloadImage": "Download Image",
+      "closeModal": "Close Modal",
+      "closeImageView": "Close image view",
+      "enlargedImageAlt": "Enlarged view of uploaded image"
     },
     "MockModeIndicator": {
       "mockMode": "Demo Mode",
@@ -198,13 +233,17 @@
     "CostIndicator": {
       "cost": "Cost",
       "credits": "Credits",
-      "free": "Free"
+      "free": "Free",
+      "creditsRequired": "Credits required",
+      "youHave": "You have",
+      "buyCredits": "Buy Credits",
+      "toUse": "to use \"{action}\""
     },
     "AddSuggestionCard": {
       "addCustom": "Add Custom Suggestion",
-      "description": "Describe your own design ideas",
+      "description": "Do you have your own design idea? Add your personal suggestion.",
       "titleLabel": "Title",
-      "titlePlaceholder": "e.g. Warmer Lighting",
+      "titlePlaceholder": "e.g. Warmer lighting",
       "suggestionLabel": "Suggestion",
       "suggestionPlaceholder": "Describe your design suggestion in detail...",
       "cancel": "Cancel",
@@ -215,7 +254,14 @@
     "AILoadingScreen": {
       "analyzing": "Analyzing...",
       "generating": "Generating...",
-      "please_wait": "Please wait"
+      "please_wait": "Please wait",
+      "noImageAvailable": "No image available",
+      "analysisRunning": "AI Analysis Running",
+      "generationRunning": "AI Generation Running",
+      "imageBeingAnalyzed": "Image is being analyzed",
+      "imageBeingGenerated": "Image is being generated",
+      "progressAnnouncement": "Progress",
+      "generationAnnouncement": "Generation"
     },
     "AnimatedButton": {
       "loading": "Loading..."
@@ -226,14 +272,58 @@
       "uploadNow": "Upload Now"
     },
     "InspirationGallery": {
-      "inspiration": "Inspiration",
-      "viewExample": "View Example",
+      "title": "Discover AI Transformations",
+      "subtitle": "Experience the potential of AI-powered interior design. Each transformation shows how our technology intelligently and stylishly transforms spaces.",
+      "transformationButton": "View Transformation",
+      "readyTitle": "Ready for your own transformation?",
+      "readySubtitle": "Upload a photo of your space and let our AI create personalized design suggestions.",
+      "uploadImageButton": "Upload Your Own Image",
+      "backToHome": "Back to Homepage",
       "before": "Before",
-      "after": "After"
+      "after": "After",
+      "examples": {
+        "modernLiving1": {
+          "title": "Modern Living Room",
+          "category": "Living Room",
+          "style": "Modern Minimalism",
+          "description": "Warm living space becomes an elegant, modern room"
+        },
+        "modernLiving2": {
+          "title": "Light-Filled Space",
+          "category": "Living Room",
+          "style": "Scandinavian",
+          "description": "Traditional room receives Scandinavian elegance"
+        },
+        "modernLiving3": {
+          "title": "Color Harmony Concept",
+          "category": "Living Room",
+          "style": "Contemporary",
+          "description": "Warm tones become a balanced color palette"
+        },
+        "modernLiving4": {
+          "title": "Space Optimization",
+          "category": "Living Room",
+          "style": "Minimalist",
+          "description": "Efficient use of space through intelligent furniture placement"
+        },
+        "modernLiving5": {
+          "title": "Lighting Concept",
+          "category": "Living Room",
+          "style": "Modern Industrial",
+          "description": "Atmospheric lighting creates a warm ambiance"
+        },
+        "modernLiving6": {
+          "title": "Material Harmony",
+          "category": "Living Room",
+          "style": "Luxury Modern",
+          "description": "High-quality materials unite to create an elegant overall picture"
+        }
+      }
     },
     "DiffSlider": {
       "before": "Before",
       "after": "After",
+      "imagesLoading": "Images loading...",
       "dragToCompare": "Drag to compare"
     },
     "CreditPackageCard": {
@@ -242,6 +332,131 @@
       "selectPackage": "Select Package",
       "credits": "Credits",
       "price": "Price"
+    },
+    "ActionBar": {
+      "suggestionSelected": "Suggestion selected:",
+      "applySuggestion": "Apply Suggestion",
+      "notEnoughCredits": "Not enough credits",
+      "applying": "Applying...",
+      "cancel": "Cancel"
+    },
+    "ErrorDisplay": {
+      "error": "Error:"
+    },
+    "ImageDisplaySection": {
+      "downloadSuccess": "Image downloaded successfully",
+      "downloadError": "The image could not be downloaded. Please try again.",
+      "noImageFound": "No image found",
+      "pleaseUploadImage": "Please upload an image first.",
+      "uploadImage": "Upload Image",
+      "planningAdjustments": "Planning desired adjustments...",
+      "preparingGeneration": "Preparing image generation...",
+      "generatingImage": "Generating your new image...",
+      "applySuggestionTitle": "Your suggestion is being applied",
+      "applySuggestionSubtitle": "We're working on your personalized room transformation...",
+      "generationHint": "Generation usually takes 30-60 seconds",
+      "transformationTitle": "Your room, transformed step by step",
+      "sliderInstruction": "Move the slider to see the changes",
+      "originalLabel": "Original",
+      "currentLabel": "Current",
+      "downloadImageAria": "Download transformed image",
+      "downloadImageText": "Download Image",
+      "newImageAria": "Upload new image",
+      "newImageText": "New Image"
+    },
+    "SuggestionsListSection": {
+      "designSuggestions": "Design Suggestions",
+      "suggestionInstructions": "Select a suggestion and apply it. You can add further improvements step by step.",
+      "noSuggestionsAvailable": "No suggestions available. Add your own ideas!"
+    },
+    "CallToAction": {
+      "loading": "Loading...",
+      "startNow": "Start Now",
+      "startFree": "Start Free Now",
+      "viewInspiration": "View Inspiration",
+      "subtitleLoggedIn": "Ready for your next design dream? Upload a photo and let the AI work.",
+      "subtitleLoggedOut": "No credit card required. Start with free credits and experience the future of interior design."
+    },
+    "HeroContent": {
+      "mainHeadline": "Transform Every Room",
+      "mainHeadlineHighlight": "with AI Power.",
+      "description": "Upload a photo. Get personalized design suggestions. Transform your home in just a few clicks."
+    },
+    "ProcessSteps": {
+      "upload": {
+        "title": "Upload Photo",
+        "description": "Take a picture of your space"
+      },
+      "analyze": {
+        "title": "AI Analyzes",
+        "description": "Recognize style, colors and potential"
+      },
+      "transform": {
+        "title": "Transformation",
+        "description": "Personalized design suggestions"
+      }
+    },
+    "FeatureIndicators": {
+      "aiAnalysis": "AI Analysis",
+      "colorOptimization": "Color Optimization",
+      "furnitureSuggestions": "Furniture Suggestions",
+      "premium": "Premium"
+    },
+    "CustomSuggestionCard": {
+      "customSuggestion": "Custom Suggestion",
+      "applied": "Applied",
+      "titleLabel": "Title",
+      "titleRequired": "*",
+      "titlePlaceholder": "e.g. Warmer lighting",
+      "suggestionLabel": "Suggestion",
+      "suggestionRequired": "*",
+      "suggestionPlaceholder": "Describe your design suggestion...",
+      "cancel": "Cancel",
+      "save": "Save",
+      "activate": "activate",
+      "deactivate": "deactivate",
+      "editLabel": "edit",
+      "deleteLabel": "delete"
+    },
+    "UploadContent": {
+      "selectPhoto": "Select Photo",
+      "orDragHere": "or drag here",
+      "supportedFormats": "JPG, PNG, WEBP, GIF and other image formats",
+      "mockModeActive": "Mock mode active"
+    },
+    "InspirationCTA": {
+      "or": "or",
+      "discoverInspiration": "Discover Inspiration",
+      "viewExamples": "View Examples"
+    },
+    "CreditPackageCard": {
+      "credits": "Credits",
+      "oneTime": "one-time",
+      "processing": "Processing...",
+      "buyCredits": "Buy Credits",
+      "availableImmediately": "Available immediately",
+      "noExpiration": "No expiration"
+    },
+    "MobileMenu": {
+      "uploadPhoto": "Upload Photo",
+      "darkMode": "Dark Mode",
+      "signOut": "Sign Out",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "availableBalance": "Available Balance",
+      "signIn": "Sign In",
+      "inspiration": "Inspiration",
+      "myArea": "My Area",
+      "buyBalance": "Buy Credits",
+      "settings": "Settings"
+    },
+    "UploadZone": {
+      "dragImageError": "Please drag an image file here.",
+      "uploadAriaLabel": "Click here or drag an image here to upload"
+    },
+    "ProgressIndicator": {
+      "uploading": "Uploading... {progress}%",
+      "uploadCompleted": "Upload completed!"
     }
   }
 }

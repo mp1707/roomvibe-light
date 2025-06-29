@@ -206,12 +206,11 @@ const AddSuggestionCard = ({ onAdd, delay = 0 }: AddSuggestionCardProps) => {
         </motion.div>
 
         <h3 className="text-base sm:text-lg font-semibold text-base-content mb-2">
-          Eigenen Vorschlag hinzufügen
+          {t("addCustom")}
         </h3>
 
         <p className="text-sm text-base-content/60 leading-relaxed max-w-xs">
-          Haben Sie eine eigene Design-Idee? Fügen Sie Ihren persönlichen
-          Vorschlag hinzu.
+          {t("description")}
         </p>
       </div>
     </motion.div>

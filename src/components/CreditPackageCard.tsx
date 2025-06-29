@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CreditPackage } from "@/types/credits";
+import { useTranslations } from "next-intl";
 
 interface CreditPackageCardProps {
   package: CreditPackage;
@@ -16,6 +17,7 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
   disabled = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations("Components.CreditPackageCard");
 
   const handlePurchase = async () => {
     if (disabled || isLoading) return;
@@ -58,7 +60,7 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
           }}
         >
           <span className="bg-primary text-primary-content px-3 py-1 rounded-full text-xs font-semibold">
-            Beliebt
+            {t("popular")}
           </span>
         </motion.div>
       )}
@@ -123,7 +125,7 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
           <div className="text-4xl font-bold text-primary">
             €{pkg.priceEur.toFixed(2)}
           </div>
-          <p className="text-sm text-base-content/60">einmalig</p>
+          <p className="text-sm text-base-content/60">{t("oneTime")}</p>
         </motion.div>
 
         {/* Purchase Button */}
@@ -141,10 +143,10 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
           {isLoading ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
-              <span>Wird verarbeitet...</span>
+              <span>{t("processing")}</span>
             </div>
           ) : (
-            "Credits kaufen"
+            t("buyCredits")
           )}
         </motion.button>
 
@@ -162,7 +164,7 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
                 clipRule="evenodd"
               />
             </svg>
-            <span>Sofort verfügbar</span>
+            <span>{t("availableImmediately")}</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-sm text-base-content/70">
             <svg
@@ -176,7 +178,7 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
                 clipRule="evenodd"
               />
             </svg>
-            <span>Kein Ablaufdatum</span>
+            <span>{t("noExpiration")}</span>
           </div>
         </div>
       </div>

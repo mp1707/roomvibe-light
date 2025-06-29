@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import toast from "react-hot-toast";
 import { useCreditsStore } from "@/utils/creditsStore";
@@ -15,6 +16,7 @@ import ActionBar from "./components/ActionBar";
 import ErrorDisplay from "./components/ErrorDisplay";
 
 export default function SuggestionsPage() {
+  const t = useTranslations("SuggestionsPage");
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(
     null
   );
@@ -81,7 +83,7 @@ export default function SuggestionsPage() {
       setSelectedSuggestion(null);
     } catch (error) {
       console.error("Failed to apply suggestion:", error);
-      toast.error("Fehler beim Anwenden des Vorschlags");
+      toast.error(t("applyError"));
     }
   }, [selectedSuggestion, isSubmitting, isGenerating, generateImage]);
 
@@ -99,17 +101,17 @@ export default function SuggestionsPage() {
     // Check if user has enough credits for applying suggestion
     if (!canApplySuggestion()) {
       toast.error(
-        `Nicht genügend Credits! Sie benötigen ${CREDIT_COSTS.APPLY_SUGGESTION} Credits um einen Vorschlag anzuwenden.`
+        t("notEnoughCreditsError", { credits: CREDIT_COSTS.APPLY_SUGGESTION })
       );
       return;
     }
 
     // Show confirmation modal
     openConfirmationModal({
-      title: "Vorschlag anwenden",
-      message: `Soll "${suggestionToApply.title}" angewendet werden?`,
-      confirmText: `${CREDIT_COSTS.APPLY_SUGGESTION} Credits verwenden`,
-      cancelText: "Abbrechen",
+      title: t("applySuggestionTitle"),
+      message: t("applySuggestionMessage", { title: suggestionToApply.title }),
+      confirmText: t("useCredits", { credits: CREDIT_COSTS.APPLY_SUGGESTION }),
+      cancelText: t("cancel"),
       onConfirm: confirmAndApplySuggestion,
     });
   }, [

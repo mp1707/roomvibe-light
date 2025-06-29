@@ -9,6 +9,7 @@ import { useMenuState } from "./hooks/useMenuState";
 import { UserSection } from "./components/UserSection";
 import { NavigationSection } from "./components/NavigationSection";
 import { BottomSection } from "./components/BottomSection";
+import { useTranslations } from "next-intl";
 
 interface MobileMenuProps {
   className?: string;
@@ -34,6 +35,7 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
     handleNavigationClick,
     handleAuthRedirect,
   } = useMenuState();
+  const t = useTranslations("Components.MobileMenu");
 
   // Memoize animation variants to prevent recreation on each render
   const animationVariants = useMemo(
@@ -80,7 +82,7 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
           whileHover="hover"
           whileTap="tap"
           className={buttonClasses}
-          aria-label="Menü öffnen"
+          aria-label={t("openMenu")}
           aria-expanded={false}
         >
           <MenuIcon isOpen={false} />
@@ -115,7 +117,7 @@ const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
           onClick={handleToggleMenu}
           onKeyDown={handleKeyDown}
           className={buttonClasses}
-          aria-label={isOpen ? "Menü schließen" : "Menü öffnen"}
+          aria-label={isOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={isOpen}
         >
           <MenuIcon isOpen={isOpen} />

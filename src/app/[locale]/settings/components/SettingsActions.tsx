@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface SettingsActionsProps {
   showResetConfirm: boolean;
@@ -17,6 +18,7 @@ export const SettingsActions = ({
   showResetConfirm,
   onReset,
 }: SettingsActionsProps) => {
+  const t = useTranslations("SettingsPage");
   return (
     <>
       {/* Actions */}
@@ -31,9 +33,7 @@ export const SettingsActions = ({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          {showResetConfirm
-            ? "Bestätigen: Zurücksetzen"
-            : "Alle Einstellungen zurücksetzen"}
+          {showResetConfirm ? t("confirmReset") : t("resetAllSettings")}
         </motion.button>
       </motion.div>
 
@@ -43,9 +43,7 @@ export const SettingsActions = ({
         className="mt-8 p-4 bg-warning/10 border border-warning/20 rounded-lg"
       >
         <p className="text-sm text-base-content/70">
-          <strong>Hinweis:</strong> Diese Einstellungen sind nur für die
-          Entwicklung gedacht. Im Produktionsmodus sollten immer die echten APIs
-          verwendet werden.
+          <strong>{t("note")}</strong> {t("developmentNotice")}
         </p>
       </motion.div>
     </>

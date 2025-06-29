@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   cardVariants,
   buttonVariants,
@@ -99,31 +100,31 @@ const ToggleSwitch = ({
   );
 };
 
+interface EditFormProps {
+  initialTitle: string;
+  initialSuggestion: string;
+  onSave: (data: { title: string; suggestion: string }) => void;
+  onCancel: () => void;
+}
+
 const EditForm = ({
   initialTitle,
   initialSuggestion,
   onSave,
   onCancel,
-}: {
-  initialTitle: string;
-  initialSuggestion: string;
-  onSave: (data: { title: string; suggestion: string }) => void;
-  onCancel: () => void;
-}) => {
+}: EditFormProps) => {
   const [title, setTitle] = useState(initialTitle);
   const [suggestion, setSuggestion] = useState(initialSuggestion);
   const reducedMotion = useMotionPreference();
-
-  const handleSave = () => {
-    if (title.trim() && suggestion.trim()) {
-      onSave({
-        title: title.trim(),
-        suggestion: suggestion.trim(),
-      });
-    }
-  };
+  const t = useTranslations("Components.CustomSuggestionCard");
 
   const isValid = title.trim() && suggestion.trim();
+
+  const handleSave = () => {
+    if (isValid) {
+      onSave({ title: title.trim(), suggestion: suggestion.trim() });
+    }
+  };
 
   return (
     <motion.div
@@ -138,14 +139,15 @@ const EditForm = ({
           htmlFor="title"
           className="block text-sm font-medium text-base-content mb-2"
         >
-          Titel <span className="text-error">*</span>
+          {t("titleLabel")}{" "}
+          <span className="text-error">{t("titleRequired")}</span>
         </label>
         <input
           id="title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="z.B. Wärmere Beleuchtung"
+          placeholder={t("titlePlaceholder")}
           className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200"
           autoFocus
         />
@@ -156,13 +158,14 @@ const EditForm = ({
           htmlFor="suggestion"
           className="block text-sm font-medium text-base-content mb-2"
         >
-          Vorschlag <span className="text-error">*</span>
+          {t("suggestionLabel")}{" "}
+          <span className="text-error">{t("suggestionRequired")}</span>
         </label>
         <textarea
           id="suggestion"
           value={suggestion}
           onChange={(e) => setSuggestion(e.target.value)}
-          placeholder="Beschreiben Sie Ihren Design-Vorschlag..."
+          placeholder={t("suggestionPlaceholder")}
           rows={4}
           className="w-full px-3 py-2 rounded-lg border border-base-300 focus:border-primary focus:ring-1 focus:ring-primary bg-base-100 text-base-content transition-colors duration-200 resize-none"
         />
@@ -176,7 +179,7 @@ const EditForm = ({
           onClick={onCancel}
           className="px-4 py-2 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
         >
-          Abbrechen
+          {t("cancel")}
         </motion.button>
         <motion.button
           variants={reducedMotion ? {} : buttonVariants}
@@ -190,7 +193,7 @@ const EditForm = ({
               : "bg-base-200 text-base-content/40 cursor-not-allowed"
           }`}
         >
-          Speichern
+          {t("save")}
         </motion.button>
       </div>
     </motion.div>
@@ -212,6 +215,7 @@ const CustomSuggestionCard = ({
 }: CustomSuggestionCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const reducedMotion = useMotionPreference();
+  const t = useTranslations("Components.CustomSuggestionCard");
   const cardId = `custom-suggestion-${id}`;
   const toggleId = `toggle-${cardId}`;
 
@@ -288,13 +292,13 @@ const CustomSuggestionCard = ({
     >
       {/* Custom badge */}
       <div className="absolute -top-2 -left-2 px-2 py-1 bg-accent text-accent-content text-xs font-semibold rounded-full">
-        Eigener Vorschlag
+        {t("customSuggestion")}
       </div>
 
       {/* Applied Badge - Fixed clipping with proper positioning */}
       {isApplied && (
         <div className="absolute -top-2 -right-2 px-3 py-1 bg-success text-success-content text-xs font-semibold rounded-full shadow-sm z-10 whitespace-nowrap">
-          ✓ Angewendet
+          ✓ {t("applied")}
         </div>
       )}
 
@@ -322,7 +326,9 @@ const CustomSuggestionCard = ({
               checked={selected}
               onChange={handleToggle}
               id={toggleId}
-              ariaLabel={`${title} ${selected ? "deaktivieren" : "aktivieren"}`}
+              ariaLabel={`${title} ${
+                selected ? t("deactivate") : t("activate")
+              }`}
               disabled={isGenerating}
             />
           </div>
@@ -346,7 +352,7 @@ const CustomSuggestionCard = ({
                 ? "text-base-content/30 cursor-not-allowed"
                 : "text-base-content/50 hover:text-primary"
             }`}
-            aria-label={`${title} bearbeiten`}
+            aria-label={`${title} ${t("editLabel")}`}
           >
             <EditIcon className="w-4 h-4" />
           </motion.button>
@@ -362,7 +368,7 @@ const CustomSuggestionCard = ({
                 ? "text-base-content/30 cursor-not-allowed"
                 : "text-base-content/50 hover:text-error"
             }`}
-            aria-label={`${title} löschen`}
+            aria-label={`${title} ${t("deleteLabel")}`}
           >
             <DeleteIcon className="w-4 h-4" />
           </motion.button>

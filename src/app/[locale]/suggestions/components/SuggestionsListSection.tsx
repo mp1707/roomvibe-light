@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import SuggestionCard from "@/components/SuggestionCard";
 import CustomSuggestionCard from "@/components/CustomSuggestionCard";
 import AddSuggestionCard from "@/components/AddSuggestionCard";
@@ -30,6 +31,7 @@ const SuggestionsListSection = ({
   onEditCustomSuggestion,
   onDeleteCustomSuggestion,
 }: SuggestionsListSectionProps) => {
+  const t = useTranslations("Components.SuggestionsListSection");
   const { suggestions, customSuggestions, appliedSuggestions } = useAppState();
 
   // Memoize all suggestions to prevent unnecessary re-computations
@@ -68,17 +70,16 @@ const SuggestionsListSection = ({
       >
         <div className="text-center mb-6">
           <h3 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
-            Design-Vorschläge
+            {t("designSuggestions")}
           </h3>
           <p className="text-base-content/60 max-w-2xl mx-auto">
-            Wähle einen Vorschlag aus und wende ihn an. Du kannst Schritt für
-            Schritt weitere Verbesserungen hinzufügen.
+            {t("suggestionInstructions")}
           </p>
         </div>
 
         <div className="text-center py-8">
           <p className="text-base-content/50 mb-6">
-            Keine Vorschläge verfügbar. Fügen Sie eigene Ideen hinzu!
+            {t("noSuggestionsAvailable")}
           </p>
           <AddSuggestionCard onAdd={handleAddCustomSuggestion} />
         </div>
@@ -93,11 +94,10 @@ const SuggestionsListSection = ({
     >
       <div className="text-center mb-6">
         <h3 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
-          Design-Vorschläge
+          {t("designSuggestions")}
         </h3>
         <p className="text-base-content/60 max-w-2xl mx-auto">
-          Wähle einen Vorschlag aus und wende ihn an. Du kannst Schritt für
-          Schritt weitere Verbesserungen hinzufügen.
+          {t("suggestionInstructions")}
         </p>
       </div>
 

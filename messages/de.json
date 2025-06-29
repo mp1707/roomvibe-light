@@ -139,6 +139,38 @@
     "history": "Historie",
     "images": "Bilder"
   },
+  "SuggestionsPage": {
+    "applyError": "Fehler beim Anwenden des Vorschlags",
+    "notEnoughCreditsError": "Nicht genügend Credits! Sie benötigen {credits} Credits um einen Vorschlag anzuwenden.",
+    "applySuggestionTitle": "Vorschlag anwenden",
+    "applySuggestionMessage": "Soll \"{title}\" angewendet werden?",
+    "useCredits": "{credits} Credits verwenden",
+    "cancel": "Abbrechen"
+  },
+  "SettingsPage": {
+    "backToHome": "Zurück zur Startseite",
+    "developerSettings": "Entwickler-Einstellungen",
+    "settingsDescription": "Konfiguriere Mock-APIs für die Entwicklung, um Kosten bei häufigen Tests zu sparen.",
+    "mockImageAnalysis": "Mock Bildanalyse",
+    "mockImageAnalysisDesc": "Verwendet Mock-Daten anstelle der OpenAI Vision API für die Raumanalyse. Spart API-Kosten während der Entwicklung.",
+    "mockImageGeneration": "Mock Bildgenerierung",
+    "mockImageGenerationDesc": "Verwendet vorhandene Beispielbilder anstelle der Replicate API für die Bildgenerierung. Spart API-Kosten während der Entwicklung.",
+    "exampleImagesGenerated": "Beispielbilder werden generiert",
+    "mockFileUpload": "Mock Datei-Upload",
+    "mockFileUploadDesc": "Simuliert das Hochladen von Dateien ohne tatsächlich Supabase Storage zu verwenden. Spart API-Kosten und ermöglicht Offline-Entwicklung.",
+    "exampleImageUsed": "Beispielbild wird verwendet",
+    "confirmReset": "Bestätigen: Zurücksetzen",
+    "resetAllSettings": "Alle Einstellungen zurücksetzen",
+    "note": "Hinweis:",
+    "developmentNotice": "Diese Einstellungen sind nur für die Entwicklung gedacht. Im Produktionsmodus sollten immer die echten APIs verwendet werden.",
+    "disable": "Deaktiviere",
+    "enable": "Aktiviere"
+  },
+  "Layout": {
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz",
+    "allRightsReserved": "Alle Rechte vorbehalten"
+  },
   "Components": {
     "Header": {
       "uploadPhoto": "Foto hochladen",
@@ -198,11 +230,15 @@
     "CostIndicator": {
       "cost": "Kosten",
       "credits": "Credits",
-      "free": "Kostenlos"
+      "free": "Kostenlos",
+      "creditsRequired": "Credits benötigt",
+      "youHave": "Sie haben",
+      "buyCredits": "Credits kaufen",
+      "toUse": "um \"{action}\" zu verwenden"
     },
     "AddSuggestionCard": {
       "addCustom": "Eigenen Vorschlag hinzufügen",
-      "description": "Beschreiben Sie Ihre eigenen Design-Ideen",
+      "description": "Haben Sie eine eigene Design-Idee? Fügen Sie Ihren persönlichen Vorschlag hinzu.",
       "titleLabel": "Titel",
       "titlePlaceholder": "z.B. Wärmere Beleuchtung",
       "suggestionLabel": "Vorschlag",
@@ -234,6 +270,7 @@
     "DiffSlider": {
       "before": "Vorher",
       "after": "Nachher",
+      "imagesLoading": "Bilder werden geladen...",
       "dragToCompare": "Ziehen zum Vergleichen"
     },
     "CreditPackageCard": {
@@ -242,6 +279,204 @@
       "selectPackage": "Paket auswählen",
       "credits": "Credits",
       "price": "Preis"
+    },
+    "ActionBar": {
+      "suggestionSelected": "Vorschlag ausgewählt:",
+      "applySuggestion": "Vorschlag anwenden",
+      "notEnoughCredits": "Nicht genügend Credits",
+      "applying": "Wird angewendet...",
+      "cancel": "Abbrechen"
+    },
+    "ErrorDisplay": {
+      "error": "Fehler:"
+    },
+    "ImageDisplaySection": {
+      "downloadSuccess": "Bild wurde erfolgreich heruntergeladen",
+      "downloadError": "Das Bild konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
+      "noImageFound": "Kein Bild gefunden",
+      "pleaseUploadImage": "Bitte laden Sie zunächst ein Bild hoch.",
+      "uploadImage": "Bild hochladen",
+      "planningAdjustments": "Plane die gewünschten Anpassungen...",
+      "preparingGeneration": "Bereite Bildgenerierung vor...",
+      "generatingImage": "Generiere dein neues Bild...",
+      "applySuggestionTitle": "Dein Vorschlag wird angewendet",
+      "applySuggestionSubtitle": "Wir arbeiten an deiner personalisierten Raumtransformation...",
+      "generationHint": "Die Generierung dauert in der Regel 30-60 Sekunden",
+      "transformationTitle": "Dein Raum, Schritt für Schritt transformiert",
+      "sliderInstruction": "Bewege den Regler, um die Veränderungen zu sehen",
+      "originalLabel": "Original",
+      "currentLabel": "Aktuell",
+      "downloadImageAria": "Transformiertes Bild herunterladen",
+      "downloadImageText": "Bild herunterladen",
+      "newImageAria": "Neues Bild hochladen",
+      "newImageText": "Neues Bild"
+    },
+    "SuggestionsListSection": {
+      "designSuggestions": "Design-Vorschläge",
+      "suggestionInstructions": "Wähle einen Vorschlag aus und wende ihn an. Du kannst Schritt für Schritt weitere Verbesserungen hinzufügen.",
+      "noSuggestionsAvailable": "Keine Vorschläge verfügbar. Fügen Sie eigene Ideen hinzu!"
+    },
+    "InspirationGallery": {
+      "title": "KI-Transformationen entdecken",
+      "subtitle": "Erleben Sie das Potenzial von KI-gestütztem Interior Design. Jede Transformation zeigt, wie unsere Technologie Räume intelligent und stilvoll verwandelt.",
+      "transformationButton": "Transformation ansehen",
+      "readyTitle": "Bereit für Ihre eigene Transformation?",
+      "readySubtitle": "Laden Sie ein Foto Ihres Raumes hoch und lassen Sie unsere KI personalisierte Designvorschläge erstellen.",
+      "uploadImageButton": "Eigenes Bild hochladen",
+      "backToHome": "Zurück zur Startseite",
+      "before": "Vorher",
+      "after": "Nachher",
+      "examples": {
+        "modernLiving1": {
+          "title": "Modernes Wohnzimmer",
+          "category": "Wohnzimmer",
+          "style": "Moderner Minimalismus",
+          "description": "Warmer Wohnbereich wird zu einem eleganten, modernen Raum"
+        },
+        "modernLiving2": {
+          "title": "Lichtdurchfluteter Raum",
+          "category": "Wohnzimmer",
+          "style": "Skandinavisch",
+          "description": "Traditioneller Raum erhält skandinavische Eleganz"
+        },
+        "modernLiving3": {
+          "title": "Farbharmonie-Konzept",
+          "category": "Wohnzimmer",
+          "style": "Contemporary",
+          "description": "Warme Töne werden zu einer ausgewogenen Farbpalette"
+        },
+        "modernLiving4": {
+          "title": "Raumoptimierung",
+          "category": "Wohnzimmer",
+          "style": "Minimalistisch",
+          "description": "Effiziente Nutzung des Raumes durch intelligente Möbel-Platzierung"
+        },
+        "modernLiving5": {
+          "title": "Beleuchtungskonzept",
+          "category": "Wohnzimmer",
+          "style": "Modern Industrial",
+          "description": "Atmosphärische Beleuchtung schafft ein warmes Ambiente"
+        },
+        "modernLiving6": {
+          "title": "Materialharmonie",
+          "category": "Wohnzimmer",
+          "style": "Luxus Modern",
+          "description": "Hochwertige Materialien vereinen sich zu einem eleganten Gesamtbild"
+        }
+      }
+    },
+    "CallToAction": {
+      "loading": "Lädt...",
+      "startNow": "Jetzt starten",
+      "startFree": "Jetzt kostenlos starten",
+      "viewInspiration": "Inspiration ansehen",
+      "subtitleLoggedIn": "Bereit für deinen nächsten Designtraum? Lade ein Foto hoch und lass die KI arbeiten.",
+      "subtitleLoggedOut": "Keine Kreditkarte erforderlich. Starte mit kostenlosen Credits und erlebe die Zukunft des Interior Designs."
+    },
+    "HeroContent": {
+      "mainHeadline": "Verwandle jeden Raum",
+      "mainHeadlineHighlight": "mit KI-Power.",
+      "description": "Lade ein Foto hoch. Erhalte personalisierte Designvorschläge. Verwandle dein Zuhause in wenigen Klicks."
+    },
+    "ProcessSteps": {
+      "upload": {
+        "title": "Foto hochladen",
+        "description": "Bild deines Raumes aufnehmen"
+      },
+      "analyze": {
+        "title": "KI analysiert",
+        "description": "Stil, Farben und Potenzial erkennen"
+      },
+      "transform": {
+        "title": "Transformation",
+        "description": "Personalisierte Designvorschläge"
+      }
+    },
+    "FeatureIndicators": {
+      "aiAnalysis": "KI Analyse",
+      "colorOptimization": "Farb-Optimierung",
+      "furnitureSuggestions": "Möbel-Vorschläge",
+      "premium": "Premium"
+    },
+    "CustomSuggestionCard": {
+      "customSuggestion": "Eigener Vorschlag",
+      "applied": "Angewendet",
+      "titleLabel": "Titel",
+      "titleRequired": "*",
+      "titlePlaceholder": "z.B. Wärmere Beleuchtung",
+      "suggestionLabel": "Vorschlag",
+      "suggestionRequired": "*",
+      "suggestionPlaceholder": "Beschreiben Sie Ihren Design-Vorschlag...",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "activate": "aktivieren",
+      "deactivate": "deaktivieren",
+      "editLabel": "bearbeiten",
+      "deleteLabel": "löschen"
+    },
+    "UploadContent": {
+      "selectPhoto": "Foto auswählen",
+      "orDragHere": "oder hierher ziehen",
+      "supportedFormats": "JPG, PNG, WEBP, GIF und andere Bildformate",
+      "mockModeActive": "Mock-Modus aktiv"
+    },
+    "InspirationCTA": {
+      "or": "oder",
+      "discoverInspiration": "Inspiration entdecken",
+      "viewExamples": "Beispiele ansehen"
+    },
+    "CreditPackageCard": {
+      "credits": "Credits",
+      "oneTime": "einmalig",
+      "processing": "Wird verarbeitet...",
+      "availableImmediately": "Sofort verfügbar",
+      "noExpiration": "Kein Ablaufdatum"
+    },
+
+    "AILoadingScreen": {
+      "noImageAvailable": "Kein Bild verfügbar",
+      "analysisRunning": "KI-Analyse läuft",
+      "generationRunning": "KI-Generierung läuft",
+      "imageBeingAnalyzed": "Bild wird analysiert",
+      "imageBeingGenerated": "Bild wird generiert",
+      "progressAnnouncement": "Fortschritt",
+      "generationAnnouncement": "Generierung"
+    },
+    "MobileMenu": {
+      "uploadPhoto": "Foto hochladen",
+      "darkMode": "Dark Mode",
+      "signOut": "Abmelden",
+      "openMenu": "Menü öffnen",
+      "closeMenu": "Menü schließen",
+      "availableBalance": "Verfügbares Guthaben",
+      "signIn": "Anmelden",
+      "inspiration": "Inspiration",
+      "myArea": "Mein Bereich",
+      "buyBalance": "Guthaben kaufen",
+      "settings": "Einstellungen"
+    },
+    "ImageModal": {
+      "closeImage": "Bild schließen",
+      "downloadImage": "Bild herunterladen",
+      "closeModal": "Modal schließen",
+      "closeImageView": "Bildansicht schließen",
+      "enlargedImageAlt": "Vergrößerte Ansicht des hochgeladenen Bildes"
+    },
+    "UploadZone": {
+      "dragImageError": "Bitte ziehen Sie eine Bilddatei hierher.",
+      "uploadAriaLabel": "Klicken Sie hier oder ziehen Sie ein Bild hierher zum Hochladen"
+    },
+    "ProgressIndicator": {
+      "uploading": "Wird hochgeladen... {progress}%",
+      "uploadCompleted": "Upload abgeschlossen!"
+    },
+    "CreditPackageCard": {
+      "popular": "Beliebt",
+      "oneTime": "einmalig",
+      "processing": "Wird verarbeitet...",
+      "buyCredits": "Credits kaufen",
+      "availableImmediately": "Sofort verfügbar",
+      "noExpiration": "Kein Ablaufdatum"
     }
   }
 }

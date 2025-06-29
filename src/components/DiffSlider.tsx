@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { MagnifyingGlassPlusIcon } from "@heroicons/react/24/outline";
 import { useState, useRef, useCallback, useEffect, memo, useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 interface DiffSliderProps {
   beforeImageUrl: string;
@@ -21,8 +22,8 @@ const DiffSlider = memo<DiffSliderProps>(
   ({
     beforeImageUrl,
     afterImageUrl,
-    beforeLabel = "Vorher",
-    afterLabel = "Nachher",
+    beforeLabel,
+    afterLabel,
     onBeforeImageClick,
     onAfterImageClick,
     className = "",
@@ -32,6 +33,11 @@ const DiffSlider = memo<DiffSliderProps>(
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
+    const t = useTranslations("Components.DiffSlider");
+
+    // Use translations for labels with fallbacks to provided props
+    const defaultBeforeLabel = beforeLabel || t("before");
+    const defaultAfterLabel = afterLabel || t("after");
 
     // Memoize safe image URLs to prevent unnecessary re-renders
     const safeBeforeImageUrl = useMemo(
@@ -159,7 +165,7 @@ const DiffSlider = memo<DiffSliderProps>(
         <div
           className={`${aspectRatio} rounded-xl bg-base-200 flex items-center justify-center ${className}`}
         >
-          <span className="text-base-content/40">Bilder werden geladen...</span>
+          <span className="text-base-content/40">{t("imagesLoading")}</span>
         </div>
       );
     }
@@ -183,7 +189,7 @@ const DiffSlider = memo<DiffSliderProps>(
             transition={{ duration: 0.2 }}
           >
             <MagnifyingGlassPlusIcon className="w-4 h-4" />
-            {beforeLabel}
+            {defaultBeforeLabel}
           </motion.div>
         )}
 
@@ -196,7 +202,7 @@ const DiffSlider = memo<DiffSliderProps>(
             transition={{ duration: 0.2 }}
           >
             <MagnifyingGlassPlusIcon className="w-4 h-4" />
-            {afterLabel}
+            {defaultAfterLabel}
           </motion.div>
         )}
 
@@ -204,7 +210,7 @@ const DiffSlider = memo<DiffSliderProps>(
         <div className="absolute inset-0">
           <Image
             src={safeAfterImageUrl}
-            alt={afterLabel}
+            alt={defaultAfterLabel}
             fill
             className="object-cover"
             draggable={false}
@@ -219,7 +225,7 @@ const DiffSlider = memo<DiffSliderProps>(
         <div className="absolute inset-0" style={{ clipPath }}>
           <Image
             src={safeBeforeImageUrl}
-            alt={beforeLabel}
+            alt={defaultBeforeLabel}
             fill
             className="object-cover"
             draggable={false}

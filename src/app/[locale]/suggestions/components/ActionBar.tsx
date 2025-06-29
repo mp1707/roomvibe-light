@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import CostIndicator from "@/components/CostIndicator";
 import { useMotionPreference, buttonVariants } from "@/utils/animations";
 import { useCreditsStore } from "@/utils/creditsStore";
@@ -22,6 +23,7 @@ const ActionBar = ({
   onCancel,
   onApply,
 }: ActionBarProps) => {
+  const t = useTranslations("Components.ActionBar");
   const reducedMotion = useMotionPreference();
   const { canApplySuggestion } = useCreditsStore();
 
@@ -35,10 +37,10 @@ const ActionBar = ({
       isDisabled,
       buttonText:
         isSubmitting || isGenerating
-          ? "Wird angewendet..."
+          ? t("applying")
           : !canApply
-          ? "Nicht genügend Credits"
-          : "Vorschlag anwenden",
+          ? t("notEnoughCredits")
+          : t("applySuggestion"),
     };
   }, [isSubmitting, isGenerating, canApplySuggestion]);
 
@@ -57,7 +59,7 @@ const ActionBar = ({
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
           <div className="text-center sm:text-left">
             <p className="text-sm text-base-content/60">
-              Vorschlag ausgewählt:
+              {t("suggestionSelected")}
             </p>
             <p className="font-semibold text-base-content">
               {selectedSuggestionTitle}
@@ -66,7 +68,7 @@ const ActionBar = ({
             <div className="mt-2">
               <CostIndicator
                 cost={CREDIT_COSTS.APPLY_SUGGESTION}
-                action="Vorschlag anwenden"
+                action={t("applySuggestion")}
                 disabled={isGenerating}
                 showUpgradePrompt={false}
                 className="justify-center sm:justify-start"
@@ -87,7 +89,7 @@ const ActionBar = ({
                   : "text-base-content/60 hover:text-base-content"
               }`}
             >
-              Abbrechen
+              {t("cancel")}
             </motion.button>
 
             <motion.button

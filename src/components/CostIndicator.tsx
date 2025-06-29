@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { useCreditsStore } from "@/utils/creditsStore";
+import { useTranslations } from "next-intl";
 
 interface CostIndicatorProps {
   cost: number;
@@ -22,6 +23,7 @@ const CostIndicator: React.FC<CostIndicatorProps> = ({
   const { credits, hasEnoughCredits } = useCreditsStore();
   const hasCredits = hasEnoughCredits(cost);
   const currentCredits = credits ?? 0;
+  const t = useTranslations("Components.CostIndicator");
 
   if (disabled) {
     return (
@@ -31,7 +33,9 @@ const CostIndicator: React.FC<CostIndicatorProps> = ({
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
-        <span>{cost} Credits</span>
+        <span>
+          {cost} {t("credits")}
+        </span>
       </div>
     );
   }
@@ -52,7 +56,9 @@ const CostIndicator: React.FC<CostIndicatorProps> = ({
         >
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
-        <span>{cost} Credits</span>
+        <span>
+          {cost} {t("credits")}
+        </span>
       </motion.div>
     );
   }
@@ -70,9 +76,11 @@ const CostIndicator: React.FC<CostIndicatorProps> = ({
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
-        <span>{cost} Credits benötigt</span>
+        <span>
+          {cost} {t("creditsRequired")}
+        </span>
         <span className="text-xs text-base-content/50">
-          (Sie haben {currentCredits})
+          ({t("youHave")} {currentCredits})
         </span>
       </div>
 
@@ -101,10 +109,10 @@ const CostIndicator: React.FC<CostIndicatorProps> = ({
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Credits kaufen
+            {t("buyCredits")}
           </Link>
           <span className="text-xs text-base-content/50">
-            um "{action}" zu verwenden
+            {t("toUse", { action })}
           </span>
         </motion.div>
       )}

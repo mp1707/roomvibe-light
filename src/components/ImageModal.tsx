@@ -6,30 +6,35 @@ import { useEffect, useRef, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useImageModalStore } from "@/utils/useImageModalStore";
+import { useTranslations } from "next-intl";
 
-const CloseIcon = memo(() => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2.5}
-    stroke="currentColor"
-    className="size-8 text-base-content"
-  >
-    <title>Modal schließen</title>
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6 18 18 6M6 6l12 12"
-    />
-  </svg>
-));
+const CloseIcon = memo(() => {
+  const t = useTranslations("Components.ImageModal");
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2.5}
+      stroke="currentColor"
+      className="size-8 text-base-content"
+    >
+      <title>{t("closeModal")}</title>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6 18 18 6M6 6l12 12"
+      />
+    </svg>
+  );
+});
 
 CloseIcon.displayName = "CloseIcon";
 
 export const ImageModal = memo(() => {
   const { imageUrl, closeModal } = useImageModalStore();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const t = useTranslations("Components.ImageModal");
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -75,7 +80,7 @@ export const ImageModal = memo(() => {
           type="button"
           onClick={closeModal}
           className="absolute top-4 right-4 z-20 p-2 rounded-full bg-base-content/20 hover:bg-base-content/40 transition-colors"
-          aria-label="Bildansicht schließen"
+          aria-label={t("closeImageView")}
         >
           <CloseIcon />
         </button>
@@ -91,7 +96,7 @@ export const ImageModal = memo(() => {
             width={3000}
             height={2000}
             className="w-auto h-auto max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-            alt="Vergrößerte Ansicht des hochgeladenen Bildes"
+            alt={t("enlargedImageAlt")}
             priority
           />
         </motion.div>

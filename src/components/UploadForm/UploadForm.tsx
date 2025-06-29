@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "@/i18n/navigation";
 import {
   staggerContainer,
   staggerItem,
@@ -16,6 +17,11 @@ const UploadForm = () => {
   const reducedMotion = useMotionPreference();
   const [isDragging, setIsDragging] = useState(false);
   const { isUploading, uploadProgress, handleFileUpload } = useFileUpload();
+  const router = useRouter();
+
+  const handleExploreInspiration = () => {
+    router.push("/inspiration");
+  };
 
   return (
     <div className="w-full flex items-center justify-center">
@@ -46,7 +52,7 @@ const UploadForm = () => {
 
         {/* Inspiration CTA */}
         <motion.div variants={reducedMotion ? {} : staggerItem}>
-          <InspirationCTA />
+          <InspirationCTA onExploreInspiration={handleExploreInspiration} />
         </motion.div>
       </motion.div>
     </div>

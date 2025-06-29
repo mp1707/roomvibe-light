@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useSettingsStore } from "@/utils/settingsStore";
 import {
   EyeIcon,
@@ -25,6 +26,7 @@ import {
 } from "./utils/constants";
 
 export default function Settings() {
+  const t = useTranslations("SettingsPage");
   const {
     mockImageAnalysis,
     mockImageGeneration,
@@ -56,22 +58,22 @@ export default function Settings() {
         <ToggleSwitch
           enabled={mockImageAnalysis}
           onChange={setMockImageAnalysis}
-          label="Mock Bildanalyse"
-          description="Verwendet Mock-Daten anstelle der OpenAI Vision API für die Raumanalyse. Spart API-Kosten während der Entwicklung."
+          label={t("mockImageAnalysis")}
+          description={t("mockImageAnalysisDesc")}
           icon={<EyeIcon className="w-5 h-5" />}
         />
 
         <ToggleSwitch
           enabled={mockImageGeneration}
           onChange={setMockImageGeneration}
-          label="Mock Bildgenerierung"
-          description="Verwendet vorhandene Beispielbilder anstelle der Replicate API für die Bildgenerierung. Spart API-Kosten während der Entwicklung."
+          label={t("mockImageGeneration")}
+          description={t("mockImageGenerationDesc")}
           icon={<PhotoIcon className="w-5 h-5" />}
         />
 
         <PreviewSection
           isVisible={mockImageGeneration}
-          title="Beispielbilder werden generiert"
+          title={t("exampleImagesGenerated")}
           icon={<PhotoIcon className="w-5 h-5" />}
           images={mockGenerationImages}
           isMultiple={true}
@@ -80,14 +82,14 @@ export default function Settings() {
         <ToggleSwitch
           enabled={mockFileUpload}
           onChange={setMockFileUpload}
-          label="Mock Datei-Upload"
-          description="Simuliert das Hochladen von Dateien ohne tatsächlich Supabase Storage zu verwenden. Spart API-Kosten und ermöglicht Offline-Entwicklung."
+          label={t("mockFileUpload")}
+          description={t("mockFileUploadDesc")}
           icon={<CloudArrowUpIcon className="w-5 h-5" />}
         />
 
         <PreviewSection
           isVisible={mockFileUpload}
-          title="Beispielbild wird verwendet"
+          title={t("exampleImageUsed")}
           icon={<CloudArrowUpIcon className="w-5 h-5" />}
           images={[mockUploadImage]}
         />

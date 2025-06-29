@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface ToggleSwitchProps {
   enabled: boolean;
@@ -23,6 +24,7 @@ export const ToggleSwitch = ({
   description,
   icon,
 }: ToggleSwitchProps) => {
+  const t = useTranslations("SettingsPage");
   return (
     <motion.div
       variants={cardVariants}
@@ -52,7 +54,7 @@ export const ToggleSwitch = ({
             enabled ? "bg-primary" : "bg-base-300"
           }`}
           whileTap={{ scale: 0.95 }}
-          aria-label={`${enabled ? "Deaktiviere" : "Aktiviere"} ${label}`}
+          aria-label={`${enabled ? t("disable") : t("enable")} ${label}`}
         >
           <motion.div
             className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"

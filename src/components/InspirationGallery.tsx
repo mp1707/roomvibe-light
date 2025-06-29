@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "@/i18n/navigation";
 import { useAppState } from "@/utils/store";
+import { useTranslations } from "next-intl";
 import {
   staggerContainer,
   staggerItem,
@@ -22,66 +23,6 @@ interface InspirationExample {
   description: string;
 }
 
-// Mock inspiration examples - using the same before/after pair for now
-const inspirationExamples: InspirationExample[] = [
-  {
-    id: "modern-living-1",
-    title: "Modernes Wohnzimmer",
-    beforeImage: "/assets/images/inspirationBefore.png",
-    afterImage: "/assets/images/inspirationAfter.png",
-    category: "Wohnzimmer",
-    style: "Moderner Minimalismus",
-    description: "Warmer Wohnbereich wird zu einem eleganten, modernen Raum",
-  },
-  {
-    id: "modern-living-2",
-    title: "Lichtdurchfluteter Raum",
-    beforeImage: "/assets/images/inspirationBefore.png",
-    afterImage: "/assets/images/inspirationAfter.png",
-    category: "Wohnzimmer",
-    style: "Skandinavisch",
-    description: "Traditioneller Raum erhält skandinavische Eleganz",
-  },
-  {
-    id: "modern-living-3",
-    title: "Farbharmonie-Konzept",
-    beforeImage: "/assets/images/inspirationBefore.png",
-    afterImage: "/assets/images/inspirationAfter.png",
-    category: "Wohnzimmer",
-    style: "Contemporary",
-    description: "Warme Töne werden zu einer ausgewogenen Farbpalette",
-  },
-  {
-    id: "modern-living-4",
-    title: "Raumoptimierung",
-    beforeImage: "/assets/images/inspirationBefore.png",
-    afterImage: "/assets/images/inspirationAfter.png",
-    category: "Wohnzimmer",
-    style: "Minimalistisch",
-    description:
-      "Effiziente Nutzung des Raumes durch intelligente Möbel-Platzierung",
-  },
-  {
-    id: "modern-living-5",
-    title: "Beleuchtungskonzept",
-    beforeImage: "/assets/images/inspirationBefore.png",
-    afterImage: "/assets/images/inspirationAfter.png",
-    category: "Wohnzimmer",
-    style: "Modern Industrial",
-    description: "Atmosphärische Beleuchtung schafft ein warmes Ambiente",
-  },
-  {
-    id: "modern-living-6",
-    title: "Materialharmonie",
-    beforeImage: "/assets/images/inspirationBefore.png",
-    afterImage: "/assets/images/inspirationAfter.png",
-    category: "Wohnzimmer",
-    style: "Luxus Modern",
-    description:
-      "Hochwertige Materialien vereinen sich zu einem eleganten Gesamtbild",
-  },
-];
-
 interface InspirationCardProps {
   example: InspirationExample;
   onSelect: (example: InspirationExample) => void;
@@ -90,6 +31,7 @@ interface InspirationCardProps {
 const InspirationCard = ({ example, onSelect }: InspirationCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [sliderPosition, setSliderPosition] = useState(50);
+  const t = useTranslations("Components.InspirationGallery");
 
   return (
     <motion.div
@@ -107,7 +49,7 @@ const InspirationCard = ({ example, onSelect }: InspirationCardProps) => {
         <div className="absolute inset-0">
           <Image
             src={example.afterImage}
-            alt={`${example.title} - Nachher`}
+            alt={`${example.title} - ${t("after")}`}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -123,7 +65,7 @@ const InspirationCard = ({ example, onSelect }: InspirationCardProps) => {
         >
           <Image
             src={example.beforeImage}
-            alt={`${example.title} - Vorher`}
+            alt={`${example.title} - ${t("before")}`}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -139,12 +81,12 @@ const InspirationCard = ({ example, onSelect }: InspirationCardProps) => {
         {/* Before/After Labels */}
         <div className="absolute top-3 left-3 z-20">
           <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded-md backdrop-blur-sm">
-            Vorher
+            {t("before")}
           </span>
         </div>
         <div className="absolute top-3 right-3 z-20">
           <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded-md backdrop-blur-sm">
-            Nachher
+            {t("after")}
           </span>
         </div>
 
@@ -173,7 +115,7 @@ const InspirationCard = ({ example, onSelect }: InspirationCardProps) => {
               onSelect(example);
             }}
           >
-            Transformation ansehen
+            {t("transformationButton")}
           </motion.button>
         </motion.div>
       </div>
@@ -203,6 +145,65 @@ interface InspirationGalleryProps {
 const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+  const t = useTranslations("Components.InspirationGallery");
+
+  // Mock inspiration examples - using translations for data
+  const inspirationExamples: InspirationExample[] = [
+    {
+      id: "modern-living-1",
+      title: t("examples.modernLiving1.title"),
+      beforeImage: "/assets/images/inspirationBefore.png",
+      afterImage: "/assets/images/inspirationAfter.png",
+      category: t("examples.modernLiving1.category"),
+      style: t("examples.modernLiving1.style"),
+      description: t("examples.modernLiving1.description"),
+    },
+    {
+      id: "modern-living-2",
+      title: t("examples.modernLiving2.title"),
+      beforeImage: "/assets/images/inspirationBefore.png",
+      afterImage: "/assets/images/inspirationAfter.png",
+      category: t("examples.modernLiving2.category"),
+      style: t("examples.modernLiving2.style"),
+      description: t("examples.modernLiving2.description"),
+    },
+    {
+      id: "modern-living-3",
+      title: t("examples.modernLiving3.title"),
+      beforeImage: "/assets/images/inspirationBefore.png",
+      afterImage: "/assets/images/inspirationAfter.png",
+      category: t("examples.modernLiving3.category"),
+      style: t("examples.modernLiving3.style"),
+      description: t("examples.modernLiving3.description"),
+    },
+    {
+      id: "modern-living-4",
+      title: t("examples.modernLiving4.title"),
+      beforeImage: "/assets/images/inspirationBefore.png",
+      afterImage: "/assets/images/inspirationAfter.png",
+      category: t("examples.modernLiving4.category"),
+      style: t("examples.modernLiving4.style"),
+      description: t("examples.modernLiving4.description"),
+    },
+    {
+      id: "modern-living-5",
+      title: t("examples.modernLiving5.title"),
+      beforeImage: "/assets/images/inspirationBefore.png",
+      afterImage: "/assets/images/inspirationAfter.png",
+      category: t("examples.modernLiving5.category"),
+      style: t("examples.modernLiving5.style"),
+      description: t("examples.modernLiving5.description"),
+    },
+    {
+      id: "modern-living-6",
+      title: t("examples.modernLiving6.title"),
+      beforeImage: "/assets/images/inspirationBefore.png",
+      afterImage: "/assets/images/inspirationAfter.png",
+      category: t("examples.modernLiving6.category"),
+      style: t("examples.modernLiving6.style"),
+      description: t("examples.modernLiving6.description"),
+    },
+  ];
 
   const handleExampleSelect = (example: InspirationExample) => {
     router.push(`/inspiration/${example.id}`);
@@ -220,12 +221,10 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
         className="text-center mb-8 md:mb-12"
       >
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-4">
-          KI-Transformationen entdecken
+          {t("title")}
         </h2>
         <p className="text-lg text-base-content/60 max-w-3xl mx-auto leading-relaxed">
-          Erleben Sie das Potenzial von KI-gestütztem Interior Design. Jede
-          Transformation zeigt, wie unsere Technologie Räume intelligent und
-          stilvoll verwandelt.
+          {t("subtitle")}
         </p>
       </motion.div>
 
@@ -251,11 +250,10 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
       >
         <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl p-6 md:p-8 border border-primary/10">
           <h3 className="text-xl md:text-2xl font-bold text-base-content mb-3">
-            Bereit für Ihre eigene Transformation?
+            {t("readyTitle")}
           </h3>
           <p className="text-base-content/60 mb-4 max-w-2xl mx-auto">
-            Laden Sie ein Foto Ihres Raumes hoch und lassen Sie unsere KI
-            personalisierte Designvorschläge erstellen.
+            {t("readySubtitle")}
           </p>
           <motion.button
             onClick={() => router.push("/")}
@@ -274,10 +272,10 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"
               />
             </svg>
-            Eigenes Bild hochladen
+            {t("uploadImageButton")}
           </motion.button>
         </div>
 
@@ -287,7 +285,7 @@ const InspirationGallery = ({ onClose }: InspirationGalleryProps) => {
           whileHover={{ x: -4 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
         >
-          ← Zurück zur Startseite
+          ← {t("backToHome")}
         </motion.button>
       </motion.div>
     </motion.div>

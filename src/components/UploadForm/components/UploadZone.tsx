@@ -5,6 +5,7 @@ import { dragVariants } from "@/utils/animations";
 import toast from "react-hot-toast";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { UploadContent } from "./UploadContent";
+import { useTranslations } from "next-intl";
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
@@ -23,6 +24,7 @@ export const UploadZone = ({
 }: UploadZoneProps) => {
   const { mockFileUpload } = useSettingsStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("Components.UploadZone");
 
   const handleFileChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -44,10 +46,10 @@ export const UploadZone = ({
       if (imageFile) {
         onFileSelect(imageFile);
       } else if (files.length > 0) {
-        toast.error("Bitte ziehen Sie eine Bilddatei hierher.");
+        toast.error(t("dragImageError"));
       }
     },
-    [onFileSelect, onDragStateChange]
+    [onFileSelect, onDragStateChange, t]
   );
 
   const handleDragEvents = useCallback(
@@ -93,7 +95,7 @@ export const UploadZone = ({
       }`}
       onClick={handleClick}
       tabIndex={0}
-      aria-label="Klicken Sie hier oder ziehen Sie ein Bild hierher zum Hochladen"
+      aria-label={t("uploadAriaLabel")}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();

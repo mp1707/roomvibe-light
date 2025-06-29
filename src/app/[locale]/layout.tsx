@@ -8,6 +8,38 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import Header from "@/components/Header";
 import { Toaster } from "react-hot-toast";
 import MockModeIndicator from "../../components/MockModeIndicator";
+import { useTranslations } from "next-intl";
+
+function Footer() {
+  const t = useTranslations("Layout");
+
+  return (
+    <footer className="bg-base-100 border-t border-base-300 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex gap-6 text-sm text-base-content/60">
+            <Link
+              href="/impressum"
+              className="hover:text-base-content transition-colors"
+            >
+              {t("impressum")}
+            </Link>
+            <span className="text-base-content/30">|</span>
+            <Link
+              href="/datenschutz"
+              className="hover:text-base-content transition-colors"
+            >
+              {t("datenschutz")}
+            </Link>
+          </div>
+          <p className="text-xs text-base-content/40 text-center">
+            © {new Date().getFullYear()} roomvibe. {t("allRightsReserved")}.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
 
 export default async function LocaleLayout({
   children,
@@ -52,30 +84,7 @@ export default async function LocaleLayout({
         </div>
 
         {/* Footer */}
-        <footer className="bg-base-100 border-t border-base-300 mt-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex gap-6 text-sm text-base-content/60">
-                <Link
-                  href="/impressum"
-                  className="hover:text-base-content transition-colors"
-                >
-                  Impressum
-                </Link>
-                <span className="text-base-content/30">|</span>
-                <Link
-                  href="/datenschutz"
-                  className="hover:text-base-content transition-colors"
-                >
-                  Datenschutz
-                </Link>
-              </div>
-              <p className="text-xs text-base-content/40 text-center">
-                © {new Date().getFullYear()} roomvibe. All rights reserved.
-              </p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
 
       <MockModeIndicator />
