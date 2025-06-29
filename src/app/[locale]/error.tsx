@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -11,6 +12,7 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   const router = useRouter();
+  const t = useTranslations("ErrorPage");
 
   useEffect(() => {
     // Log the error to your error reporting service
@@ -44,7 +46,7 @@ export default function Error({ error, reset }: ErrorProps) {
                 </svg>
               </div>
               <h2 className="text-lg font-semibold text-base-content">
-                Etwas ist schiefgelaufen
+                {t("title")}
               </h2>
             </div>
           </div>
@@ -52,14 +54,13 @@ export default function Error({ error, reset }: ErrorProps) {
           {/* Content */}
           <div className="px-6 py-6">
             <p className="text-base-content/70 leading-relaxed mb-6">
-              Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es
-              erneut.
+              {t("description")}
             </p>
 
             {process.env.NODE_ENV === "development" && (
               <details className="mb-4 text-left">
                 <summary className="text-sm text-base-content/50 cursor-pointer hover:text-base-content/70">
-                  Fehlerdetails (Development)
+                  {t("errorDetails")}
                 </summary>
                 <pre className="mt-2 text-xs bg-base-200 rounded p-2 overflow-auto">
                   {error.message}
@@ -76,7 +77,7 @@ export default function Error({ error, reset }: ErrorProps) {
               onClick={reset}
               className="w-full px-4 py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
-              Erneut versuchen
+              {t("tryAgain")}
             </motion.button>
 
             <motion.button
@@ -85,7 +86,7 @@ export default function Error({ error, reset }: ErrorProps) {
               onClick={() => router.push("/")}
               className="w-full px-4 py-3 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
-              Zur Startseite
+              {t("goHome")}
             </motion.button>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
@@ -29,6 +30,7 @@ interface GeneratedImage {
 export default function ProfilePage() {
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+  const t = useTranslations("PrivatePage");
   const {
     credits,
     isLoading: creditsLoading,
@@ -64,7 +66,7 @@ export default function ProfilePage() {
 
         if (error) {
           console.error("Error fetching generated images:", error);
-          if (showLoading) toast.error("Fehler beim Laden der Bilder");
+          if (showLoading) toast.error(t("errorLoadingImages"));
           setGeneratedImages([]);
           return;
         }
@@ -103,17 +105,17 @@ export default function ProfilePage() {
         setGeneratedImages(imagesWithUrls);
 
         if (showLoading && imagesWithUrls.length > 0) {
-          toast.success(`${imagesWithUrls.length} Bilder geladen`);
+          toast.success(`${imagesWithUrls.length} ${t("imagesLoaded")}`);
         }
       } catch (error) {
         console.error("Failed to fetch generated images:", error);
-        if (showLoading) toast.error("Fehler beim Laden der Bilder");
+        if (showLoading) toast.error(t("errorLoadingImages"));
         setGeneratedImages([]);
       } finally {
         if (showLoading) setIsLoadingImages(false);
       }
     },
-    [supabase]
+    [supabase, t]
   );
 
   // Refresh images function
@@ -165,11 +167,11 @@ export default function ProfilePage() {
       await fetchGeneratedImages(user.id);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      toast.error("Fehler beim Laden der Profildaten");
+      toast.error(t("errorLoadingProfile"));
     } finally {
       setIsLoading(false);
     }
-  }, [supabase, router]);
+  }, [supabase, router, fetchGeneratedImages, t]);
 
   useEffect(() => {
     fetchUserData();
@@ -190,7 +192,7 @@ export default function ProfilePage() {
           className="text-center space-y-4"
         >
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" />
-          <p className="text-base-content/60">Profil wird geladen...</p>
+          <p className="text-base-content/60">{t("loadingProfile")}</p>
         </motion.div>
       </div>
     );
@@ -204,14 +206,14 @@ export default function ProfilePage() {
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
-    "Benutzer";
+    t("user");
   const joinDate = userProfile?.created_at
     ? new Date(userProfile.created_at).toLocaleDateString("de-DE", {
         year: "numeric",
         month: "long",
         day: "numeric",
       })
-    : "Unbekannt";
+    : t("unknown");
 
   return (
     <motion.div
@@ -257,7 +259,7 @@ export default function ProfilePage() {
                 {user.email}
               </p>
               <p className="text-xs sm:text-sm text-base-content/50">
-                Mitglied seit {joinDate}
+                {t("memberSince")} {joinDate}
               </p>
             </div>
 
@@ -276,7 +278,7 @@ export default function ProfilePage() {
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                   <span className="text-sm lg:text-base font-semibold text-base-content">
-                    Credits
+                    {t("credits")}
                   </span>
                 </div>
                 {creditsLoading ? (
@@ -299,7 +301,7 @@ export default function ProfilePage() {
                     whileTap={reducedMotion ? {} : "tap"}
                     className="px-3 lg:px-4 py-2 bg-primary text-primary-content rounded-lg text-sm font-medium hover:bg-primary-focus transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   >
-                    Kaufen
+                    {t("buy")}
                   </motion.button>
                 </Link>
               </div>
@@ -313,9 +315,9 @@ export default function ProfilePage() {
           className="flex bg-base-200/50 rounded-xl p-1 mb-6 border border-base-300/50"
         >
           {[
-            { id: "overview", label: "Übersicht", Icon: UserIcon },
-            { id: "history", label: "Historie", Icon: ChartBarIcon },
-            { id: "images", label: "Bilder", Icon: PhotoIcon },
+            { id: "overview", label: t("overview"), Icon: UserIcon },
+            { id: "history", label: t("history"), Icon: ChartBarIcon },
+            { id: "images", label: t("images"), Icon: PhotoIcon },
           ].map((tab) => (
             <motion.button
               key={tab.id}

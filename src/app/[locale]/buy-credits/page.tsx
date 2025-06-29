@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { createClient } from "@/utils/supabase/client";
@@ -16,6 +16,7 @@ const SearchParamsHandler = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refreshCredits } = useCreditsStore();
+  const t = useTranslations("BuyCreditsPage");
 
   // Check for success/cancel parameters
   useEffect(() => {
@@ -23,7 +24,7 @@ const SearchParamsHandler = () => {
     const canceled = searchParams.get("canceled");
 
     if (success === "true") {
-      toast.success("Zahlung erfolgreich! Ihre Credits wurden hinzugefügt.", {
+      toast.success(t("paymentSuccess"), {
         duration: 5000,
       });
       // Refresh credits to show the new balance
@@ -31,11 +32,11 @@ const SearchParamsHandler = () => {
       // Clean up URL
       router.replace("/buy-credits");
     } else if (canceled === "true") {
-      toast.error("Zahlung abgebrochen.");
+      toast.error(t("paymentCanceled"));
       // Clean up URL
       router.replace("/buy-credits");
     }
-  }, [searchParams, router, refreshCredits]);
+  }, [searchParams, router, refreshCredits, t]);
 
   return null; // This component doesn't render anything
 };
@@ -46,6 +47,7 @@ const BuyCreditsContent = () => {
   const { credits, isLoading, fetchCredits } = useCreditsStore();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const t = useTranslations("BuyCreditsPage");
 
   // Check authentication
   useEffect(() => {
@@ -69,7 +71,7 @@ const BuyCreditsContent = () => {
 
   const handlePurchase = async (packageId: string) => {
     if (!isAuthenticated) {
-      toast.error("Bitte melden Sie sich an, um Credits zu kaufen.");
+      toast.error(t("loginRequired"));
       router.push("/auth/login");
       return;
     }
@@ -98,17 +100,11 @@ const BuyCreditsContent = () => {
         // Redirect to Stripe Checkout
         window.location.href = data.checkoutUrl;
       } else {
-        throw new Error(
-          data.error || "Fehler beim Erstellen der Checkout-Session"
-        );
+        throw new Error(data.error || t("checkoutError"));
       }
     } catch (error) {
       console.error("Purchase error:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Fehler beim Starten des Kaufprozesses. Bitte versuchen Sie es erneut."
-      );
+      toast.error(error instanceof Error ? error.message : t("purchaseError"));
     }
   };
 
@@ -139,19 +135,15 @@ const BuyCreditsContent = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <h1 className="text-3xl font-bold text-base-content">
-            Credits kaufen
-          </h1>
-          <p className="text-base-content/70">
-            Bitte melden Sie sich an, um Credits zu kaufen.
-          </p>
+          <h1 className="text-3xl font-bold text-base-content">{t("title")}</h1>
+          <p className="text-base-content/70">{t("notAuthenticated")}</p>
           <motion.button
             className="btn btn-primary"
             onClick={() => router.push("/auth/login")}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Anmelden
+            {t("signIn")}
           </motion.button>
         </motion.div>
       </div>
@@ -167,11 +159,9 @@ const BuyCreditsContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h1 className="text-3xl font-bold text-base-content">Credits kaufen</h1>
+        <h1 className="text-3xl font-bold text-base-content">{t("title")}</h1>
         <p className="text-base-content/70 max-w-2xl mx-auto">
-          Kaufen Sie Credits, um Ihre Räume zu analysieren und Design-Vorschläge
-          anzuwenden. Credits haben kein Ablaufdatum und werden sofort Ihrem
-          Konto gutgeschrieben.
+          {t("subtitle")}
         </p>
       </motion.div>
 
@@ -191,7 +181,7 @@ const BuyCreditsContent = () => {
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
           </svg>
           <span className="text-lg font-medium text-base-content">
-            Ihre aktuellen Credits
+            {t("currentCredits")}
           </span>
         </div>
         {isLoading ? (
@@ -228,7 +218,7 @@ const BuyCreditsContent = () => {
               clipRule="evenodd"
             />
           </svg>
-          Wie werden Credits verwendet?
+          {t("howCreditsUsed")}
         </h3>
         <div className="space-y-4 text-sm">
           <div className="flex items-center gap-3 p-3 rounded-lg bg-success/10 border border-success/20">
@@ -248,16 +238,14 @@ const BuyCreditsContent = () => {
               </svg>
             </div>
             <span className="text-base-content/80 font-medium">
-              Bild hochladen & analysieren - <strong>KOSTENLOS</strong>
+              {t("uploadAnalyzeFree")}
             </span>
           </div>
           <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
               <span className="text-primary font-semibold">5</span>
             </div>
-            <span className="text-base-content/80">
-              KI-Bildgenerierung (Vorschlag anwenden)
-            </span>
+            <span className="text-base-content/80">{t("aiGeneration")}</span>
           </div>
         </div>
       </motion.div>
@@ -270,7 +258,7 @@ const BuyCreditsContent = () => {
         transition={{ duration: 0.4, delay: 0.3 }}
       >
         <h2 className="text-2xl font-semibold text-base-content text-center">
-          Credit-Pakete
+          {t("creditPackages")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -310,12 +298,9 @@ const BuyCreditsContent = () => {
               clipRule="evenodd"
             />
           </svg>
-          <span>Sichere Zahlung über Stripe</span>
+          <span>{t("securePayment")}</span>
         </div>
-        <p>
-          Ihre Zahlungsdaten werden sicher verarbeitet. Wir speichern keine
-          Kreditkarteninformationen.
-        </p>
+        <p>{t("securityNotice")}</p>
       </motion.div>
     </div>
   );

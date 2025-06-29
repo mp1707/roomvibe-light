@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
 import Image from "next/image";
@@ -28,6 +29,7 @@ const ErrorModal = ({
   message: string;
 }) => {
   const reducedMotion = useMotionPreference();
+  const t = useTranslations("Common");
 
   if (!isOpen) return null;
 
@@ -101,7 +103,7 @@ const ErrorModal = ({
                 onClick={onClose}
                 className="w-full px-4 py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
-                Zurück
+                {t("back")}
               </motion.button>
             </div>
           </div>
@@ -127,6 +129,7 @@ export default function AnalyzePage() {
   });
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+  const t = useTranslations("AnalyzePage");
 
   // Helper function to show error modal
   const showErrorModal = useCallback((title: string, message: string) => {
@@ -187,7 +190,7 @@ export default function AnalyzePage() {
         });
         imageUrl = base64;
       } else {
-        throw new Error("Kein Bild zum Analysieren gefunden");
+        throw new Error(t("errors.noImage"));
       }
 
       // Call our analysis API (real or mock based on settings)
@@ -217,9 +220,7 @@ export default function AnalyzePage() {
 
         // Handle specific error codes
         if (response.status === 413) {
-          throw new Error(
-            "Das Bild ist zu groß. Bitte verwenden Sie ein kleineres Bild (max. 5MB)."
-          );
+          throw new Error(t("errors.tooLarge"));
         }
 
         let errorData;
@@ -266,8 +267,8 @@ export default function AnalyzePage() {
           setIsAnalyzing(false);
           setAnalysisProgress(0);
           showErrorModal(
-            "Kein Innenraum erkannt",
-            "Es konnten keine Vorschläge generiert werden. Bitte laden Sie ein Bild eines Innenraums hoch (Wohnzimmer, Schlafzimmer, Küche, etc.)."
+            t("errors.noInteriorSpace"),
+            t("errors.noSuggestions")
           );
         }, 500);
         return;
@@ -287,9 +288,8 @@ export default function AnalyzePage() {
       setAnalysisProgress(0);
 
       // Show user-friendly error message
-      let errorTitle = "Analyse fehlgeschlagen";
-      let errorMessage =
-        "Es ist ein Fehler bei der Analyse aufgetreten. Versuchen Sie es mit einem anderen Bild erneut.";
+      let errorTitle = t("errors.analysisFailed");
+      let errorMessage = t("errors.defaultError");
 
       if (error instanceof Error) {
         console.error("Error details:", {
@@ -301,49 +301,42 @@ export default function AnalyzePage() {
         });
 
         if (error.message.includes("OpenAI API")) {
-          errorTitle = "KI-Service nicht verfügbar";
-          errorMessage =
-            "Die KI-Analyse ist momentan nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.";
+          errorTitle = t("errors.aiUnavailable");
+          errorMessage = t("errors.aiError");
         } else if (
           error.message.includes("Validierung") ||
           error.message.includes("erwarteten Format")
         ) {
-          errorTitle = "Verarbeitungsfehler";
-          errorMessage =
-            "Die KI-Antwort konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild erneut.";
-        } else if (error.message.includes("Kein Bild")) {
-          errorTitle = "Bild nicht gefunden";
-          errorMessage =
-            "Das Bild konnte nicht gefunden werden. Bitte laden Sie ein neues Bild hoch.";
+          errorTitle = t("errors.processingError");
+          errorMessage = t("errors.processingMessage");
+        } else if (error.message.includes(t("errors.noImage"))) {
+          errorTitle = t("errors.imageNotFound");
+          errorMessage = t("errors.imageNotFoundMessage");
         } else if (
           error.message.includes("string did not match") ||
           error.message.includes("pattern")
         ) {
-          errorTitle = "Datenformat-Fehler";
-          errorMessage =
-            "Es gab ein Problem mit dem Datenformat. Bitte versuchen Sie es erneut oder laden Sie ein anderes Bild hoch.";
+          errorTitle = t("errors.dataFormatError");
+          errorMessage = t("errors.dataFormatMessage");
         } else if (
           error.message.includes("Failed to fetch") ||
           error.message.includes("Network")
         ) {
-          errorTitle = "Verbindungsfehler";
-          errorMessage =
-            "Die Verbindung zum Server ist fehlgeschlagen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+          errorTitle = t("errors.connectionError");
+          errorMessage = t("errors.connectionMessage");
         } else if (
           error.message.includes("invalid JSON response") ||
           error.message.includes("environment variables")
         ) {
-          errorTitle = "Konfigurationsfehler";
-          errorMessage =
-            "Es gibt ein Problem mit der Server-Konfiguration. Bitte versuchen Sie es in wenigen Minuten erneut oder kontaktieren Sie den Support.";
+          errorTitle = t("errors.configError");
+          errorMessage = t("errors.configMessage");
         } else if (
           error.message.includes("zu groß") ||
           error.message.includes("Content Too Large") ||
           error.message.includes("413")
         ) {
-          errorTitle = "Bild zu groß";
-          errorMessage =
-            "Das ausgewählte Bild ist zu groß für die Verarbeitung. Bitte verwenden Sie ein kleineres Bild (empfohlen: unter 5MB) oder komprimieren Sie das Bild.";
+          errorTitle = t("errors.imageTooBig");
+          errorMessage = t("errors.imageTooBigMessage");
         } else {
           errorMessage = `${error.message} (Fehlercode: ANALYZE_${Date.now()})`;
         }
@@ -351,7 +344,7 @@ export default function AnalyzePage() {
 
       showErrorModal(errorTitle, errorMessage);
     }
-  }, [localImageUrl, hostedImageUrl, router, showErrorModal]);
+  }, [localImageUrl, hostedImageUrl, router, showErrorModal, t]);
 
   const handleGoBack = useCallback(() => {
     // Reset all state when going back to prevent interference
@@ -382,11 +375,10 @@ export default function AnalyzePage() {
               className="mb-8 md:mb-12"
             >
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
-                Bereit für die Analyse?
+                {t("title")}
               </h1>
               <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
-                Ihr Bild ist hochgeladen. Starten Sie jetzt die KI-Analyse für
-                personalisierte Raumgestaltungsvorschläge.
+                {t("subtitle")}
               </p>
             </motion.div>
           )}
@@ -401,14 +393,14 @@ export default function AnalyzePage() {
                 <AILoadingScreen
                   progress={analysisProgress}
                   steps={[
-                    "Bild wird analysiert...",
-                    "Räume werden erkannt...",
-                    "Stil wird identifiziert...",
-                    "Vorschläge werden generiert...",
+                    t("loadingSteps.analyzing"),
+                    t("loadingSteps.detecting"),
+                    t("loadingSteps.identifying"),
+                    t("loadingSteps.generating"),
                   ]}
-                  title="KI-Analyse läuft"
-                  subtitle="Ihre Raumgestaltungsvorschläge werden gerade erstellt. Bitte haben Sie einen Moment Geduld."
-                  hint="Die Analyse dauert in der Regel 30-60 Sekunden"
+                  title={t("loadingTitle")}
+                  subtitle={t("loadingSubtitle")}
+                  hint={t("loadingHint")}
                   mode="analyze"
                 />
               ) : (
@@ -423,7 +415,7 @@ export default function AnalyzePage() {
                     {imageUrl && (
                       <Image
                         src={imageUrl}
-                        alt="Hochgeladenes Bild"
+                        alt={t("imageUploaded")}
                         fill
                         className="object-cover"
                         priority
@@ -441,11 +433,11 @@ export default function AnalyzePage() {
                           <div className="flex items-center space-x-3">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                             <span className="text-sm font-medium text-base-content">
-                              Bild erfolgreich hochgeladen
+                              {t("imageUploaded")}
                             </span>
                           </div>
                           <div className="text-xs text-base-content/50">
-                            Bereit für Analyse
+                            {t("readyForAnalysis")}
                           </div>
                         </div>
                       </div>
@@ -470,7 +462,7 @@ export default function AnalyzePage() {
                 onClick={handleGoBack}
                 className="flex-1 px-6 py-3 sm:py-4 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
-                Anderes Bild wählen
+                {t("chooseOtherImage")}
               </motion.button>
 
               {/* Start Analysis Button */}
@@ -495,7 +487,7 @@ export default function AnalyzePage() {
                       d="M13 10V3L4 14h7v7l9-11h-7z"
                     />
                   </svg>
-                  <span>Analyse starten</span>
+                  <span>{t("startAnalysis")}</span>
                 </span>
               </motion.button>
             </motion.div>

@@ -29,6 +29,114 @@
     "tryAgain": "Erneut versuchen",
     "back": "Zurück",
     "next": "Weiter",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "close": "Schließen"
+  },
+  "ErrorPage": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "errorDetails": "Fehlerdetails (Development)",
+    "tryAgain": "Erneut versuchen",
+    "goHome": "Zur Startseite"
+  },
+  "NotFoundPage": {
+    "title": "Seite nicht gefunden",
+    "description": "Die angeforderte Seite konnte nicht gefunden werden. Möglicherweise wurde sie verschoben oder existiert nicht mehr.",
+    "goHome": "Zur Startseite",
+    "goBack": "Zurück",
+    "additionalLinks": "Oder besuchen Sie eine dieser Seiten:",
+    "inspiration": "Inspiration",
+    "buyCredits": "Credits kaufen"
+  },
+  "LoadingPage": {
+    "title": "Lädt...",
+    "subtitle": "Einen Moment bitte"
+  },
+  "AnalyzePage": {
+    "title": "Bereit für die Analyse?",
+    "subtitle": "Ihr Bild ist hochgeladen. Starten Sie jetzt die KI-Analyse für personalisierte Raumgestaltungsvorschläge.",
+    "imageUploaded": "Bild erfolgreich hochgeladen",
+    "readyForAnalysis": "Bereit für Analyse",
+    "chooseOtherImage": "Anderes Bild wählen",
+    "startAnalysis": "Analyse starten",
+    "loadingTitle": "KI-Analyse läuft",
+    "loadingSubtitle": "Ihre Raumgestaltungsvorschläge werden gerade erstellt. Bitte haben Sie einen Moment Geduld.",
+    "loadingHint": "Die Analyse dauert in der Regel 30-60 Sekunden",
+    "loadingSteps": {
+      "analyzing": "Bild wird analysiert...",
+      "detecting": "Räume werden erkannt...",
+      "identifying": "Stil wird identifiziert...",
+      "generating": "Vorschläge werden generiert..."
+    },
+    "errors": {
+      "noImage": "Kein Bild zum Analysieren gefunden",
+      "tooLarge": "Das Bild ist zu groß. Bitte verwenden Sie ein kleineres Bild (max. 5MB).",
+      "noInteriorSpace": "Kein Innenraum erkannt",
+      "noSuggestions": "Es konnten keine Vorschläge generiert werden. Bitte laden Sie ein Bild eines Innenraums hoch (Wohnzimmer, Schlafzimmer, Küche, etc.).",
+      "analysisFailed": "Analyse fehlgeschlagen",
+      "defaultError": "Es ist ein Fehler bei der Analyse aufgetreten. Versuchen Sie es mit einem anderen Bild erneut.",
+      "aiUnavailable": "KI-Service nicht verfügbar",
+      "aiError": "Die KI-Analyse ist momentan nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.",
+      "processingError": "Verarbeitungsfehler",
+      "processingMessage": "Die KI-Antwort konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild erneut.",
+      "imageNotFound": "Bild nicht gefunden",
+      "imageNotFoundMessage": "Das Bild konnte nicht gefunden werden. Bitte laden Sie ein neues Bild hoch.",
+      "dataFormatError": "Datenformat-Fehler",
+      "dataFormatMessage": "Es gab ein Problem mit dem Datenformat. Bitte versuchen Sie es erneut oder laden Sie ein anderes Bild hoch.",
+      "connectionError": "Verbindungsfehler",
+      "connectionMessage": "Die Verbindung zum Server ist fehlgeschlagen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+      "configError": "Konfigurationsfehler",
+      "configMessage": "Es gibt ein Problem mit der Server-Konfiguration. Bitte versuchen Sie es in wenigen Minuten erneut oder kontaktieren Sie den Support.",
+      "imageTooBig": "Bild zu groß",
+      "imageTooBigMessage": "Das ausgewählte Bild ist zu groß für die Verarbeitung. Bitte verwenden Sie ein kleineres Bild (empfohlen: unter 5MB) oder komprimieren Sie das Bild."
+    }
+  },
+  "BuyCreditsPage": {
+    "title": "Credits kaufen",
+    "subtitle": "Kaufen Sie Credits, um Ihre Räume zu analysieren und Design-Vorschläge anzuwenden. Credits haben kein Ablaufdatum und werden sofort Ihrem Konto gutgeschrieben.",
+    "currentCredits": "Ihre aktuellen Credits",
+    "notAuthenticated": "Bitte melden Sie sich an, um Credits zu kaufen.",
+    "signIn": "Anmelden",
+    "howCreditsUsed": "Wie werden Credits verwendet?",
+    "uploadAnalyzeFree": "Bild hochladen & analysieren - KOSTENLOS",
+    "aiGeneration": "KI-Bildgenerierung (Vorschlag anwenden)",
+    "creditPackages": "Credit-Pakete",
+    "securePayment": "Sichere Zahlung über Stripe",
+    "securityNotice": "Ihre Zahlungsdaten werden sicher verarbeitet. Wir speichern keine Kreditkarteninformationen.",
+    "paymentSuccess": "Zahlung erfolgreich! Ihre Credits wurden hinzugefügt.",
+    "paymentCanceled": "Zahlung abgebrochen.",
+    "loginRequired": "Bitte melden Sie sich an, um Credits zu kaufen.",
+    "purchaseError": "Fehler beim Starten des Kaufprozesses. Bitte versuchen Sie es erneut.",
+    "checkoutError": "Fehler beim Erstellen der Checkout-Session"
+  },
+  "AuthPage": {
+    "title": "Willkommen bei RoomVibe",
+    "subtitle": "Melden Sie sich an, um Ihren Raum mit KI zu verwandeln",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "orContinueWith": "Oder fortfahren mit E-Mail",
+    "emailAddress": "E-Mail-Adresse",
+    "password": "Passwort",
+    "enterEmail": "Geben Sie Ihre E-Mail ein",
+    "enterPassword": "Geben Sie Ihr Passwort ein",
+    "signIn": "Anmelden",
+    "createAccount": "Konto erstellen",
+    "termsPrivacy": "Durch Fortfahren stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu."
+  },
+  "PrivatePage": {
+    "loadingProfile": "Profil wird geladen...",
+    "errorLoadingProfile": "Fehler beim Laden der Profildaten",
+    "imagesLoaded": "Bilder geladen",
+    "errorLoadingImages": "Fehler beim Laden der Bilder",
+    "refreshImages": "Bilder aktualisieren",
+    "noGeneratedImages": "Keine generierten Bilder für Benutzer gefunden",
+    "foundImages": "{count} generierte Bilder gefunden",
+    "memberSince": "Mitglied seit",
+    "unknown": "Unbekannt",
+    "user": "Benutzer",
+    "credits": "Credits",
+    "buy": "Kaufen",
+    "overview": "Übersicht",
+    "history": "Historie",
+    "images": "Bilder"
   }
 }

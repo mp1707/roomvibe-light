@@ -29,6 +29,114 @@
     "tryAgain": "Try Again",
     "back": "Back",
     "next": "Next",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "ErrorPage": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "errorDetails": "Error Details (Development)",
+    "tryAgain": "Try Again",
+    "goHome": "Go to Homepage"
+  },
+  "NotFoundPage": {
+    "title": "Page not found",
+    "description": "The requested page could not be found. It may have been moved or no longer exists.",
+    "goHome": "Go to Homepage",
+    "goBack": "Go Back",
+    "additionalLinks": "Or visit one of these pages:",
+    "inspiration": "Inspiration",
+    "buyCredits": "Buy Credits"
+  },
+  "LoadingPage": {
+    "title": "Loading...",
+    "subtitle": "Please wait a moment"
+  },
+  "AnalyzePage": {
+    "title": "Ready for analysis?",
+    "subtitle": "Your image has been uploaded. Start the AI analysis now for personalized room design suggestions.",
+    "imageUploaded": "Image successfully uploaded",
+    "readyForAnalysis": "Ready for analysis",
+    "chooseOtherImage": "Choose another image",
+    "startAnalysis": "Start Analysis",
+    "loadingTitle": "AI Analysis Running",
+    "loadingSubtitle": "Your room design suggestions are being created. Please be patient.",
+    "loadingHint": "Analysis usually takes 30-60 seconds",
+    "loadingSteps": {
+      "analyzing": "Image is being analyzed...",
+      "detecting": "Rooms are being detected...",
+      "identifying": "Style is being identified...",
+      "generating": "Suggestions are being generated..."
+    },
+    "errors": {
+      "noImage": "No image found for analysis",
+      "tooLarge": "The image is too large. Please use a smaller image (max 5MB).",
+      "noInteriorSpace": "No interior space detected",
+      "noSuggestions": "No suggestions could be generated. Please upload an image of an interior space (living room, bedroom, kitchen, etc.).",
+      "analysisFailed": "Analysis failed",
+      "defaultError": "An error occurred during analysis. Please try again with another image.",
+      "aiUnavailable": "AI Service unavailable",
+      "aiError": "AI analysis is currently unavailable. Please try again in a moment.",
+      "processingError": "Processing error",
+      "processingMessage": "The AI response could not be processed. Please try again with another image.",
+      "imageNotFound": "Image not found",
+      "imageNotFoundMessage": "The image could not be found. Please upload a new image.",
+      "dataFormatError": "Data format error",
+      "dataFormatMessage": "There was a problem with the data format. Please try again or upload another image.",
+      "connectionError": "Connection error",
+      "connectionMessage": "The connection to the server failed. Check your internet connection and try again.",
+      "configError": "Configuration error",
+      "configMessage": "There is a problem with the server configuration. Please try again in a few minutes or contact support.",
+      "imageTooBig": "Image too large",
+      "imageTooBigMessage": "The selected image is too large for processing. Please use a smaller image (recommended: under 5MB) or compress the image."
+    }
+  },
+  "BuyCreditsPage": {
+    "title": "Buy Credits",
+    "subtitle": "Buy credits to analyze your rooms and apply design suggestions. Credits never expire and are immediately credited to your account.",
+    "currentCredits": "Your current credits",
+    "notAuthenticated": "Please log in to buy credits.",
+    "signIn": "Sign In",
+    "howCreditsUsed": "How are credits used?",
+    "uploadAnalyzeFree": "Upload image & analyze - FREE",
+    "aiGeneration": "AI image generation (apply suggestion)",
+    "creditPackages": "Credit Packages",
+    "securePayment": "Secure payment via Stripe",
+    "securityNotice": "Your payment information is processed securely. We do not store credit card information.",
+    "paymentSuccess": "Payment successful! Your credits have been added.",
+    "paymentCanceled": "Payment canceled.",
+    "loginRequired": "Please log in to buy credits.",
+    "purchaseError": "Error starting the purchase process. Please try again.",
+    "checkoutError": "Error creating checkout session"
+  },
+  "AuthPage": {
+    "title": "Welcome to RoomVibe",
+    "subtitle": "Sign in to transform your space with AI",
+    "continueWithGoogle": "Continue with Google",
+    "orContinueWith": "Or continue with email",
+    "emailAddress": "Email address",
+    "password": "Password",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "termsPrivacy": "By continuing, you agree to our Terms of Service and Privacy Policy."
+  },
+  "PrivatePage": {
+    "loadingProfile": "Loading profile...",
+    "errorLoadingProfile": "Error loading profile data",
+    "imagesLoaded": "images loaded",
+    "errorLoadingImages": "Error loading images",
+    "refreshImages": "Refresh images",
+    "noGeneratedImages": "No generated images found for user",
+    "foundImages": "Found {count} generated images",
+    "memberSince": "Member since",
+    "unknown": "Unknown",
+    "user": "User",
+    "credits": "Credits",
+    "buy": "Buy",
+    "overview": "Overview",
+    "history": "History",
+    "images": "Images"
   }
 }

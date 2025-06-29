@@ -1,6 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function Loading() {
+  const t = useTranslations("LoadingPage");
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="text-center">
@@ -31,10 +35,10 @@ export default function Loading() {
 
         {/* Loading Text */}
         <h2 className="text-xl font-semibold text-base-content mb-2 animate-pulse">
-          Lädt...
+          {t("title")}
         </h2>
 
-        <p className="text-base-content/60 animate-pulse">Einen Moment bitte</p>
+        <p className="text-base-content/60 animate-pulse">{t("subtitle")}</p>
       </div>
     </div>
   );

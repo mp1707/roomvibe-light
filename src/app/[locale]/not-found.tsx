@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import {
   cardVariants,
   buttonVariants,
@@ -12,6 +13,7 @@ import {
 const NotFoundPage = () => {
   const router = useRouter();
   const reducedMotion = useMotionPreference();
+  const t = useTranslations("NotFoundPage");
 
   const handleGoHome = () => {
     router.push("/");
@@ -51,12 +53,9 @@ const NotFoundPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <h1 className="text-3xl font-bold text-base-content">
-            Seite nicht gefunden
-          </h1>
+          <h1 className="text-3xl font-bold text-base-content">{t("title")}</h1>
           <p className="text-base-content/70 leading-relaxed">
-            Die angeforderte Seite konnte nicht gefunden werden. Möglicherweise
-            wurde sie verschoben oder existiert nicht mehr.
+            {t("description")}
           </p>
         </motion.div>
 
@@ -88,7 +87,7 @@ const NotFoundPage = () => {
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              Zur Startseite
+              {t("goHome")}
             </motion.button>
 
             <motion.button
@@ -111,25 +110,25 @@ const NotFoundPage = () => {
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Zurück
+              {t("goBack")}
             </motion.button>
           </div>
 
           {/* Additional Links */}
           <div className="pt-4 text-sm text-base-content/60">
-            <p className="mb-3">Oder besuchen Sie eine dieser Seiten:</p>
+            <p className="mb-3">{t("additionalLinks")}</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/inspiration"
                 className="text-primary hover:text-primary-focus transition-colors duration-200 hover:underline"
               >
-                Inspiration
+                {t("inspiration")}
               </Link>
               <Link
                 href="/buy-credits"
                 className="text-primary hover:text-primary-focus transition-colors duration-200 hover:underline"
               >
-                Credits kaufen
+                {t("buyCredits")}
               </Link>
             </div>
           </div>
