@@ -1,197 +1,286 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { memo, useMemo } from "react";
-import { useAuth } from "./hooks/useAuth";
-import { useMenuState } from "./hooks/useMenuState";
-import { UserSection } from "./components/UserSection";
-import { NavigationSection } from "./components/NavigationSection";
-import { SettingsSection } from "./components/SettingsSection";
 import { useTranslations } from "next-intl";
+import { createClient } from "@/utils/supabase/client";
+import { Link } from "@/i18n/navigation";
+import CreditsDisplay from "../CreditsDisplay";
+import ThemeToggle from "../ThemeToggle";
+import LanguageSwitch from "../LanguageSwitch";
+import {
+  HeartIcon,
+  UserIcon,
+  CurrencyEuroIcon,
+  PhotoIcon,
+  CogIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 
-interface MobileMenuProps {
-  className?: string;
-}
-
-const MenuIcon = memo(({ isOpen }: { isOpen: boolean }) => {
-  const IconComponent = isOpen ? XMarkIcon : Bars3Icon;
-  return <IconComponent className="w-5 h-5 text-base-content" />;
-});
-
-MenuIcon.displayName = "MenuIcon";
-
-const MobileMenu = memo(({ className = "" }: MobileMenuProps) => {
-  const { user, loading } = useAuth();
-  const {
-    isOpen,
-    buttonPosition,
-    menuRef,
-    buttonRef,
-    menuContentRef,
-    handleToggleMenu,
-    handleKeyDown,
-    handleNavigationClick,
-    handleAuthRedirect,
-  } = useMenuState();
+const MobileMenu = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const t = useTranslations("Components.MobileMenu");
+  const supabase = createClient();
 
-  // Animation variants from design system
-  const animationVariants = useMemo(
-    () => ({
-      menuVariants: {
-        closed: {
-          opacity: 0,
-          scale: 0.95,
-          y: -10,
-          transition: { type: "spring" as const, stiffness: 400, damping: 30 },
-        },
-        open: {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          transition: { type: "spring" as const, stiffness: 400, damping: 30 },
-        },
-      },
-      backdropVariants: {
-        closed: {
-          opacity: 0,
-          transition: { duration: 0.2 },
-        },
-        open: {
-          opacity: 1,
-          transition: { duration: 0.3 },
-        },
-      },
-      buttonVariants: {
-        hover: { scale: 1.05 },
-        tap: { scale: 0.95 },
-      },
-    }),
-    []
-  );
+  // Handle client-side mounting
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // Button classes using design system tokens
-  const buttonClasses = useMemo(
-    () =>
-      "flex items-center justify-center w-10 h-10 rounded-lg bg-base-200/50 hover:bg-base-300/70 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 border border-base-300/30",
-    []
-  );
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setUser(user);
+      } catch (error) {
+        console.error("Error getting user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Server-side rendering fallback
-  if (typeof window === "undefined") {
-    return (
-      <div className={`relative ${className}`}>
-        <motion.button
-          variants={animationVariants.buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          className={buttonClasses}
-          aria-label={t("openMenu")}
-          aria-expanded={false}
-        >
-          <MenuIcon isOpen={false} />
-        </motion.button>
-      </div>
-    );
-  }
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  const handleAuthRedirect = () => {
+    handleClose();
+    window.location.href = "/auth/login";
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    handleClose();
+  };
+
+  const getUserDisplayName = (user: any) => {
+    if (user?.user_metadata?.full_name) return user.user_metadata.full_name;
+    if (user?.user_metadata?.name) return user.user_metadata.name;
+    if (user?.email) return user.email.split("@")[0];
+    return "Benutzer";
+  };
+
+  const getUserInitial = (user: any) => {
+    const name = getUserDisplayName(user);
+    return name.charAt(0).toUpperCase();
+  };
 
   return (
-    <>
-      {/* Backdrop with glass effect */}
-      <AnimatePresence>
-        {isOpen &&
-          createPortal(
-            <motion.div
-              variants={animationVariants.backdropVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              className="
-              fixed inset-0 
-              bg-base-100/60 dark:bg-base-100/50
-              backdrop-blur-md 
-              z-[998]
-            "
-              onClick={handleToggleMenu}
-            />,
-            document.body
-          )}
-      </AnimatePresence>
+    <div className="lg:hidden">
+      {/* Menu Button */}
+      <button
+        onClick={handleToggle}
+        className="
+          flex items-center justify-center w-10 h-10 
+          rounded-lg bg-base-200/50 hover:bg-base-300/70 
+          transition-all duration-200 
+          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 
+          border border-base-300/30
+        "
+        aria-label={isOpen ? "Menü schließen" : "Menü öffnen"}
+      >
+        {isOpen ? (
+          <XMarkIcon className="w-5 h-5 text-base-content" />
+        ) : (
+          <Bars3Icon className="w-5 h-5 text-base-content" />
+        )}
+      </button>
 
-      <div ref={menuRef} className={`relative ${className}`}>
-        {/* Menu Button */}
-        <motion.button
-          ref={buttonRef}
-          variants={animationVariants.buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          onClick={handleToggleMenu}
-          onKeyDown={handleKeyDown}
-          className={buttonClasses}
-          aria-label={isOpen ? t("closeMenu") : t("openMenu")}
-          aria-expanded={isOpen}
-        >
-          <MenuIcon isOpen={isOpen} />
-        </motion.button>
-      </div>
+      {/* Mobile Menu Overlay - Portal to body */}
+      {mounted &&
+        isOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] lg:hidden">
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={handleClose}
+            />
 
-      {/* Menu Content */}
-      <AnimatePresence>
-        {isOpen &&
-          buttonPosition &&
-          createPortal(
-            <motion.div
-              ref={menuContentRef}
-              variants={animationVariants.menuVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
+            {/* Menu Panel */}
+            <div
               className="
-              fixed w-80 
-              bg-base-100/90 dark:bg-base-100/80
-              backdrop-blur-md 
-              border border-base-300/50 dark:border-base-300/30
-              rounded-2xl shadow-lg 
-              z-[999] overflow-hidden
-            "
-              style={{
-                position: "fixed",
-                top: buttonPosition.top + 8,
-                right: buttonPosition.right,
-              }}
-              onClick={(e) => e.stopPropagation()}
+            absolute top-0 right-0 h-full w-80 max-w-[85vw]
+            bg-base-100 shadow-2xl
+            transform transition-transform duration-300 ease-out
+          "
             >
-              <div className="divide-y divide-base-300/30 dark:divide-base-300/20">
-                {/* User Section */}
-                {!loading && (
-                  <div className="p-4">
-                    <UserSection user={user} onAuthClick={handleAuthRedirect} />
-                  </div>
-                )}
-
-                {/* Navigation Links */}
-                <div className="p-4">
-                  <NavigationSection
-                    user={user}
-                    onNavigationClick={handleNavigationClick}
-                  />
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-base-300 bg-base-100">
+                  <h2 className="text-lg font-semibold text-base-content">
+                    Menü
+                  </h2>
+                  <button
+                    onClick={handleClose}
+                    className="p-2 rounded-lg hover:bg-base-200 transition-colors"
+                    aria-label="Menü schließen"
+                  >
+                    <XMarkIcon className="w-5 h-5 text-base-content" />
+                  </button>
                 </div>
 
-                {/* SettingsSection */}
-                <div className="p-4 bg-base-200/50 dark:bg-base-200/30">
-                  <SettingsSection />
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto bg-base-100">
+                  {/* User Section */}
+                  {!loading && (
+                    <div className="p-4 border-b border-base-300 bg-base-100">
+                      {user ? (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                {user.user_metadata?.avatar_url ? (
+                                  <img
+                                    src={user.user_metadata.avatar_url}
+                                    alt=""
+                                    className="w-10 h-10 rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-lg font-bold text-primary">
+                                    {getUserInitial(user)}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-semibold text-base-content truncate">
+                                  {getUserDisplayName(user)}
+                                </p>
+                                <p className="text-xs text-base-content/60 truncate">
+                                  {user.email}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={handleSignOut}
+                              className="p-2 rounded-full hover:bg-base-200 transition-colors flex-shrink-0"
+                              aria-label="Abmelden"
+                            >
+                              <ArrowRightOnRectangleIcon className="w-5 h-5 text-base-content/70" />
+                            </button>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-base-content/60 mb-1">
+                              Verfügbares Guthaben
+                            </p>
+                            <CreditsDisplay className="flex" />
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={handleAuthRedirect}
+                          className="w-full bg-primary hover:bg-primary-focus text-primary-content h-12 rounded-xl font-semibold text-base transition-colors"
+                        >
+                          Anmelden
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Navigation */}
+                  <div className="p-4 space-y-2 bg-base-100">
+                    {user && (
+                      <Link
+                        href="/upload"
+                        onClick={handleClose}
+                        className="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary font-semibold rounded-lg transition-colors duration-200 hover:bg-primary/20 w-full"
+                      >
+                        <PhotoIcon className="w-5 h-5 flex-shrink-0" />
+                        <span>Foto hochladen</span>
+                      </Link>
+                    )}
+
+                    <Link
+                      href="/inspiration"
+                      onClick={handleClose}
+                      className="flex items-center gap-3 px-4 py-3 text-base-content hover:bg-base-200 rounded-lg transition-colors w-full"
+                    >
+                      <HeartIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
+                      <span>Inspiration</span>
+                    </Link>
+
+                    {user && (
+                      <Link
+                        href="/private"
+                        onClick={handleClose}
+                        className="flex items-center gap-3 px-4 py-3 text-base-content hover:bg-base-200 rounded-lg transition-colors w-full"
+                      >
+                        <UserIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
+                        <span>Mein Bereich</span>
+                      </Link>
+                    )}
+
+                    <Link
+                      href="/buy-credits"
+                      onClick={handleClose}
+                      className="flex items-center gap-3 px-4 py-3 text-base-content hover:bg-base-200 rounded-lg transition-colors w-full"
+                    >
+                      <CurrencyEuroIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
+                      <span>Guthaben kaufen</span>
+                    </Link>
+                  </div>
+
+                  {/* Settings */}
+                  <div className="p-4 bg-base-200/30 border-t border-base-300 space-y-4">
+                    <h3 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+                      Einstellungen
+                    </h3>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-base-content">
+                        Design
+                      </span>
+                      <ThemeToggle />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-base-content">
+                        Sprache
+                      </span>
+                      <LanguageSwitch />
+                    </div>
+
+                    <Link
+                      href="/settings"
+                      onClick={handleClose}
+                      className="flex items-center gap-3 p-2 text-base-content hover:bg-base-200/50 rounded-lg transition-colors w-full"
+                    >
+                      <CogIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
+                      <span className="text-sm font-medium">
+                        Entwickler-Einstellungen
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </motion.div>,
-            document.body
-          )}
-      </AnimatePresence>
-    </>
+            </div>
+          </div>,
+          document.body
+        )}
+    </div>
   );
-});
-
-MobileMenu.displayName = "MobileMenu";
+};
 
 export default MobileMenu;
