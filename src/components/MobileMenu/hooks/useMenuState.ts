@@ -14,15 +14,27 @@ export const useMenuState = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuContentRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Calculates the absolute viewport position (top / right) of the menu trigger
+   * button so the floating menu can be positioned correctly. Works both on
+   * mobile and desktop by relying on getBoundingClientRect().
+   */
+  const updateButtonPosition = () => {
+    if (!buttonRef.current) return;
+
+    const rect = buttonRef.current.getBoundingClientRect();
+    setButtonPosition({
+      top: rect.bottom,
+      right: Math.max(0, window.innerWidth - rect.right),
+    });
+  };
+
   const handleToggleMenu = () => {
-    if (!isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setButtonPosition({
-        top: rect.bottom + 8, // 8px gap (mt-2)
-        right: window.innerWidth - rect.right,
-      });
+    if (!isOpen) {
+      // About to open: make sure we have an up-to-date button position
+      updateButtonPosition();
     }
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -34,6 +46,7 @@ export const useMenuState = () => {
 
   const handleNavigationClick = () => {
     setIsOpen(false);
+    setButtonPosition(null); // Reset position when closing
   };
 
   const handleAuthRedirect = () => {
@@ -41,9 +54,22 @@ export const useMenuState = () => {
     window.location.href = "/auth/login";
   };
 
-  // Handle click outside to close menu
+  // Keep the menu correctly positioned on viewport resize/orientation changes
   useEffect(() => {
     if (!isOpen) return;
+
+    const handleResize = () => updateButtonPosition();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen]);
+
+  // Handle click outside to close menu
+  useEffect(() => {
+    if (!isOpen) {
+      setButtonPosition(null); // Clear position when menu is closed
+      return;
+    }
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
