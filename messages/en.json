@@ -464,6 +464,12 @@
     "ProgressIndicator": {
       "uploading": "Uploading... {progress}%",
       "uploadCompleted": "Upload completed!"
+    },
+    "DesktopSettingsMenu": {
+      "settings": "Settings",
+      "design": "Design",
+      "language": "Language",
+      "developerSettings": "Developer Settings"
     }
   }
 }

@@ -461,6 +461,12 @@
       "bestValue": "Bester Wert",
       "selectPackage": "Paket auswählen",
       "price": "Preis"
+    },
+    "DesktopSettingsMenu": {
+      "settings": "Einstellungen",
+      "design": "Design",
+      "language": "Sprache",
+      "developerSettings": "Entwickler-Einstellungen"
     }
   }
 }

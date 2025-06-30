@@ -9,7 +9,7 @@ import LanguageSwitch from "./LanguageSwitch";
 
 const DesktopSettingsMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const t = useTranslations("Components.Header");
+  const t = useTranslations("Components.DesktopSettingsMenu");
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -31,7 +31,7 @@ const DesktopSettingsMenu = () => {
           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 
           border border-base-300/30
         "
-        aria-label="Einstellungen"
+        aria-label={t("settings")}
       >
         <Cog6ToothIcon className="w-5 h-5 text-base-content" />
       </button>
@@ -53,14 +53,14 @@ const DesktopSettingsMenu = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-base-content">
-                  Design
+                  {t("design")}
                 </span>
                 <ThemeToggle />
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-base-content">
-                  Sprache
+                  {t("language")}
                 </span>
                 <LanguageSwitch variant="icon" />
               </div>
@@ -80,7 +80,7 @@ const DesktopSettingsMenu = () => {
               >
                 <Cog6ToothIcon className="w-5 h-5" />
                 <span className="text-sm font-medium">
-                  Entwickler-Einstellungen
+                  {t("developerSettings")}
                 </span>
               </Link>
             </div>
