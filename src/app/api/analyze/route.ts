@@ -101,6 +101,7 @@ Deine Antwort MUSS EXAKT dem bereitgestellten JSON-Schema entsprechen. Gib KEINE
 
 Antworte NUR mit dem JSON-Format!
 
+Gib mindestens 5 Empfehlungen.
 
 **Anleitung für die JSON-Felder:**
 * \`isInteriorSpace\`: \`true\` oder \`false\`.
