@@ -440,18 +440,22 @@
       "price": "Price"
     },
     "MobileMenu": {
-      "uploadPhoto": "Upload Photo",
-      "darkMode": "Dark Mode",
-      "signOut": "Sign Out",
-      "openMenu": "Open menu",
+      "menu": "Menu",
       "closeMenu": "Close menu",
-      "availableBalance": "Available Balance",
-      "signIn": "Sign In",
+      "openMenu": "Open menu",
+      "defaultUser": "User",
+      "profileImageAlt": "Profile picture of {name}",
+      "signOut": "Sign out",
+      "availableCredits": "Available credits",
+      "signIn": "Sign in",
+      "uploadPhoto": "Upload photo",
       "inspiration": "Inspiration",
-      "myArea": "My Area",
-      "buyBalance": "Buy Credits",
+      "myArea": "My area",
+      "buyCredits": "Buy credits",
       "settings": "Settings",
-      "generalSettings": "General Settings"
+      "design": "Design",
+      "language": "Language",
+      "developerSettings": "Developer settings"
     },
     "UploadZone": {
       "dragImageError": "Please drag an image file here.",

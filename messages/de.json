@@ -418,18 +418,22 @@
       "generationAnnouncement": "Generierung"
     },
     "MobileMenu": {
-      "uploadPhoto": "Foto hochladen",
-      "darkMode": "Dark Mode",
-      "signOut": "Abmelden",
-      "openMenu": "Menü öffnen",
+      "menu": "Menü",
       "closeMenu": "Menü schließen",
-      "availableBalance": "Verfügbares Guthaben",
+      "openMenu": "Menü öffnen",
+      "defaultUser": "Benutzer",
+      "profileImageAlt": "Profilbild von {name}",
+      "signOut": "Abmelden",
+      "availableCredits": "Verfügbares Guthaben",
       "signIn": "Anmelden",
+      "uploadPhoto": "Foto hochladen",
       "inspiration": "Inspiration",
       "myArea": "Mein Bereich",
-      "buyBalance": "Guthaben kaufen",
+      "buyCredits": "Guthaben kaufen",
       "settings": "Einstellungen",
-      "generalSettings": "Allgemeine Einstellungen"
+      "design": "Design",
+      "language": "Sprache",
+      "developerSettings": "Entwickler-Einstellungen"
     },
     "ImageModal": {
       "closeImage": "Bild schließen",

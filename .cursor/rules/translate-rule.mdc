@@ -1,0 +1,94 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: You are an expert at refactoring React components for internationalization (i18n) using the next-intl library. Your task is to extract hardcoded strings and integrate them into the existing translation workflow.
+globs: ["**/components/**/*.{ts,tsx}", "**/app/**/*.{ts,tsx}"]
+alwaysApply: false
+---
+# I18n: Internationalize Components with `next-intl`
+
+You are an expert at internationalizing React/TypeScript components using the `next-intl` library.
+
+Analyze the selected code and refactor it to extract all user-facing strings. You must replace them with the `useTranslations` hook and update all corresponding message files located in the `@/messages/` directory.
+
+## Actions to Perform
+
+1.  **Import Hook**: If not present, add `import { useTranslations } from 'next-intl';` to the file.
+2.  **Instantiate Hook**: In the component's body, add `const t = useTranslations('ComponentName');`. The namespace `ComponentName` must be inferred from the component's name.
+3.  **Find All Strings**: Identify all hardcoded, user-facing strings. This includes:
+    -   Visible text content inside JSX tags (`<p>`, `<h1>`, `<span>`, etc.).
+    -   Strings in accessibility attributes (`aria-label`, `title`, etc.).
+    -   `alt` text for images.
+4.  **Replace with Keys**: Replace each string with a `t('key')` call. The `key` must be a descriptive, `camelCase` version of the English text.
+5.  **Update All Message Files**: For every locale file found under `@/messages/` (e.g., `en.json`, `de.json`):
+    -   Add a new JSON object using the component's name as the key (e.g., `"UserProfile": {}`).
+    -   Populate this object with the newly created `camelCase` keys and their corresponding translated values. You are expected to provide the translation for all configured languages.
+
+## Example Transformation
+
+### Before: Hardcoded Strings
+
+```typescript
+// components/UserProfile.tsx
+
+import React from 'react';
+
+const UserProfile = () => {
+  return (
+    <section>
+      <h2>User Profile</h2>
+      <p>Welcome back to your account dashboard.</p>
+      <button aria-label="Edit your user profile">Edit Profile</button>
+    </section>
+  );
+};
+
+export default UserProfile;
+
+After: Refactored with next-intl
+// components/UserProfile.tsx
+
+import React from 'react';
+import { useTranslations } from 'next-intl';
+
+const UserProfile = () => {
+  const t = useTranslations('UserProfile');
+
+  return (
+    <section>
+      <h2>{t('userProfile')}</h2>
+      <p>{t('welcomeBackToYourAccountDashboard')}</p>
+      <button aria-label={t('editYourUserProfileAriaLabel')}>{t('editProfile')}</button>
+    </section>
+  );
+};
+
+export default UserProfile;
+
+Updated Message Files
+You must update all locale files.
+
+@/messages/en.json
+
+{
+  "UserProfile": {
+    "userProfile": "User Profile",
+    "welcomeBackToYourAccountDashboard": "Welcome back to your account dashboard.",
+    "editProfile": "Edit Profile",
+    "editYourUserProfileAriaLabel": "Edit your user profile"
+  }
+}
+
+@/messages/de.json
+
+{
+  "UserProfile": {
+    "userProfile": "Benutzerprofil",
+    "welcomeBackToYourAccountDashboard": "Willkommen zurück in Ihrem Konto-Dashboard.",
+    "editProfile": "Profil bearbeiten",
+    "editYourUserProfileAriaLabel": "Bearbeiten Sie Ihr Benutzerprofil"
+  }
+}

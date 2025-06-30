@@ -127,7 +127,7 @@ const MobileMenu = () => {
     if (user?.user_metadata?.full_name) return user.user_metadata.full_name;
     if (user?.user_metadata?.name) return user.user_metadata.name;
     if (user?.email) return user.email.split("@")[0];
-    return "Benutzer";
+    return t("defaultUser");
   };
 
   const getUserInitial = (user: any) => {
@@ -166,7 +166,7 @@ const MobileMenu = () => {
           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 
           border border-base-300/30
         "
-        aria-label={isOpen ? "Menü schließen" : "Menü öffnen"}
+        aria-label={isOpen ? t("closeMenu") : t("openMenu")}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
@@ -224,12 +224,12 @@ const MobileMenu = () => {
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b border-base-300 bg-base-100">
                       <h2 className="text-lg font-semibold text-base-content">
-                        Menü
+                        {t("menu")}
                       </h2>
                       <button
                         onClick={handleClose}
                         className="p-2 rounded-lg hover:bg-base-200 transition-colors"
-                        aria-label="Menü schließen"
+                        aria-label={t("closeMenu")}
                       >
                         <XMarkIcon className="w-5 h-5 text-base-content" />
                       </button>
@@ -248,9 +248,9 @@ const MobileMenu = () => {
                                     {getUserAvatarUrl(user) && !imageError ? (
                                       <img
                                         src={getUserAvatarUrl(user)}
-                                        alt={`Profilbild von ${getUserDisplayName(
-                                          user
-                                        )}`}
+                                        alt={t("profileImageAlt", {
+                                          name: getUserDisplayName(user),
+                                        })}
                                         className="w-10 h-10 rounded-full object-cover"
                                         onError={handleImageError}
                                         onLoad={handleImageLoad}
@@ -273,14 +273,14 @@ const MobileMenu = () => {
                                 <button
                                   onClick={handleSignOut}
                                   className="p-2 rounded-full hover:bg-base-200 transition-colors flex-shrink-0"
-                                  aria-label="Abmelden"
+                                  aria-label={t("signOut")}
                                 >
                                   <ArrowRightEndOnRectangleIcon className="w-5 h-5 text-base-content/70" />
                                 </button>
                               </div>
                               <div>
                                 <p className="text-xs font-medium text-base-content/60 mb-1">
-                                  Verfügbares Guthaben
+                                  {t("availableCredits")}
                                 </p>
                                 <CreditsDisplay className="flex" />
                               </div>
@@ -290,7 +290,7 @@ const MobileMenu = () => {
                               onClick={handleAuthRedirect}
                               className="w-full bg-primary hover:bg-primary-focus text-primary-content h-12 rounded-xl font-semibold text-base transition-colors"
                             >
-                              Anmelden
+                              {t("signIn")}
                             </button>
                           )}
                         </div>
@@ -311,7 +311,7 @@ const MobileMenu = () => {
                               className="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary font-semibold rounded-lg transition-colors duration-200 hover:bg-primary/20 w-full"
                             >
                               <PhotoIcon className="w-5 h-5 flex-shrink-0" />
-                              <span>Foto hochladen</span>
+                              <span>{t("uploadPhoto")}</span>
                             </Link>
                           </motion.div>
                         )}
@@ -323,7 +323,7 @@ const MobileMenu = () => {
                             className="flex items-center gap-3 px-4 py-3 text-base-content hover:bg-base-200 rounded-lg transition-colors w-full"
                           >
                             <HeartIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
-                            <span>Inspiration</span>
+                            <span>{t("inspiration")}</span>
                           </Link>
                         </motion.div>
 
@@ -335,7 +335,7 @@ const MobileMenu = () => {
                               className="flex items-center gap-3 px-4 py-3 text-base-content hover:bg-base-200 rounded-lg transition-colors w-full"
                             >
                               <UserIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
-                              <span>Mein Bereich</span>
+                              <span>{t("myArea")}</span>
                             </Link>
                           </motion.div>
                         )}
@@ -347,7 +347,7 @@ const MobileMenu = () => {
                             className="flex items-center gap-3 px-4 py-3 text-base-content hover:bg-base-200 rounded-lg transition-colors w-full"
                           >
                             <CurrencyEuroIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
-                            <span>Guthaben kaufen</span>
+                            <span>{t("buyCredits")}</span>
                           </Link>
                         </motion.div>
                       </motion.div>
@@ -355,19 +355,19 @@ const MobileMenu = () => {
                       {/* Settings */}
                       <div className="p-4 bg-base-200/30 border-t border-base-300 space-y-4">
                         <h3 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
-                          Einstellungen
+                          {t("settings")}
                         </h3>
 
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-base-content">
-                            Design
+                            {t("design")}
                           </span>
                           <ThemeToggle />
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-base-content">
-                            Sprache
+                            {t("language")}
                           </span>
                           <LanguageSwitch />
                         </div>
@@ -379,7 +379,7 @@ const MobileMenu = () => {
                         >
                           <CogIcon className="w-5 h-5 text-base-content/70 flex-shrink-0" />
                           <span className="text-sm font-medium">
-                            Entwickler-Einstellungen
+                            {t("developerSettings")}
                           </span>
                         </Link>
                       </div>
