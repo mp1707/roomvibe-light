@@ -53,11 +53,16 @@
     "subtitle": "Einen Moment bitte"
   },
   "AnalyzePage": {
-    "title": "Bereit für die Analyse?",
-    "subtitle": "Ihr Bild ist hochgeladen. Starten Sie jetzt die KI-Analyse für personalisierte Raumgestaltungsvorschläge.",
+    "title": "Was möchten Sie tun?",
+    "subtitle": "Ihr Bild ist hochgeladen. Wählen Sie eine Option für die weitere Bearbeitung.",
     "imageUploaded": "Bild erfolgreich hochgeladen",
     "readyForAnalysis": "Bereit für Analyse",
     "chooseOtherImage": "Anderes Bild wählen",
+    "chooseOption": "Wählen Sie eine Option",
+    "analyzeSpace": "Raum analysieren",
+    "analyzeSpaceDescription": "Lassen Sie die KI Ihren Raum analysieren und erhalten Sie personalisierte Gestaltungsvorschläge",
+    "changeStyle": "Einrichtungsstil ändern",
+    "changeStyleDescription": "Wandeln Sie Ihren Raum in verschiedene Einrichtungsstile um",
     "startAnalysis": "Analyse starten",
     "loadingTitle": "KI-Analyse läuft",
     "loadingSubtitle": "Ihre Raumgestaltungsvorschläge werden gerade erstellt. Bitte haben Sie einen Moment Geduld.",
@@ -146,6 +151,18 @@
     "applySuggestionMessage": "Soll \"{title}\" angewendet werden?",
     "useCredits": "{credits} Credits verwenden",
     "cancel": "Abbrechen"
+  },
+  "ChangeStylePage": {
+    "title": "Einrichtungsstil ändern",
+    "subtitle": "Wählen Sie einen Stil aus unserer Galerie und verwandeln Sie Ihren Raum mit nur einem Klick.",
+    "selectStyle": "Stil auswählen",
+    "applyError": "Fehler beim Anwenden des Stils",
+    "notEnoughCreditsError": "Nicht genügend Credits! Sie benötigen {credits} Credits um einen Stil anzuwenden.",
+    "applyStyleTitle": "Stil anwenden",
+    "applyStyleMessage": "Soll der Stil \"{title}\" angewendet werden?",
+    "useCredits": "{credits} Credits verwenden",
+    "cancel": "Abbrechen",
+    "generationError": "Fehler bei der Bildgenerierung"
   },
   "SettingsPage": {
     "backToHome": "Zurück zur Startseite",
@@ -263,10 +280,13 @@
       "dragToCompare": "ziehen zum vergleichen"
     },
     "ActionBar": {
-      "suggestionSelected": "Vorschlag ausgewählt:",
+      "applyStyle": "Stil anwenden",
       "applySuggestion": "Vorschlag anwenden",
-      "notEnoughCredits": "Nicht genügend Credits",
+      "applyingStyle": "Stil wird angewendet...",
       "applying": "Wird angewendet...",
+      "notEnoughCredits": "Nicht genügend Credits",
+      "styleSelected": "Stil ausgewählt",
+      "suggestionSelected": "Vorschlag ausgewählt",
       "cancel": "Abbrechen"
     },
     "ErrorDisplay": {
@@ -279,15 +299,20 @@
       "pleaseUploadImage": "Bitte laden Sie zunächst ein Bild hoch.",
       "uploadImage": "Bild hochladen",
       "planningAdjustments": "Plane die gewünschten Anpassungen...",
+      "planningStyleTransformation": "Plane die Stil-Transformation...",
       "preparingGeneration": "Bereite Bildgenerierung vor...",
       "generatingImage": "Generiere dein neues Bild...",
+      "generatingStyleImage": "Generiere Bild im neuen Stil...",
       "applySuggestionTitle": "Dein Vorschlag wird angewendet",
       "applySuggestionSubtitle": "Wir arbeiten an deiner personalisierten Raumtransformation...",
+      "applyStyleTitle": "Dein Stil wird angewendet",
+      "applyStyleSubtitle": "Wir verwandeln deinen Raum in den gewählten Stil...",
       "generationHint": "Die Generierung dauert in der Regel 30-60 Sekunden",
       "transformationTitle": "Dein Raum, Schritt für Schritt transformiert",
       "sliderInstruction": "Bewege den Regler, um die Veränderungen zu sehen",
       "originalLabel": "Original",
       "currentLabel": "Aktuell",
+      "originalImageTitle": "Ihr Originalbild",
       "downloadImageAria": "Transformiertes Bild herunterladen",
       "downloadImageText": "Bild herunterladen",
       "newImageAria": "Neues Bild hochladen",
@@ -467,6 +492,10 @@
       "design": "Design",
       "language": "Sprache",
       "developerSettings": "Entwickler-Einstellungen"
+    },
+    "StyleCard": {
+      "applied": "Angewendet",
+      "styleExampleAlt": "{styleName} Stil-Beispiel"
     }
   }
 }

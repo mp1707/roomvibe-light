@@ -10,9 +10,9 @@ import { useConfirmationModalStore } from "@/utils/useConfirmationModalStore";
 import { CREDIT_COSTS } from "@/types/credits";
 import { useAppState } from "@/utils/store";
 import { useImageGeneration } from "./hooks/useImageGeneration";
-import ImageDisplaySection from "./components/ImageDisplaySection";
+import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
 import SuggestionsListSection from "./components/SuggestionsListSection";
-import ActionBar from "./components/ActionBar";
+import ActionBar from "@/components/shared/ActionBar";
 import ErrorDisplay from "./components/ErrorDisplay";
 
 export default function SuggestionsPage() {
@@ -181,12 +181,13 @@ export default function SuggestionsPage() {
 
       {/* Action Bar */}
       <ActionBar
-        selectedSuggestion={selectedSuggestion}
-        selectedSuggestionTitle={selectedSuggestionTitle}
+        selectedItemId={selectedSuggestion}
+        selectedItemTitle={selectedSuggestionTitle}
         isSubmitting={isSubmitting}
         isGenerating={isGenerating}
         onCancel={handleCancelSelection}
         onApply={handleApplySuggestion}
+        mode="suggestions"
       />
 
       {/* Error Display */}

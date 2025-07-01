@@ -147,6 +147,18 @@
     "useCredits": "Use {credits} credits",
     "cancel": "Cancel"
   },
+  "ChangeStylePage": {
+    "title": "Change Interior Style",
+    "subtitle": "Select a style from our gallery and transform your room with just one click.",
+    "selectStyle": "Select Style",
+    "applyError": "Error applying style",
+    "notEnoughCreditsError": "Not enough credits! You need {credits} credits to apply a style.",
+    "applyStyleTitle": "Apply Style",
+    "applyStyleMessage": "Should \"{title}\" be applied?",
+    "useCredits": "Use {credits} credits",
+    "cancel": "Cancel",
+    "generationError": "Error during image generation"
+  },
   "SettingsPage": {
     "backToHome": "Back to Homepage",
     "developerSettings": "Developer Settings",
@@ -332,10 +344,13 @@
       "dragToCompare": "Drag to compare"
     },
     "ActionBar": {
-      "suggestionSelected": "Suggestion selected:",
+      "applyStyle": "Apply Style",
       "applySuggestion": "Apply Suggestion",
-      "notEnoughCredits": "Not enough credits",
+      "applyingStyle": "Applying Style...",
       "applying": "Applying...",
+      "notEnoughCredits": "Not enough credits",
+      "styleSelected": "Style Selected",
+      "suggestionSelected": "Suggestion Selected",
       "cancel": "Cancel"
     },
     "ErrorDisplay": {
@@ -470,6 +485,10 @@
       "design": "Design",
       "language": "Language",
       "developerSettings": "Developer Settings"
+    },
+    "StyleCard": {
+      "applied": "Applied",
+      "styleExampleAlt": "{styleName} style example"
     }
   }
 }

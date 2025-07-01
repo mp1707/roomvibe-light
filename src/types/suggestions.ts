@@ -16,3 +16,12 @@ export interface AnalysisResponse {
   isInteriorSpace: boolean;
   suggestions: Suggestion[];
 }
+
+// Interior design styles for style transformation
+export interface InteriorStyle {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  prompt: string; // For AI generation
+}

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Suggestion } from "@/types/suggestions";
+import { Suggestion, InteriorStyle } from "@/types/suggestions";
 
 interface AppState {
   // Image management
@@ -11,6 +11,12 @@ interface AppState {
   appliedSuggestions: Set<string>;
   suggestions: Suggestion[];
   customSuggestions: Suggestion[];
+
+  // Style management
+  selectedStyle: string | null;
+  appliedStyles: Map<string, string>; // styleId -> generatedImageUrl
+  lastAppliedStyleId: string | null;
+  styleGenerationProgress: number;
 
   // Generation state
   prediction: any | null;
@@ -34,6 +40,13 @@ interface AppState {
   ) => void;
   removeCustomSuggestion: (id: string) => void;
 
+  // Style setters
+  setSelectedStyle: (styleId: string | null) => void;
+  addAppliedStyle: (styleId: string, imageUrl: string) => void;
+  setLastAppliedStyleId: (styleId: string | null) => void;
+  removeAppliedStyle: (styleId: string) => void;
+  setStyleGenerationProgress: (progress: number) => void;
+
   // Generation setters
   setPrediction: (prediction: any | null) => void;
   setIsGenerating: (isGenerating: boolean) => void;
@@ -52,6 +65,10 @@ const initialState = {
   appliedSuggestions: new Set<string>(),
   suggestions: [],
   customSuggestions: [],
+  selectedStyle: null,
+  appliedStyles: new Map<string, string>(),
+  lastAppliedStyleId: null,
+  styleGenerationProgress: 0,
   prediction: null,
   isGenerating: false,
   generationError: null,
@@ -146,6 +163,32 @@ export const useAppState = create<AppState>((set, get) => ({
     }));
   },
 
+  setSelectedStyle: (styleId) => {
+    set({ selectedStyle: styleId });
+  },
+
+  addAppliedStyle: (styleId, imageUrl) => {
+    set((state) => {
+      const newAppliedStyles = new Map(state.appliedStyles);
+      newAppliedStyles.set(styleId, imageUrl);
+      return { appliedStyles: newAppliedStyles };
+    });
+  },
+
+  setLastAppliedStyleId: (styleId) => set({ lastAppliedStyleId: styleId }),
+
+  removeAppliedStyle: (styleId) => {
+    set((state) => {
+      const newAppliedStyles = new Map(state.appliedStyles);
+      newAppliedStyles.delete(styleId);
+      return { appliedStyles: newAppliedStyles };
+    });
+  },
+
+  setStyleGenerationProgress: (progress) => {
+    set({ styleGenerationProgress: progress });
+  },
+
   setPrediction: (prediction) => {
     // Extract the current image from prediction output
     let currentImage: string | null = null;
@@ -190,6 +233,7 @@ export const useAppState = create<AppState>((set, get) => ({
     set({
       ...initialState,
       appliedSuggestions: new Set<string>(),
+      appliedStyles: new Map<string, string>(),
     });
   },
 
@@ -208,6 +252,10 @@ export const useAppState = create<AppState>((set, get) => ({
       appliedSuggestions: new Set<string>(),
       suggestions: [],
       customSuggestions: [],
+      selectedStyle: null,
+      appliedStyles: new Map<string, string>(),
+      lastAppliedStyleId: null,
+      styleGenerationProgress: 0,
       prediction: null,
       isGenerating: false,
       generationError: null,
@@ -220,6 +268,9 @@ export const useAppState = create<AppState>((set, get) => ({
       appliedSuggestions: new Set<string>(),
       suggestions: [],
       customSuggestions: [],
+      selectedStyle: null,
+      appliedStyles: new Map<string, string>(),
+      styleGenerationProgress: 0,
       prediction: null,
       isGenerating: false,
       generationError: null,

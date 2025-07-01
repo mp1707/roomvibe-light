@@ -157,6 +157,10 @@ export default function AnalyzePage() {
     }
   }, [localImageUrl, hostedImageUrl, router]);
 
+  const handleNavigateToStyleChange = useCallback(() => {
+    router.push("/change-style");
+  }, [router]);
+
   const handleStartAnalysis = useCallback(async () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
@@ -448,47 +452,104 @@ export default function AnalyzePage() {
             </AnimatePresence>
           </motion.div>
 
-          {/* Action Buttons */}
+          {/* Choice Options */}
           {!isAnalyzing && (
             <motion.div
               variants={reducedMotion ? {} : staggerItem}
-              className="flex flex-col sm:flex-row gap-4 w-full max-w-md"
+              className="w-full max-w-2xl mb-8"
             >
-              {/* Back Button */}
+              <h2 className="text-xl font-semibold text-base-content mb-6">
+                {t("chooseOption")}
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                {/* Analyze Space Option */}
+                <motion.button
+                  variants={reducedMotion ? {} : buttonVariants}
+                  whileHover={reducedMotion ? {} : "hover"}
+                  whileTap={reducedMotion ? {} : "tap"}
+                  onClick={handleStartAnalysis}
+                  className="p-6 bg-base-100 hover:bg-base-200 border border-base-300 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <svg
+                        className="w-6 h-6 text-primary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-base-content mb-1">
+                        {t("analyzeSpace")}
+                      </h3>
+                      <p className="text-sm text-base-content/60">
+                        {t("analyzeSpaceDescription")}
+                      </p>
+                    </div>
+                  </div>
+                </motion.button>
+
+                {/* Change Style Option */}
+                <motion.button
+                  variants={reducedMotion ? {} : buttonVariants}
+                  whileHover={reducedMotion ? {} : "hover"}
+                  whileTap={reducedMotion ? {} : "tap"}
+                  onClick={handleNavigateToStyleChange}
+                  className="p-6 bg-base-100 hover:bg-base-200 border border-base-300 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                      <svg
+                        className="w-6 h-6 text-secondary"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-base-content mb-1">
+                        {t("changeStyle")}
+                      </h3>
+                      <p className="text-sm text-base-content/60">
+                        {t("changeStyleDescription")}
+                      </p>
+                    </div>
+                  </div>
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Back Button */}
+          {!isAnalyzing && (
+            <motion.div
+              variants={reducedMotion ? {} : staggerItem}
+              className="flex justify-center"
+            >
               <motion.button
                 variants={reducedMotion ? {} : buttonVariants}
                 whileHover={reducedMotion ? {} : "hover"}
                 whileTap={reducedMotion ? {} : "tap"}
                 onClick={handleGoBack}
-                className="flex-1 px-6 py-3 sm:py-4 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="px-6 py-3 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 {t("chooseOtherImage")}
-              </motion.button>
-
-              {/* Start Analysis Button */}
-              <motion.button
-                variants={reducedMotion ? {} : buttonVariants}
-                whileHover={reducedMotion ? {} : "hover"}
-                whileTap={reducedMotion ? {} : "tap"}
-                onClick={handleStartAnalysis}
-                className="flex-1 px-6 py-3 sm:py-4 bg-primary hover:bg-primary-focus text-primary-content font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transform hover:scale-105 active:scale-95"
-              >
-                <span className="flex items-center justify-center space-x-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    />
-                  </svg>
-                  <span>{t("startAnalysis")}</span>
-                </span>
               </motion.button>
             </motion.div>
           )}
