@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import CostIndicator from "@/components/CostIndicator";
-import { useMotionPreference, buttonVariants } from "@/utils/animations";
+import { springConfig, buttonVariants, useMotionPreference } from "@/utils/animations";
 import { useCreditsStore } from "@/utils/creditsStore";
 import { CREDIT_COSTS } from "@/types/credits";
 
@@ -71,9 +71,17 @@ const ActionBar = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-4 left-4 right-4 bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-2xl z-50"
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={springConfig}
+      className="
+        fixed bottom-4 left-4 right-4 z-50
+        bg-base-100/70 dark:bg-base-100/60
+        backdrop-blur-md
+        border border-base-300/30 dark:border-base-300/20
+        shadow-lg rounded-2xl
+        transition-all duration-300
+      "
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
@@ -97,15 +105,19 @@ const ActionBar = ({
           <div className="flex gap-3">
             <motion.button
               onClick={onCancel}
-              variants={reducedMotion ? {} : buttonVariants}
-              whileHover={reducedMotion ? {} : "hover"}
-              whileTap={reducedMotion ? {} : "tap"}
+              whileHover={{ scale: 1.02 }}
+              transition={springConfig}
               disabled={isGenerating}
-              className={`px-4 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl ${
-                isGenerating
-                  ? "text-base-content/30 cursor-not-allowed"
-                  : "text-base-content/60 hover:text-base-content"
-              }`}
+              className={`
+                px-4 py-2 font-medium rounded-xl
+                transition-colors duration-300
+                focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                ${
+                  isGenerating
+                    ? "text-base-content/30 cursor-not-allowed"
+                    : "text-base-content/60 hover:text-base-content hover:bg-base-200/50"
+                }
+              `}
             >
               {t("cancel")}
             </motion.button>

@@ -13,7 +13,7 @@ import { useImageGeneration } from "./hooks/useImageGeneration";
 import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
 import SuggestionsListSection from "./components/SuggestionsListSection";
 import ActionBar from "@/components/shared/ActionBar";
-import ErrorDisplay from "./components/ErrorDisplay";
+import ErrorDisplay from "@/components/shared/ErrorDisplay";
 
 export default function SuggestionsPage() {
   const t = useTranslations("SuggestionsPage");

@@ -3,6 +3,7 @@
 import type React from "react";
 import { motion } from "framer-motion";
 import { useAppState } from "@/utils/store";
+import { cardVariants, useMotionPreference } from "@/utils/animations";
 
 interface Props {
   title: string;
@@ -10,60 +11,47 @@ interface Props {
   className?: string;
 }
 
-const colors = {
-  highlight: "#34D399",
-  initial: "#ffffffcc",
-  activeText: "#111827",
-  initialText: "#374151",
-  glow: "rgba(52, 211, 153, 0.18)",
-};
-
-const regularShadow =
-  "0 2px 8px 0 rgba(0,0,0,0.04), 0 1.5px 3px 0 rgba(0,0,0,0.03)";
-const activeGlow = `0 0 0 2px ${colors.glow}`;
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    aria-hidden="true"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M5 13l4 4L19 7"
+    />
+  </svg>
+);
 
 const Card = ({ title, text, className }: Props) => {
   const { appliedSuggestions, toggleAppliedSuggestion } = useAppState();
   const active = appliedSuggestions.has(title);
+  const reducedMotion = useMotionPreference();
 
-  const toggleActive = () => {
+  const handleToggle = () => {
     toggleAppliedSuggestion(title);
-  };
-
-  const cardVariants = {
-    initial: {
-      boxShadow: regularShadow,
-      border: "1.5px solid rgba(200,200,200,0.18)",
-      scale: 1,
-      background: "linear-gradient(135deg, #f8fafc 80%, #e0f7ef 100%)",
-    },
-    active: {
-      boxShadow: `${regularShadow}, ${activeGlow}`,
-      border: `1.5px solid ${colors.highlight}`,
-      scale: 1.035,
-      background: "linear-gradient(135deg, #f8fafc 70%, #d1fae5 100%)",
-    },
-    hover: {
-      scale: 1.025,
-      boxShadow: `${regularShadow}, 0 2px 16px 0 rgba(52,211,153,0.08)`,
-    },
   };
 
   return (
     <motion.div
-      className={`card relative rounded-3xl w-full overflow-hidden border transition-all duration-100 ${
-        className || ""
+      variants={reducedMotion ? {} : cardVariants}
+      initial="hidden"
+      animate={active ? "visible" : "hidden"}
+      whileHover={reducedMotion ? {} : "hover"}
+      whileTap={reducedMotion ? {} : "tap"}
+      className={`group p-5 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out relative ${
+        active
+          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 cursor-pointer"
+          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 cursor-pointer"
       }`}
-      initial="initial"
-      animate={active ? "active" : "initial"}
-      {...(active ? {} : { whileHover: "hover" })}
-      whileTap={{ scale: 0.98 }}
-      variants={cardVariants}
-      transition={{ duration: 0.12, ease: [0.0, 0.0, 0.2, 1] }}
-      onClick={toggleActive}
+      onClick={handleToggle}
       style={{ cursor: "pointer" }}
     >
-      {/* Minimal checkmark overlay when selected */}
       {active && (
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
@@ -77,37 +65,20 @@ const Card = ({ title, text, className }: Props) => {
           }}
           className="absolute top-5 right-5 z-20 bg-white rounded-full p-0.5 shadow-md border border-gray-200"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="10" cy="10" r="9" fill="white" />
-            <path
-              d="M6.5 10.5L9 13L14 8"
-              stroke="#34D399"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <CheckIcon className="h-4 w-4 text-primary" />
         </motion.div>
       )}
       <div className="card-body relative z-10 bg-transparent px-8 py-7 flex flex-col gap-2">
-        <motion.h2
-          className="card-title text-2xl font-bold text-gray-900 tracking-tight mb-1"
-          style={{ fontFamily: "SF Pro Display, Inter, sans-serif" }}
+        <h2
+          className="card-title text-lg sm:text-xl font-semibold text-base-content leading-tight flex-1"
         >
           {title}
-        </motion.h2>
-        <motion.p
-          className="text-gray-600 text-base font-light leading-relaxed"
-          style={{ fontFamily: "SF Pro Display, Inter, sans-serif" }}
+        </h2>
+        <p
+          className="text-base-content/60 text-sm sm:text-base leading-relaxed mb-3"
         >
           {text}
-        </motion.p>
+        </p>
       </div>
     </motion.div>
   );

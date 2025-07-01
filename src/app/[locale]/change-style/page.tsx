@@ -14,7 +14,7 @@ import { useImageGeneration } from "./hooks/useImageGeneration";
 import StyleCard from "./components/StyleCard";
 import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
 import ActionBar from "@/components/shared/ActionBar";
-import { staggerContainer, staggerItem } from "@/utils/animations";
+import { staggerItem } from "@/utils/animations";
 
 export default function ChangeStylePage() {
   const t = useTranslations("ChangeStylePage");
@@ -29,7 +29,6 @@ export default function ChangeStylePage() {
     localImageUrl,
     hostedImageUrl,
     isGenerating,
-    generationError,
     appliedStyles,
     setSelectedStyle: setGlobalSelectedStyle,
     currentGeneratedImage,
@@ -137,51 +136,32 @@ export default function ChangeStylePage() {
     return getStyleById(selectedStyle || "")?.name;
   }, [selectedStyle]);
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { delayChildren: 0.1, staggerChildren: 0.05 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
+  
 
   return (
     <motion.div
-      className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8 bg-base-200/50 dark:bg-base-100/70"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8"
+      
     >
       {/* Header */}
-      <motion.div
-        variants={itemVariants}
-        className="text-center px-4 sm:px-6 pt-8"
-      >
+      <div className="text-center px-4 sm:px-6 pt-8">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6">
           {t("title")}
         </h1>
         <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
           {t("subtitle")}
         </p>
-      </motion.div>
+      </div>
 
       {/* Image Section */}
-      <motion.div variants={itemVariants}>
-        <ImageDisplaySection
-          generationProgress={generationProgress}
-          mode="styles"
-          currentImage={imageToDisplay}
-        />
-      </motion.div>
+      <ImageDisplaySection
+        generationProgress={generationProgress}
+        mode="styles"
+        currentImage={imageToDisplay}
+      />
 
       {/* Style Grid */}
-      <motion.div variants={itemVariants} className="px-4 sm:px-6">
+      <div className="px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-xl font-semibold text-base-content mb-6">
             {t("selectStyle")}
@@ -206,7 +186,7 @@ export default function ChangeStylePage() {
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Action Bar */}
       <ActionBar
@@ -220,37 +200,7 @@ export default function ChangeStylePage() {
       />
 
       {/* Error Display */}
-      {generationError && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="px-4 sm:px-6"
-        >
-          <div className="max-w-2xl mx-auto bg-error/20 backdrop-blur-lg border border-error/30 rounded-2xl p-4">
-            <div className="flex items-start space-x-3">
-              <svg
-                className="w-5 h-5 text-error flex-shrink-0 mt-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-error mb-1">
-                  {t("generationError")}
-                </h3>
-                <p className="text-sm text-error/80">{generationError}</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
+      import ErrorDisplay from "@/components/shared/ErrorDisplay";
     </motion.div>
   );
 }
