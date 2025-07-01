@@ -14,6 +14,7 @@ import { useImageGeneration } from "./hooks/useImageGeneration";
 import StyleCard from "./components/StyleCard";
 import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
 import ActionBar from "@/components/shared/ActionBar";
+import ErrorDisplay from "@/components/shared/ErrorDisplay";
 import { staggerItem } from "@/utils/animations";
 
 export default function ChangeStylePage() {
@@ -33,6 +34,7 @@ export default function ChangeStylePage() {
     setSelectedStyle: setGlobalSelectedStyle,
     currentGeneratedImage,
     lastAppliedStyleId,
+    generationError,
   } = useAppState();
 
   // Early redirect if no images available
@@ -49,20 +51,15 @@ export default function ChangeStylePage() {
 
   // Determine the image to display
   const imageToDisplay = useMemo(() => {
-    // If a style is selected, show its generated image if available.
     if (selectedStyle) {
       return appliedStyles.get(selectedStyle) || null;
     }
-    // Otherwise, show the last generated image from the global state.
     return currentGeneratedImage;
   }, [selectedStyle, appliedStyles, currentGeneratedImage]);
 
   const handleToggleStyle = useCallback(
     (styleId: string) => {
-      // Prevent selection changes during generation
       if (isGenerating) return;
-
-      // Only allow one selection at a time
       const newSelection = selectedStyle === styleId ? null : styleId;
       setSelectedStyle(newSelection);
       setGlobalSelectedStyle(newSelection);
@@ -79,7 +76,6 @@ export default function ChangeStylePage() {
     if (!selectedStyle || isSubmitting || isGenerating) {
       return;
     }
-
     try {
       await generateStyleImage(selectedStyle);
       setSelectedStyle(null);
@@ -101,19 +97,14 @@ export default function ChangeStylePage() {
     if (!selectedStyle || isSubmitting || isGenerating) {
       return;
     }
-
     const style = getStyleById(selectedStyle);
     if (!style) return;
-
-    // Check if user has enough credits for applying style
     if (!canApplySuggestion()) {
       toast.error(
         t("notEnoughCreditsError", { credits: CREDIT_COSTS.APPLY_SUGGESTION })
       );
       return;
     }
-
-    // Show confirmation modal
     openConfirmationModal({
       title: t("applyStyleTitle"),
       message: t("applyStyleMessage", { title: style.name }),
@@ -131,24 +122,32 @@ export default function ChangeStylePage() {
     t,
   ]);
 
-  // Memoize selected style name to prevent unnecessary computations
   const selectedStyleName = useMemo(() => {
     return getStyleById(selectedStyle || "")?.name;
   }, [selectedStyle]);
 
-  
+  // Animation variants for page transition
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { delayChildren: 0.1, staggerChildren: 0.1 },
+    },
+  };
 
   return (
     <motion.div
       className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8"
-      
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
     >
       {/* Header */}
       <div className="text-center px-4 sm:px-6 pt-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6 antialiased">
           {t("title")}
         </h1>
-        <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
+        <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto antialiased">
           {t("subtitle")}
         </p>
       </div>
@@ -163,10 +162,9 @@ export default function ChangeStylePage() {
       {/* Style Grid */}
       <div className="px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-semibold text-base-content mb-6">
+          <h2 className="text-xl font-semibold text-base-content mb-6 antialiased">
             {t("selectStyle")}
           </h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {interiorStyles.map((style, index) => (
               <motion.div
@@ -200,7 +198,7 @@ export default function ChangeStylePage() {
       />
 
       {/* Error Display */}
-      import ErrorDisplay from "@/components/shared/ErrorDisplay";
+      <ErrorDisplay generationError={generationError} />
     </motion.div>
   );
 }
