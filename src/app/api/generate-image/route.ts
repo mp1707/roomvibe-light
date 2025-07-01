@@ -63,7 +63,6 @@ export async function POST(req: Request) {
       input: {
         input_image: imageUrl,
         prompt: prompt,
-        safety_tolerance: 0.5,
       },
     });
 
