@@ -1,23 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-// Input validation schema (same as real API)
+// Input validation schema (same as real API) - now expects a single suggestion
 const generatePromptSchema = z.object({
   imageUrl: z.string().min(1, "Image URL is required"),
-  suggestions: z
-    .array(
-      z.object({
-        id: z.string().min(1, "Suggestion ID cannot be empty"),
-        title: z.string().min(1, "Suggestion title cannot be empty"),
-        suggestion: z.string().min(1, "Suggestion text cannot be empty"),
-        explanation: z
-          .string()
-          .optional()
-          .transform((val) => val || ""),
-        category: z.string().min(1, "Suggestion category cannot be empty"),
-      })
-    )
-    .min(1, "At least one suggestion is required"),
+  suggestion: z.object({
+    id: z.string().min(1, "Suggestion ID cannot be empty"),
+    title: z.string().min(1, "Suggestion title cannot be empty"),
+    suggestion: z.string().min(1, "Suggestion text cannot be empty"),
+    explanation: z
+      .string()
+      .optional()
+      .transform((val) => val || ""),
+    category: z.string().min(1, "Suggestion category cannot be empty"),
+  }),
 });
 
 export async function POST(req: Request) {
@@ -28,20 +24,19 @@ export async function POST(req: Request) {
 
     // Validate the input
     const validatedData = generatePromptSchema.parse(body);
-    const { imageUrl, suggestions } = validatedData;
+    const { imageUrl, suggestion } = validatedData;
 
     console.log("Mock prompt generation request:", {
       imageUrlLength: imageUrl.length,
-      suggestionsCount: suggestions.length,
-      suggestionTitles: suggestions.map((s) => s.title),
+      suggestionTitle: suggestion.title,
+      suggestionCategory: suggestion.category,
     });
 
     // Simulate API delay for realism
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // Create a mock prompt based on the suggestions
-    const suggestionTexts = suggestions.map((s) => s.suggestion).join(", ");
-    const mockPrompt = `Transform this interior space by applying the following changes: ${suggestionTexts}. Maintain the original room layout and architectural elements while making realistic and tasteful improvements that enhance the space's character and functionality.`;
+    // Create a mock prompt based on the suggestion
+    const mockPrompt = `Transform this interior space by applying the following change: ${suggestion.suggestion}. Maintain the original room layout and architectural elements while making realistic and tasteful improvements that enhance the space's character and functionality.`;
 
     console.log("Mock prompt generated:", mockPrompt);
 

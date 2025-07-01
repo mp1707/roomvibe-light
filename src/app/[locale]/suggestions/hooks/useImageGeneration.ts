@@ -128,7 +128,7 @@ export const useImageGeneration = (): UseImageGenerationReturn => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageUrl: baseImageUrl,
-          suggestions: [suggestion],
+          suggestion: suggestion,
         }),
       });
 

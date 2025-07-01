@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { z } from "zod";
 
-// Input validation schema
+// Input validation schema - now expects a single suggestion
 const generatePromptSchema = z.object({
   imageUrl: z
     .string()
@@ -20,20 +20,16 @@ const generatePromptSchema = z.object({
         return false;
       }
     }, "Must be a valid image URL or data URL"),
-  suggestions: z
-    .array(
-      z.object({
-        id: z.string().min(1, "Suggestion ID cannot be empty"),
-        title: z.string().min(1, "Suggestion title cannot be empty"),
-        suggestion: z.string().min(1, "Suggestion text cannot be empty"),
-        explanation: z
-          .string()
-          .optional()
-          .transform((val) => val || ""),
-        category: z.string().min(1, "Suggestion category cannot be empty"),
-      })
-    )
-    .min(1, "At least one suggestion is required"),
+  suggestion: z.object({
+    id: z.string().min(1, "Suggestion ID cannot be empty"),
+    title: z.string().min(1, "Suggestion title cannot be empty"),
+    suggestion: z.string().min(1, "Suggestion text cannot be empty"),
+    explanation: z
+      .string()
+      .optional()
+      .transform((val) => val || ""),
+    category: z.string().min(1, "Suggestion category cannot be empty"),
+  }),
 });
 
 // Output validation schema for OpenAI response
@@ -61,26 +57,11 @@ export async function POST(req: Request) {
 
     // Validate the input
     const validatedData = generatePromptSchema.parse(body);
-    const { imageUrl, suggestions } = validatedData;
+    const { imageUrl, suggestion } = validatedData;
 
-    // Group suggestions by category for better organization
-    const suggestionsByCategory = suggestions.reduce((acc, suggestion) => {
-      if (!acc[suggestion.category]) {
-        acc[suggestion.category] = [];
-      }
-      acc[suggestion.category].push(suggestion);
-      return acc;
-    }, {} as Record<string, typeof suggestions>);
-
-    // Create formatted suggestions text
-    const formattedSuggestions = Object.entries(suggestionsByCategory)
-      .map(([category, categorySuggestions]) => {
-        const categoryItems = categorySuggestions
-          .map((s) => `- ${s.title}: ${s.suggestion} (${s.explanation})`)
-          .join("\n");
-        return `${category.toUpperCase()}:\n${categoryItems}`;
-      })
-      .join("\n\n");
+    // Create formatted suggestion text - simplified since we only have one suggestion
+    const formattedSuggestion = `${suggestion.category.toUpperCase()}:
+- ${suggestion.title}: ${suggestion.suggestion} (${suggestion.explanation})`;
 
     // Create the system prompt with Replicate best practices
     // The System Prompt for the OpenAI API call
@@ -108,9 +89,9 @@ export async function POST(req: Request) {
 * *Internal Translation:* "Group the larger plants together in a corner and supplement them with plant stools or pedestals of different heights. Hang smaller plants in macrame hangers near the window."
 * *Final Engineered Prompt (The kind of output you will generate):* "Group the existing larger plants together into the corner on the left. Place them on a mix of wooden plant stands and minimalist black pedestals of varying heights to create a multi-level green arrangement. Next, hang two small, trailing plants in off-white macrame hangers near the window frame. IMPORTANT: Preserve all other features of the room perfectly. The existing furniture, wall color, flooring, decor, lighting, and the original camera angle must remain completely unchanged."`;
 
-    const userPrompt = `Generate the flux-kontext-pro prompt for the following interior design suggestion: "${formattedSuggestions}"`;
+    const userPrompt = `Generate the flux-kontext-pro prompt for the following interior design suggestion: "${formattedSuggestion}"`;
 
-    console.log("Calling OpenAI with suggestions:", formattedSuggestions);
+    console.log("Calling OpenAI with suggestion:", formattedSuggestion);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4.1",
