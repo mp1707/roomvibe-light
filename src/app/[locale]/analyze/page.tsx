@@ -11,11 +11,116 @@ import {
   staggerContainer,
   staggerItem,
   buttonVariants,
+  cardVariants,
   useMotionPreference,
 } from "@/utils/animations";
 
 import { getAnalyzeEndpoint } from "@/utils/apiHelpers";
 import AILoadingScreen from "@/components/AILoadingScreen";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+
+interface OptionCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  onClick: () => void;
+  variant: "primary" | "secondary";
+  disabled?: boolean;
+  delay?: number;
+}
+
+const OptionCard = ({
+  icon,
+  title,
+  description,
+  onClick,
+  variant,
+  disabled = false,
+  delay = 0,
+}: OptionCardProps) => {
+  const reducedMotion = useMotionPreference();
+  const cardId = `option-${title.toLowerCase().replace(/\s+/g, "-")}`;
+  const t = useTranslations("Components.OptionCard");
+
+  return (
+    <motion.div
+      variants={reducedMotion ? {} : cardVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover={reducedMotion || disabled ? {} : "hover"}
+      whileTap={reducedMotion || disabled ? {} : "tap"}
+      transition={{ delay }}
+      className={`group p-4 xs:p-5 sm:p-6 rounded-lg xs:rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out relative ${
+        disabled
+          ? "border-base-300 bg-base-100 cursor-not-allowed opacity-60"
+          : variant === "primary"
+          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 cursor-pointer hover:border-primary hover:bg-primary/10"
+          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 cursor-pointer"
+      }`}
+      onClick={disabled ? undefined : onClick}
+      role="button"
+      aria-labelledby={`${cardId}-title`}
+      aria-describedby={`${cardId}-description`}
+      aria-disabled={disabled}
+      aria-label={
+        disabled ? t("ariaDisabled", { title }) : t("ariaSelect", { title })
+      }
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={(e) => {
+        if (!disabled && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
+      <div className="flex items-start space-x-3 xs:space-x-4">
+        <motion.div
+          variants={reducedMotion ? {} : buttonVariants}
+          whileHover={reducedMotion || disabled ? {} : "hover"}
+          whileTap={reducedMotion || disabled ? {} : "tap"}
+          className={`w-10 h-10 xs:w-12 xs:h-12 rounded-lg xs:rounded-xl flex items-center justify-center transition-colors duration-200 ${
+            disabled
+              ? "bg-base-200"
+              : variant === "primary"
+              ? "bg-primary/10 group-hover:bg-primary/20"
+              : "bg-base-200 group-hover:bg-primary/10"
+          }`}
+        >
+          <div
+            className={`w-5 h-5 xs:w-6 xs:h-6 ${
+              disabled
+                ? "text-base-content/40"
+                : variant === "primary"
+                ? "text-primary"
+                : "text-base-content/60 group-hover:text-primary"
+            }`}
+            aria-hidden="true"
+          >
+            {icon}
+          </div>
+        </motion.div>
+        <div className="flex-1 min-w-0">
+          <h3
+            id={`${cardId}-title`}
+            className={`text-base xs:text-lg sm:text-xl font-semibold mb-0.5 xs:mb-1 ${
+              disabled ? "text-base-content/40" : "text-base-content"
+            }`}
+          >
+            {title}
+          </h3>
+          <p
+            id={`${cardId}-description`}
+            className={`text-xs xs:text-sm sm:text-base leading-relaxed ${
+              disabled ? "text-base-content/30" : "text-base-content/60"
+            }`}
+          >
+            {description}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const ErrorModal = ({
   isOpen,
@@ -29,7 +134,8 @@ const ErrorModal = ({
   message: string;
 }) => {
   const reducedMotion = useMotionPreference();
-  const t = useTranslations("Common");
+  const t = useTranslations("Components.ErrorModal");
+  const commonT = useTranslations("Common");
 
   if (!isOpen) return null;
 
@@ -39,7 +145,10 @@ const ErrorModal = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 xs:p-4 sm:p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="error-modal-title"
       >
         {/* Backdrop */}
         <motion.div
@@ -48,6 +157,7 @@ const ErrorModal = ({
           exit={{ opacity: 0 }}
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
+          aria-hidden="true"
         />
 
         {/* Modal */}
@@ -62,18 +172,19 @@ const ErrorModal = ({
             reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 20 }
           }
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          className="relative w-full max-w-md mx-auto"
+          className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-md mx-auto"
         >
-          <div className="bg-white/20 dark:bg-black/20 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/30">
+          <div className="bg-white/20 dark:bg-black/20 backdrop-blur-xl rounded-2xl xs:rounded-3xl shadow-2xl overflow-hidden border border-white/30">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-white/20">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-error/20 rounded-full flex items-center justify-center">
+            <div className="px-4 xs:px-5 sm:px-6 py-3 xs:py-4 border-b border-white/20">
+              <div className="flex items-center space-x-2.5 xs:space-x-3">
+                <div className="w-8 h-8 xs:w-10 xs:h-10 bg-error/20 rounded-full flex items-center justify-center">
                   <svg
-                    className="w-5 h-5 text-error"
+                    className="w-4 h-4 xs:w-5 xs:h-5 text-error"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-label={t("errorIcon")}
                   >
                     <path
                       strokeLinecap="round"
@@ -83,27 +194,33 @@ const ErrorModal = ({
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-base-content">
-                  {title}
+                <h3
+                  id="error-modal-title"
+                  className="text-base xs:text-lg font-semibold text-base-content"
+                >
+                  {title || t("modalTitle")}
                 </h3>
               </div>
             </div>
 
             {/* Content */}
-            <div className="px-6 py-6">
-              <p className="text-base-content/70 leading-relaxed">{message}</p>
+            <div className="px-4 xs:px-5 sm:px-6 py-4 xs:py-5 sm:py-6">
+              <p className="text-sm xs:text-base text-base-content/70 leading-relaxed">
+                {message}
+              </p>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-white/10 dark:bg-black/10 border-t border-white/20">
+            <div className="px-4 xs:px-5 sm:px-6 py-3 xs:py-4 bg-white/10 dark:bg-black/10 border-t border-white/20">
               <motion.button
                 variants={reducedMotion ? {} : buttonVariants}
                 whileHover={reducedMotion ? {} : "hover"}
                 whileTap={reducedMotion ? {} : "tap"}
                 onClick={onClose}
-                className="w-full px-4 py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg"
+                className="w-full px-3 xs:px-4 py-2.5 xs:py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-xl xs:rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg text-sm xs:text-base"
+                aria-label={t("closeModal")}
               >
-                {t("back")}
+                {commonT("back")}
               </motion.button>
             </div>
           </div>
@@ -365,23 +482,23 @@ export default function AnalyzePage() {
 
   return (
     <>
-      <div className="w-full flex items-center justify-center min-h-screen bg-base-200/50 dark:bg-base-100/70 py-8">
+      <div className="w-full flex items-center justify-center min-h-screen bg-base-200/50 dark:bg-base-100/70 py-4 xs:py-6 sm:py-8">
         <motion.div
           variants={reducedMotion ? {} : staggerContainer}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-4xl flex flex-col items-center text-center px-4 sm:px-6"
+          className="w-full max-w-xl sm:max-w-2xl md:max-w-4xl flex flex-col items-center text-center px-3 xs:px-4 sm:px-6"
         >
           {/* Header */}
           {!isAnalyzing && (
             <motion.div
               variants={reducedMotion ? {} : staggerItem}
-              className="mb-8 md:mb-12"
+              className="mb-6 xs:mb-8 md:mb-12"
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6">
+              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-3 xs:mb-4 md:mb-6">
                 {t("title")}
               </h1>
-              <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
+              <p className="text-base xs:text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
                 {t("subtitle")}
               </p>
             </motion.div>
@@ -390,7 +507,7 @@ export default function AnalyzePage() {
           {/* Image Preview or Loading Animation */}
           <motion.div
             variants={reducedMotion ? {} : staggerItem}
-            className="relative w-full max-w-2xl mb-8 md:mb-12"
+            className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl mb-6 xs:mb-8 md:mb-12"
           >
             <AnimatePresence mode="wait">
               {isAnalyzing ? (
@@ -415,7 +532,7 @@ export default function AnalyzePage() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="relative aspect-[4/3] rounded-2xl xs:rounded-3xl overflow-hidden shadow-xl xs:shadow-2xl">
                     {imageUrl && (
                       <Image
                         src={imageUrl}
@@ -423,6 +540,7 @@ export default function AnalyzePage() {
                         fill
                         className="object-cover"
                         priority
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 80vw, 60vw"
                       />
                     )}
 
@@ -430,17 +548,17 @@ export default function AnalyzePage() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="absolute bottom-4 left-4 right-4"
+                      className="absolute bottom-3 xs:bottom-4 left-3 xs:left-4 right-3 xs:right-4"
                     >
-                      <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 border border-base-100/20">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-                          <div className="flex items-center space-x-2 sm:space-x-3">
-                            <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-xs sm:text-sm font-medium text-base-content">
+                      <div className="bg-base-100/90 backdrop-blur-sm rounded-xl xs:rounded-2xl px-2.5 xs:px-3 sm:px-4 py-2 xs:py-2.5 sm:py-3 border border-base-100/20">
+                        <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1.5 xs:gap-2 sm:gap-4">
+                          <div className="flex items-center space-x-2 xs:space-x-3">
+                            <div className="w-1.5 xs:w-2 h-1.5 xs:h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-xs xs:text-sm font-medium text-base-content">
                               {t("imageUploaded")}
                             </span>
                           </div>
-                          <div className="text-[10px] sm:text-xs text-base-content/60 font-medium">
+                          <div className="text-[10px] xs:text-xs text-base-content/60 font-medium">
                             {t("readyForAnalysis")}
                           </div>
                         </div>
@@ -456,82 +574,60 @@ export default function AnalyzePage() {
           {!isAnalyzing && (
             <motion.div
               variants={reducedMotion ? {} : staggerItem}
-              className="w-full max-w-2xl mb-8"
+              className="w-full max-w-lg sm:max-w-xl md:max-w-2xl mb-6 xs:mb-8"
             >
-              <h2 className="text-xl font-semibold text-base-content mb-6">
+              <h2 className="text-lg xs:text-xl font-semibold text-base-content mb-4 xs:mb-6">
                 {t("chooseOption")}
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 mb-6">
                 {/* Analyze Space Option */}
-                <motion.button
-                  variants={reducedMotion ? {} : buttonVariants}
-                  whileHover={reducedMotion ? {} : "hover"}
-                  whileTap={reducedMotion ? {} : "tap"}
+                <OptionCard
+                  icon={
+                    <svg
+                      className="w-6 h-6 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                  }
+                  title={t("analyzeSpace")}
+                  description={t("analyzeSpaceDescription")}
                   onClick={handleStartAnalysis}
-                  className="p-6 bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group shadow-lg hover:shadow-xl"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <svg
-                        className="w-6 h-6 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-base-content mb-1">
-                        {t("analyzeSpace")}
-                      </h3>
-                      <p className="text-sm text-base-content/60">
-                        {t("analyzeSpaceDescription")}
-                      </p>
-                    </div>
-                  </div>
-                </motion.button>
+                  variant="primary"
+                  delay={0.1}
+                />
 
                 {/* Change Style Option */}
-                <motion.button
-                  variants={reducedMotion ? {} : buttonVariants}
-                  whileHover={reducedMotion ? {} : "hover"}
-                  whileTap={reducedMotion ? {} : "tap"}
+                <OptionCard
+                  icon={
+                    <svg
+                      className="w-6 h-6 text-secondary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
+                      />
+                    </svg>
+                  }
+                  title={t("changeStyle")}
+                  description={t("changeStyleDescription")}
                   onClick={handleNavigateToStyleChange}
-                  className="p-6 bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group shadow-lg hover:shadow-xl"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-                      <svg
-                        className="w-6 h-6 text-secondary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-base-content mb-1">
-                        {t("changeStyle")}
-                      </h3>
-                      <p className="text-sm text-base-content/60">
-                        {t("changeStyleDescription")}
-                      </p>
-                    </div>
-                  </div>
-                </motion.button>
+                  variant="secondary"
+                  delay={0.2}
+                />
               </div>
             </motion.div>
           )}
@@ -540,15 +636,16 @@ export default function AnalyzePage() {
           {!isAnalyzing && (
             <motion.div
               variants={reducedMotion ? {} : staggerItem}
-              className="flex justify-center"
+              className="flex justify-center w-full"
             >
               <motion.button
                 variants={reducedMotion ? {} : buttonVariants}
                 whileHover={reducedMotion ? {} : "hover"}
                 whileTap={reducedMotion ? {} : "tap"}
                 onClick={handleGoBack}
-                className="px-6 py-3 bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg hover:shadow-xl"
+                className="w-full xs:w-auto flex items-center gap-2 px-4 xs:px-6 py-2.5 xs:py-3 bg-primary text-primary-content font-semibold rounded-lg xs:rounded-xl shadow-lg transition-all duration-300 hover:bg-primary-focus hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[140px] xs:min-w-[160px] justify-center"
               >
+                <ArrowLeftIcon className="w-4 h-4 xs:w-5 xs:h-5" />
                 {t("chooseOtherImage")}
               </motion.button>
             </motion.div>

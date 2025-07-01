@@ -54,7 +54,7 @@
   },
   "AnalyzePage": {
     "title": "Was möchten Sie tun?",
-    "subtitle": "Ihr Bild ist hochgeladen. Wählen Sie eine Option für die weitere Bearbeitung.",
+    "subtitle": "Ihr Bild wurde hochgeladen. Wählen Sie eine Option für die weitere Bearbeitung.",
     "imageUploaded": "Bild erfolgreich hochgeladen",
     "readyForAnalysis": "Bereit für Analyse",
     "chooseOtherImage": "Anderes Bild wählen",
@@ -312,7 +312,10 @@
       "sliderInstruction": "Bewege den Regler, um die Veränderungen zu sehen",
       "originalLabel": "Original",
       "currentLabel": "Aktuell",
-      "originalImageTitle": "Ihr Originalbild",
+      "originalImageTitle": "Originalbild",
+      "generatedImageTitle": "Generiertes Bild",
+      "loadingTitle": "Lädt...",
+      "generatingTitle": "Wird generiert...",
       "downloadImageAria": "Transformiertes Bild herunterladen",
       "downloadImageText": "Bild herunterladen",
       "newImageAria": "Neues Bild hochladen",
@@ -496,6 +499,16 @@
     "StyleCard": {
       "applied": "Angewendet",
       "styleExampleAlt": "{styleName} Stil-Beispiel"
+    },
+    "OptionCard": {
+      "ariaSelect": "Option {title} auswählen",
+      "ariaSelected": "Option {title} ausgewählt",
+      "ariaDisabled": "Option {title} nicht verfügbar"
+    },
+    "ErrorModal": {
+      "closeModal": "Fehlermeldung schließen",
+      "errorIcon": "Fehlersymbol",
+      "modalTitle": "Fehler aufgetreten"
     }
   }
 }

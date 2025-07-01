@@ -53,11 +53,16 @@
     "subtitle": "Please wait a moment"
   },
   "AnalyzePage": {
-    "title": "Ready for analysis?",
-    "subtitle": "Your image has been uploaded. Start the AI analysis now for personalized room design suggestions.",
+    "title": "What would you like to do?",
+    "subtitle": "Your image has been uploaded. Choose an option for further processing.",
     "imageUploaded": "Image successfully uploaded",
     "readyForAnalysis": "Ready for analysis",
     "chooseOtherImage": "Choose another image",
+    "chooseOption": "Choose an option",
+    "analyzeSpace": "Analyze Space",
+    "analyzeSpaceDescription": "Let AI analyze your room and get personalized design suggestions",
+    "changeStyle": "Change Style",
+    "changeStyleDescription": "Transform your room into different interior styles",
     "startAnalysis": "Start Analysis",
     "loadingTitle": "AI Analysis Running",
     "loadingSubtitle": "Your room design suggestions are being created. Please be patient.",
@@ -375,7 +380,11 @@
       "downloadImageAria": "Download transformed image",
       "downloadImageText": "Download Image",
       "newImageAria": "Upload new image",
-      "newImageText": "New Image"
+      "newImageText": "New Image",
+      "originalImageTitle": "Original Image",
+      "generatedImageTitle": "Generated Image",
+      "loadingTitle": "Loading...",
+      "generatingTitle": "Generating..."
     },
     "SuggestionsListSection": {
       "designSuggestions": "Design Suggestions",
@@ -489,6 +498,16 @@
     "StyleCard": {
       "applied": "Applied",
       "styleExampleAlt": "{styleName} style example"
+    },
+    "OptionCard": {
+      "ariaSelect": "Select option {title}",
+      "ariaSelected": "Option {title} selected",
+      "ariaDisabled": "Option {title} not available"
+    },
+    "ErrorModal": {
+      "closeModal": "Close error message",
+      "errorIcon": "Error icon",
+      "modalTitle": "Error occurred"
     }
   }
 }
