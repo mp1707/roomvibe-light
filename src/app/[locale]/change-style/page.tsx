@@ -153,17 +153,20 @@ export default function ChangeStylePage() {
 
   return (
     <motion.div
-      className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8"
+      className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8 bg-base-200/50 dark:bg-base-100/70"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
       {/* Header */}
-      <motion.div variants={itemVariants} className="text-center px-4 sm:px-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
+      <motion.div
+        variants={itemVariants}
+        className="text-center px-4 sm:px-6 pt-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6">
           {t("title")}
         </h1>
-        <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
           {t("subtitle")}
         </p>
       </motion.div>
@@ -223,7 +226,7 @@ export default function ChangeStylePage() {
           animate={{ opacity: 1, y: 0 }}
           className="px-4 sm:px-6"
         >
-          <div className="max-w-2xl mx-auto bg-error/10 border border-error/20 rounded-xl p-4">
+          <div className="max-w-2xl mx-auto bg-error/20 backdrop-blur-lg border border-error/30 rounded-2xl p-4">
             <div className="flex items-start space-x-3">
               <svg
                 className="w-5 h-5 text-error flex-shrink-0 mt-0.5"

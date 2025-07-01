@@ -42,14 +42,14 @@ const StyleCard = ({
       whileHover={reducedMotion ? {} : "hover"}
       whileTap={reducedMotion ? {} : "tap"}
       transition={{ delay }}
-      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out cursor-pointer ${
+      className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl border transition-all duration-300 ease-out cursor-pointer shadow-lg hover:shadow-xl ${
         isApplied
-          ? "border-success bg-success/10 shadow-lg shadow-success/10 cursor-default"
+          ? "border-success bg-success/20 shadow-success/20 cursor-default"
           : isGenerating
-          ? "border-base-300 bg-base-100 cursor-not-allowed opacity-60"
+          ? "border-base-300 bg-base-100/50 cursor-not-allowed opacity-60"
           : selected
-          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
-          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+          ? "border-primary bg-primary/10 shadow-primary/20"
+          : "border-white/20 bg-white/10 dark:bg-black/10 hover:border-primary/30"
       }`}
       onClick={handleToggle}
       role="button"

@@ -61,12 +61,12 @@ const ErrorModal = ({
           exit={
             reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 20 }
           }
-          transition={{ type: "spring", duration: 0.3 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className="relative w-full max-w-md mx-auto"
         >
-          <div className="bg-base-100 rounded-3xl shadow-2xl overflow-hidden">
+          <div className="bg-white/20 dark:bg-black/20 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/30">
             {/* Header */}
-            <div className="bg-gradient-to-r from-error/10 to-warning/10 px-6 py-4 border-b border-base-200">
+            <div className="px-6 py-4 border-b border-white/20">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-error/20 rounded-full flex items-center justify-center">
                   <svg
@@ -95,13 +95,13 @@ const ErrorModal = ({
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-base-50 border-t border-base-200">
+            <div className="px-6 py-4 bg-white/10 dark:bg-black/10 border-t border-white/20">
               <motion.button
                 variants={reducedMotion ? {} : buttonVariants}
                 whileHover={reducedMotion ? {} : "hover"}
                 whileTap={reducedMotion ? {} : "tap"}
                 onClick={onClose}
-                className="w-full px-4 py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="w-full px-4 py-3 bg-primary hover:bg-primary-focus text-primary-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg"
               >
                 {t("back")}
               </motion.button>
@@ -365,7 +365,7 @@ export default function AnalyzePage() {
 
   return (
     <>
-      <div className="w-full flex items-center justify-center min-h-screen py-8">
+      <div className="w-full flex items-center justify-center min-h-screen bg-base-200/50 dark:bg-base-100/70 py-8">
         <motion.div
           variants={reducedMotion ? {} : staggerContainer}
           initial="hidden"
@@ -378,10 +378,10 @@ export default function AnalyzePage() {
               variants={reducedMotion ? {} : staggerItem}
               className="mb-8 md:mb-12"
             >
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6">
                 {t("title")}
               </h1>
-              <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
                 {t("subtitle")}
               </p>
             </motion.div>
@@ -469,7 +469,7 @@ export default function AnalyzePage() {
                   whileHover={reducedMotion ? {} : "hover"}
                   whileTap={reducedMotion ? {} : "tap"}
                   onClick={handleStartAnalysis}
-                  className="p-6 bg-base-100 hover:bg-base-200 border border-base-300 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+                  className="p-6 bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group shadow-lg hover:shadow-xl"
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -504,7 +504,7 @@ export default function AnalyzePage() {
                   whileHover={reducedMotion ? {} : "hover"}
                   whileTap={reducedMotion ? {} : "tap"}
                   onClick={handleNavigateToStyleChange}
-                  className="p-6 bg-base-100 hover:bg-base-200 border border-base-300 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+                  className="p-6 bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 rounded-2xl text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group shadow-lg hover:shadow-xl"
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
@@ -547,7 +547,7 @@ export default function AnalyzePage() {
                 whileHover={reducedMotion ? {} : "hover"}
                 whileTap={reducedMotion ? {} : "tap"}
                 onClick={handleGoBack}
-                className="px-6 py-3 bg-base-200 hover:bg-base-300 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="px-6 py-3 bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 text-base-content font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg hover:shadow-xl"
               >
                 {t("chooseOtherImage")}
               </motion.button>

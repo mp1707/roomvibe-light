@@ -73,7 +73,7 @@ const ActionBar = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-0 left-0 right-0 bg-base-100/95 backdrop-blur-sm border-t border-base-300/50 shadow-2xl z-50"
+      className="fixed bottom-4 left-4 right-4 bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-2xl z-50"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">

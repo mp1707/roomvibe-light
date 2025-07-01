@@ -15,7 +15,7 @@ const SuggestionSchema = z.object({
 const AnalysisResponseSchema = z.object({
   isInteriorSpace: z.boolean(),
   suggestions: z.array(SuggestionSchema),
-  identifiedStyle: z.string().min(1, "Identified style cannot be empty"),
+identifiedStyle: z.string().min(1, "Identified style cannot be empty"),
 });
 
 // Initialize OpenAI client
