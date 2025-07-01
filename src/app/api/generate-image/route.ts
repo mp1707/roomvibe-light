@@ -35,14 +35,6 @@ const replicate = new Replicate({
 
 // Removed base64 conversion function since Replicate accepts URLs directly
 
-// Type for handling Replicate response variations
-interface ReplicateResponse {
-  url?: string;
-  images?: string[];
-  data?: string[];
-  [key: string]: any;
-}
-
 export async function POST(req: Request) {
   if (!process.env.REPLICATE_API_TOKEN) {
     return NextResponse.json(
@@ -71,6 +63,7 @@ export async function POST(req: Request) {
       input: {
         input_image: imageUrl,
         prompt: prompt,
+        safety_tolerance: 0.5,
       },
     });
 

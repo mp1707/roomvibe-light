@@ -83,53 +83,37 @@ export async function POST(req: Request) {
       .join("\n\n");
 
     // Create the system prompt with Replicate best practices
-    const systemPrompt = `You are an expert prompt engineer for AI image editing models. Your task is to create a perfect English prompt for the Replicate "flux-kontext-pro" model that will transform an interior design image based on user suggestions.
+    // The System Prompt for the OpenAI API call
+    const systemPrompt = `You are an expert Prompt Engineer specializing in generating instructions for the advanced generative image editing model, black-forest-labs/flux-kontext-pro. Your sole purpose is to translate a user's interior design suggestion into a perfect, detailed, and actionable prompt in English that results in a photorealistic and accurate image modification.
 
-REPLICATE PROMPTING BEST PRACTICES:
+**Your Core Directives:**
 
-1. BE SPECIFIC:
-   - Use clear, detailed language with exact colors and descriptions
-   - Avoid vague terms like "make it better"
-   - Name subjects directly and precisely
-   - Include specific materials, textures, and finishes
+1.  **Translate and Deconstruct:** If the user's suggestion is in German, first translate it flawlessly to English. Then, deconstruct the core request into specific, sequential visual commands.
 
-2. PRESERVE INTENTIONALLY:
-   - Specify what should stay the same: "while keeping the same room layout"
-   - Use "maintain the original composition" to preserve overall structure
-   - For element changes: "Change the wall color to warm beige while keeping all furniture in the exact same positions"
+2.  **Embrace Extreme Specificity:**
+    * **Verbs:** Use direct, unambiguous action verbs (e.g., "place", "group", "add", "hang", "replace", "cluster"). Avoid vague terms like "make it better" or "improve the style."
+    * **Nouns:** Describe objects with concrete details. Instead of just "add plants," specify "Add a tall fiddle-leaf fig in a black ceramic pot," or "Hang two small, trailing pothos plants in woven macrame hangers."
 
-3. STYLE TRANSFER:
-   - Be specific about design styles: "Scandinavian minimalist" not just "modern"
-   - Reference known movements: "mid-century modern" or "contemporary industrial"
-   - Describe key traits: "clean lines, natural materials, neutral color palette"
+3.  **Prioritize Preservation (Crucial Rule):** You MUST explicitly command the model to maintain the integrity of all unchanged elements from the original image. This is the most important instruction. Use clear phrases like:
+    * "Crucially, preserve the original room layout, wall color, and flooring."
+    * "Keep the existing furniture (sofa, table, chairs) and their current materials and positions exactly as they are."
+    * "The original camera angle, perspective, and overall lighting conditions must remain completely unchanged."
 
-4. COMPLEX EDITS:
-   - Break into clear, actionable steps
-   - Use descriptive action verbs for more control
-   - Be specific about placement and proportions
+4.  **Structure for Iteration:** Formulate the final prompt as a series of clear, step-by-step instructions. This helps the image model process complex changes logically and effectively.
 
-You must respond with a JSON object containing only a "prompt" field with the generated English prompt. The prompt should be optimized for interior design transformations while preserving the room's essential character.`;
+5.  **Output Format:** Your response MUST be a single, valid JSON object. This object will contain only one key: \`prompt\`. The value of this key will be the final, engineered English prompt string. Do not include any other text, explanations, or markdown.
 
-    const userPrompt = `Based on these interior design suggestions, create a perfect English prompt for the Replicate flux-kontext-pro model:
+**Example Thought Process (For your internal reasoning only):**
+* *Input Suggestion:* "Stelle die größeren Pflanzen in einer Ecke zusammen und ergänze sie mit unterschiedlich hohen Pflanzenhockern oder Podesten. Hänge kleinere Pflanzen in Makramee-Ampeln in Fensternähe."
+* *Internal Translation:* "Group the larger plants together in a corner and supplement them with plant stools or pedestals of different heights. Hang smaller plants in macrame hangers near the window."
+* *Final Engineered Prompt (The kind of output you will generate):* "Group the existing larger plants together into the corner on the left. Place them on a mix of wooden plant stands and minimalist black pedestals of varying heights to create a multi-level green arrangement. Next, hang two small, trailing plants in off-white macrame hangers near the window frame. IMPORTANT: Preserve all other features of the room perfectly. The existing furniture, wall color, flooring, decor, lighting, and the original camera angle must remain completely unchanged."`;
 
-SELECTED SUGGESTIONS:
-${formattedSuggestions}
-
-REQUIREMENTS:
-- Transform the interior space while maintaining the original room layout and architectural elements
-- Apply changes realistically and tastefully
-- Ensure all modifications blend naturally with the existing design
-- Focus on enhancing the space while preserving its character and functionality
-- Use specific, detailed language following Replicate's best practices
-- Include exact colors, materials, and design elements mentioned in suggestions
-- Specify what should be preserved vs. what should be changed
-
-Return a JSON object with a single "prompt" field containing the optimized English prompt.`;
+    const userPrompt = `Generate the flux-kontext-pro prompt for the following interior design suggestion: "${formattedSuggestions}"`;
 
     console.log("Calling OpenAI with suggestions:", formattedSuggestions);
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
@@ -141,7 +125,7 @@ Return a JSON object with a single "prompt" field containing the optimized Engli
         },
       ],
       temperature: 0.3, // Lower temperature for more consistent results
-      max_tokens: 1000,
+      max_tokens: 250,
       response_format: { type: "json_object" },
     });
 
