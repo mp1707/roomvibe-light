@@ -7,11 +7,37 @@ const nextConfig: NextConfig = {
   // Moved from experimental as per Next.js warning
   serverExternalPackages: ["stripe", "replicate", "openai"],
 
-  // Compiler optimizations
-  compiler: {
-    // Remove console.logs in production
-    removeConsole: process.env.NODE_ENV === "production",
+  // Simplified config for React 19 stability
+  experimental: {
+    // Disable problematic features
+    webpackBuildWorker: false,
   },
+
+  // Minimal webpack config for HMR stability
+  webpack: (config, { dev }) => {
+    if (dev) {
+      // Force polling for file changes (more reliable on some systems)
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: /node_modules/,
+      };
+      
+      // Ensure proper module resolution
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
+
+  // Only apply compiler optimizations in production
+  ...(process.env.NODE_ENV === "production" && {
+    compiler: {
+      removeConsole: true,
+    },
+  }),
 
   // Performance optimizations
   poweredByHeader: false,
@@ -63,18 +89,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
-  // Bundle analysis (uncomment for debugging)
-  // webpack: (config, { dev, isServer }) => {
-  //   if (!dev && !isServer) {
-  //     config.resolve.alias = {
-  //       ...config.resolve.alias,
-  //       '@/components': path.resolve(__dirname, 'src/components'),
-  //       '@/utils': path.resolve(__dirname, 'src/utils'),
-  //     };
-  //   }
-  //   return config;
-  // },
 };
 
 const withNextIntl = createNextIntlPlugin();
