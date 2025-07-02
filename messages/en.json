@@ -402,7 +402,12 @@
     "HeroContent": {
       "mainHeadline": "Transform Every Room",
       "mainHeadlineHighlight": "with AI Power.",
-      "description": "Upload a photo. Get personalized design suggestions. Transform your home in just a few clicks."
+      "description": "Upload a photo. Get personalized design suggestions. Transform your home in just a few clicks.",
+      "valueProps": {
+        "fast": "Lightning Fast",
+        "personalized": "Personalized",
+        "aiPowered": "AI-Powered"
+      }
     },
     "ProcessSteps": {
       "upload": {
@@ -508,6 +513,42 @@
       "closeModal": "Close error message",
       "errorIcon": "Error icon",
       "modalTitle": "Error occurred"
+    },
+    "FeatureShowcase": {
+      "title": "AI Power Meets Design Expertise",
+      "subtitle": "Experience the future of interior design with cutting-edge technology and years of design experience.",
+      "speed": {
+        "title": "Lightning-Fast Results",
+        "description": "From analysis to complete design in under a minute. No more hours of waiting."
+      },
+      "quality": {
+        "title": "Professional Quality",
+        "description": "Interior designer-level designs created by advanced AI with expert knowledge."
+      },
+      "intelligence": {
+        "title": "Smart Adaptation",
+        "description": "Every suggestion is custom-tailored to your space, style, and specific needs."
+      },
+      "benefits": {
+        "title": "Why Choose RoomVibe?",
+        "subtitle": "Combine professional interior design with the speed and accessibility of modern AI technology.",
+        "professional": {
+          "title": "Pro Design for Everyone",
+          "description": "Get designer-quality results without the high costs and long wait times."
+        },
+        "affordable": {
+          "title": "Fair Pricing",
+          "description": "Free credits to start, then pay only for what you actually use."
+        },
+        "instant": {
+          "title": "Instant Inspiration",
+          "description": "Endless design possibilities at the click of a button. Experiment as much as you want."
+        }
+      },
+      "cta": {
+        "button": "Start Free Now",
+        "subtitle": "No credit card required • 3 free designs included"
+      }
     }
   }
 }

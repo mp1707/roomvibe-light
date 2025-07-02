@@ -11,6 +11,7 @@ import {
 } from "@/utils/animations";
 import { HeroContent } from "./components/HeroContent";
 import { InteractiveDemo } from "./components/InteractiveDemo";
+import { FeatureShowcase } from "./components/FeatureShowcase";
 
 /**
  * WelcomeScreen Component
@@ -69,33 +70,49 @@ const WelcomeScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200">
-      <motion.div
+    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-base-200/50">
+      {/* Hero Section */}
+      <motion.section
         variants={reducedMotion ? {} : staggerContainer}
         initial="hidden"
         animate="visible"
-        className="w-full max-w-7xl mx-auto px-4 sm:px-6"
+        className="min-h-screen flex items-center relative overflow-hidden"
       >
-        {/* Hero Section - Split Layout */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center py-8 lg:py-12">
-          {/* Left Side - Hero Content */}
-          <HeroContent
-            onGetStarted={handleGetStarted}
-            onViewInspiration={handleViewInspiration}
-            reducedMotion={reducedMotion}
-            user={user}
-            loading={loading}
-          />
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          {/* Hero Grid Layout */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-16 lg:py-20">
+            {/* Left Side - Hero Content */}
+            <motion.div
+              variants={reducedMotion ? {} : staggerItem}
+              className="relative"
+            >
+              <HeroContent
+                onGetStarted={handleGetStarted}
+                onViewInspiration={handleViewInspiration}
+                reducedMotion={reducedMotion}
+                user={user}
+                loading={loading}
+              />
+            </motion.div>
 
-          {/* Right Side - Interactive Demo */}
-          <motion.div
-            variants={reducedMotion ? {} : staggerItem}
-            className="relative lg:pl-8"
-          >
-            <InteractiveDemo />
-          </motion.div>
+            {/* Right Side - Interactive Demo */}
+            <motion.div
+              variants={reducedMotion ? {} : staggerItem}
+              className="relative lg:pl-8"
+            >
+              <InteractiveDemo />
+            </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </motion.section>
+
+      {/* Feature Showcase Section */}
+      <FeatureShowcase />
     </div>
   );
 };

@@ -386,7 +386,12 @@
     "HeroContent": {
       "mainHeadline": "Verwandle jeden Raum",
       "mainHeadlineHighlight": "mit KI-Power.",
-      "description": "Lade ein Foto hoch. Erhalte personalisierte Designvorschläge. Verwandle dein Zuhause in wenigen Klicks."
+      "description": "Lade ein Foto hoch. Erhalte personalisierte Designvorschläge. Verwandle dein Zuhause in wenigen Klicks.",
+      "valueProps": {
+        "fast": "Blitzschnell",
+        "personalized": "Personalisiert",
+        "aiPowered": "KI-gesteuert"
+      }
     },
     "ProcessSteps": {
       "upload": {
@@ -509,6 +514,42 @@
       "closeModal": "Fehlermeldung schließen",
       "errorIcon": "Fehlersymbol",
       "modalTitle": "Fehler aufgetreten"
+    },
+    "FeatureShowcase": {
+      "title": "KI-Power trifft Design-Expertise",
+      "subtitle": "Erleben Sie die Zukunft der Raumgestaltung mit modernster Technologie und jahrelanger Design-Erfahrung.",
+      "speed": {
+        "title": "Blitzschnelle Ergebnisse",
+        "description": "Von der Analyse bis zum fertigen Design in unter einer Minute. Keine stundenlangen Wartezeiten mehr."
+      },
+      "quality": {
+        "title": "Professionelle Qualität",
+        "description": "Designs auf dem Niveau eines Interior Designers, erstellt von fortschrittlicher KI mit Expertenwissen."
+      },
+      "intelligence": {
+        "title": "Intelligente Anpassung",
+        "description": "Jeder Vorschlag wird speziell für Ihren Raum, Stil und Ihre Bedürfnisse maßgeschneidert."
+      },
+      "benefits": {
+        "title": "Warum RoomVibe wählen?",
+        "subtitle": "Vereinen Sie professionelle Raumgestaltung mit der Geschwindigkeit und Zugänglichkeit moderner KI-Technologie.",
+        "professional": {
+          "title": "Profi-Design für alle",
+          "description": "Erhalten Sie Designer-Qualität ohne die hohen Kosten und langen Wartezeiten."
+        },
+        "affordable": {
+          "title": "Faire Preise",
+          "description": "Kostenlose Credits zum Start, dann nur zahlen für das, was Sie wirklich nutzen."
+        },
+        "instant": {
+          "title": "Sofortige Inspiration",
+          "description": "Endlose Designmöglichkeiten auf Knopfdruck. Experimentieren Sie so viel Sie möchten."
+        }
+      },
+      "cta": {
+        "button": "Jetzt kostenfrei starten",
+        "subtitle": "Keine Kreditkarte erforderlich • 3 kostenlose Designs inklusive"
+      }
     }
   }
 }
