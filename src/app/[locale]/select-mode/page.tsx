@@ -7,120 +7,19 @@ import { useTranslations } from "next-intl";
 import { useAppState } from "@/utils/store";
 import { useImageModalStore } from "@/utils/useImageModalStore";
 import Image from "next/image";
-import {
-  staggerContainer,
-  staggerItem,
-  buttonVariants,
-  cardVariants,
-  useMotionPreference,
-} from "@/utils/animations";
 
 import { getAnalyzeEndpoint } from "@/utils/apiHelpers";
 import AILoadingScreen from "@/components/AILoadingScreen";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
-interface OptionCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  onClick: () => void;
-  variant: "primary" | "secondary";
-  disabled?: boolean;
-  delay?: number;
-}
+// New shared components
+import PageLayout from "@/components/PageLayout";
+import PageHeader from "@/components/PageHeader";
+import UnifiedCard from "@/components/UnifiedCard";
+import ContentSection from "@/components/ContentSection";
+import NavigationBar from "@/components/NavigationBar";
+import { getNavigationSteps } from "@/utils/navigation";
+import { buttonVariants, useMotionPreference } from "@/utils/animations";
 
-const OptionCard = ({
-  icon,
-  title,
-  description,
-  onClick,
-  variant,
-  disabled = false,
-  delay = 0,
-}: OptionCardProps) => {
-  const reducedMotion = useMotionPreference();
-  const cardId = `option-${title.toLowerCase().replace(/\s+/g, "-")}`;
-  const t = useTranslations("Components.OptionCard");
-
-  return (
-    <motion.div
-      variants={reducedMotion ? {} : cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover={reducedMotion || disabled ? {} : "hover"}
-      whileTap={reducedMotion || disabled ? {} : "tap"}
-      transition={{ delay }}
-      className={`group p-4 xs:p-5 sm:p-6 rounded-lg xs:rounded-xl sm:rounded-2xl border-2 transition-all duration-300 ease-out relative ${
-        disabled
-          ? "border-base-300 bg-base-100 cursor-not-allowed opacity-60"
-          : variant === "primary"
-          ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 cursor-pointer hover:border-primary hover:bg-primary/10"
-          : "border-base-300 bg-base-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 cursor-pointer"
-      }`}
-      onClick={disabled ? undefined : onClick}
-      role="button"
-      aria-labelledby={`${cardId}-title`}
-      aria-describedby={`${cardId}-description`}
-      aria-disabled={disabled}
-      aria-label={
-        disabled ? t("ariaDisabled", { title }) : t("ariaSelect", { title })
-      }
-      tabIndex={disabled ? -1 : 0}
-      onKeyDown={(e) => {
-        if (!disabled && (e.key === "Enter" || e.key === " ")) {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-    >
-      <div className="flex items-start space-x-3 xs:space-x-4">
-        <motion.div
-          variants={reducedMotion ? {} : buttonVariants}
-          whileHover={reducedMotion || disabled ? {} : "hover"}
-          whileTap={reducedMotion || disabled ? {} : "tap"}
-          className={`w-10 h-10 xs:w-12 xs:h-12 rounded-lg xs:rounded-xl flex items-center justify-center transition-colors duration-200 ${
-            disabled
-              ? "bg-base-200"
-              : variant === "primary"
-              ? "bg-primary/10 group-hover:bg-primary/20"
-              : "bg-base-200 group-hover:bg-primary/10"
-          }`}
-        >
-          <div
-            className={`w-5 h-5 xs:w-6 xs:h-6 ${
-              disabled
-                ? "text-base-content/40"
-                : variant === "primary"
-                ? "text-primary"
-                : "text-base-content/60 group-hover:text-primary"
-            }`}
-            aria-hidden="true"
-          >
-            {icon}
-          </div>
-        </motion.div>
-        <div className="flex-1 min-w-0">
-          <h3
-            id={`${cardId}-title`}
-            className={`text-base xs:text-lg sm:text-xl font-semibold mb-0.5 xs:mb-1 ${
-              disabled ? "text-base-content/40" : "text-base-content"
-            }`}
-          >
-            {title}
-          </h3>
-          <p
-            id={`${cardId}-description`}
-            className={`text-xs xs:text-sm sm:text-base leading-relaxed ${
-              disabled ? "text-base-content/30" : "text-base-content/60"
-            }`}
-          >
-            {description}
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
 
 const ErrorModal = ({
   isOpen,
@@ -230,7 +129,7 @@ const ErrorModal = ({
   );
 };
 
-export default function AnalyzePage() {
+export default function SelectModePage() {
   const { localImageUrl, hostedImageUrl, resetForNewImage } = useAppState();
   const { reset: resetImageModal } = useImageModalStore();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -245,8 +144,7 @@ export default function AnalyzePage() {
     message: "",
   });
   const router = useRouter();
-  const reducedMotion = useMotionPreference();
-  const t = useTranslations("AnalyzePage");
+  const t = useTranslations("SelectModePage");
 
   // Helper function to show error modal
   const showErrorModal = useCallback((title: string, message: string) => {
@@ -480,178 +378,168 @@ export default function AnalyzePage() {
 
   const imageUrl = localImageUrl || hostedImageUrl;
 
+  // Get navigation steps for the workflow
+  const navigationSteps = getNavigationSteps("/select-mode");
+
   return (
     <>
-      <div className="w-full flex items-center justify-center min-h-screen bg-base-200/50 dark:bg-base-100/70 py-4 xs:py-6 sm:py-8">
-        <motion.div
-          variants={reducedMotion ? {} : staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="w-full max-w-xl sm:max-w-2xl md:max-w-4xl flex flex-col items-center text-center px-3 xs:px-4 sm:px-6"
+      {/* Navigation Bar */}
+      <NavigationBar 
+        currentStep="/select-mode"
+        steps={navigationSteps}
+        showProgress={true}
+      />
+      
+      <PageLayout 
+        maxWidth="4xl" 
+        spacing="lg" 
+        background="gradient"
+        animation={true}
+      >
+        {/* Page Header */}
+        {!isAnalyzing && (
+          <PageHeader
+            title={t("title")}
+            subtitle={t("subtitle")}
+            showBackButton={true}
+            onBack={handleGoBack}
+            align="center"
+            size="base"
+          />
+        )}
+
+        {/* Image Section */}
+        <ContentSection 
+          maxWidth="2xl" 
+          spacing="none" 
+          animation={true}
         >
-          {/* Header */}
-          {!isAnalyzing && (
-            <motion.div
-              variants={reducedMotion ? {} : staggerItem}
-              className="mb-6 xs:mb-8 md:mb-12"
-            >
-              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-3 xs:mb-4 md:mb-6">
-                {t("title")}
-              </h1>
-              <p className="text-base xs:text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto">
-                {t("subtitle")}
-              </p>
-            </motion.div>
-          )}
+          <AnimatePresence mode="wait">
+            {isAnalyzing ? (
+              <AILoadingScreen
+                progress={analysisProgress}
+                steps={[
+                  t("loadingSteps.analyzing"),
+                  t("loadingSteps.detecting"),
+                  t("loadingSteps.identifying"),
+                  t("loadingSteps.generating"),
+                ]}
+                title={t("loadingTitle")}
+                subtitle={t("loadingSubtitle")}
+                hint={t("loadingHint")}
+                mode="analyze"
+              />
+            ) : (
+              <motion.div
+                key="image-preview"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-2xl mx-auto"
+              >
+                <div className="relative aspect-[4/3] rounded-2xl xs:rounded-3xl overflow-hidden shadow-xl xs:shadow-2xl">
+                  {imageUrl && (
+                    <Image
+                      src={imageUrl}
+                      alt={t("imageUploaded")}
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 80vw, 60vw"
+                    />
+                  )}
 
-          {/* Image Preview or Loading Animation */}
-          <motion.div
-            variants={reducedMotion ? {} : staggerItem}
-            className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl mb-6 xs:mb-8 md:mb-12"
-          >
-            <AnimatePresence mode="wait">
-              {isAnalyzing ? (
-                <AILoadingScreen
-                  progress={analysisProgress}
-                  steps={[
-                    t("loadingSteps.analyzing"),
-                    t("loadingSteps.detecting"),
-                    t("loadingSteps.identifying"),
-                    t("loadingSteps.generating"),
-                  ]}
-                  title={t("loadingTitle")}
-                  subtitle={t("loadingSubtitle")}
-                  hint={t("loadingHint")}
-                  mode="analyze"
-                />
-              ) : (
-                <motion.div
-                  key="image-preview"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="relative aspect-[4/3] rounded-2xl xs:rounded-3xl overflow-hidden shadow-xl xs:shadow-2xl">
-                    {imageUrl && (
-                      <Image
-                        src={imageUrl}
-                        alt={t("imageUploaded")}
-                        fill
-                        className="object-cover"
-                        priority
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 80vw, 60vw"
-                      />
-                    )}
-
-                    {/* Image info overlay */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="absolute bottom-3 xs:bottom-4 left-3 xs:left-4 right-3 xs:right-4"
-                    >
-                      <div className="bg-base-100/90 backdrop-blur-sm rounded-xl xs:rounded-2xl px-2.5 xs:px-3 sm:px-4 py-2 xs:py-2.5 sm:py-3 border border-base-100/20">
-                        <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1.5 xs:gap-2 sm:gap-4">
-                          <div className="flex items-center space-x-2 xs:space-x-3">
-                            <div className="w-1.5 xs:w-2 h-1.5 xs:h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-xs xs:text-sm font-medium text-base-content">
-                              {t("imageUploaded")}
-                            </span>
-                          </div>
-                          <div className="text-[10px] xs:text-xs text-base-content/60 font-medium">
-                            {t("readyForAnalysis")}
-                          </div>
+                  {/* Image info overlay */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="absolute bottom-3 xs:bottom-4 left-3 xs:left-4 right-3 xs:right-4"
+                  >
+                    <div className="bg-base-100/90 backdrop-blur-sm rounded-xl xs:rounded-2xl px-2.5 xs:px-3 sm:px-4 py-2 xs:py-2.5 sm:py-3 border border-base-100/20">
+                      <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1.5 xs:gap-2 sm:gap-4">
+                        <div className="flex items-center space-x-2 xs:space-x-3">
+                          <div className="w-1.5 xs:w-2 h-1.5 xs:h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs xs:text-sm font-medium text-base-content">
+                            {t("imageUploaded")}
+                          </span>
+                        </div>
+                        <div className="text-[10px] xs:text-xs text-base-content/60 font-medium">
+                          {t("readyForAnalysis")}
                         </div>
                       </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </ContentSection>
 
-          {/* Choice Options */}
-          {!isAnalyzing && (
-            <motion.div
-              variants={reducedMotion ? {} : staggerItem}
-              className="w-full max-w-lg sm:max-w-xl md:max-w-2xl mb-6 xs:mb-8"
-            >
-              <h2 className="text-lg xs:text-xl font-semibold text-base-content mb-4 xs:mb-6">
-                {t("chooseOption")}
-              </h2>
+        {/* Options Section */}
+        {!isAnalyzing && (
+          <ContentSection 
+            title={t("chooseOption")}
+            maxWidth="xl" 
+            spacing="base" 
+            layout="grid-2" 
+            gap="base"
+            animation={true}
+          >
+            {/* Analyze Space Option */}
+            <UnifiedCard
+              title={t("analyzeSpace")}
+              description={t("analyzeSpaceDescription")}
+              icon={
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              }
+              onClick={handleStartAnalysis}
+              variant="primary"
+              size="base"
+              layout="horizontal"
+              delay={0.1}
+            />
 
-              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 mb-6">
-                {/* Analyze Space Option */}
-                <OptionCard
-                  icon={
-                    <svg
-                      className="w-6 h-6 text-primary"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 10V3L4 14h7v7l9-11h-7z"
-                      />
-                    </svg>
-                  }
-                  title={t("analyzeSpace")}
-                  description={t("analyzeSpaceDescription")}
-                  onClick={handleStartAnalysis}
-                  variant="primary"
-                  delay={0.1}
-                />
-
-                {/* Change Style Option */}
-                <OptionCard
-                  icon={
-                    <svg
-                      className="w-6 h-6 text-secondary"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
-                      />
-                    </svg>
-                  }
-                  title={t("changeStyle")}
-                  description={t("changeStyleDescription")}
-                  onClick={handleNavigateToStyleChange}
-                  variant="secondary"
-                  delay={0.2}
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {/* Back Button */}
-          {!isAnalyzing && (
-            <motion.div
-              variants={reducedMotion ? {} : staggerItem}
-              className="flex justify-center w-full"
-            >
-              <motion.button
-                variants={reducedMotion ? {} : buttonVariants}
-                whileHover={reducedMotion ? {} : "hover"}
-                whileTap={reducedMotion ? {} : "tap"}
-                onClick={handleGoBack}
-                className="w-full xs:w-auto flex items-center gap-2 px-4 xs:px-6 py-2.5 xs:py-3 bg-primary text-primary-content font-semibold rounded-lg xs:rounded-xl shadow-lg transition-all duration-300 hover:bg-primary-focus hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[140px] xs:min-w-[160px] justify-center"
-              >
-                <ArrowLeftIcon className="w-4 h-4 xs:w-5 xs:h-5" />
-                {t("chooseOtherImage")}
-              </motion.button>
-            </motion.div>
-          )}
-        </motion.div>
-      </div>
+            {/* Change Style Option */}
+            <UnifiedCard
+              title={t("changeStyle")}
+              description={t("changeStyleDescription")}
+              icon={
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
+                  />
+                </svg>
+              }
+              onClick={handleNavigateToStyleChange}
+              variant="secondary"
+              size="base"
+              layout="horizontal"
+              delay={0.2}
+            />
+          </ContentSection>
+        )}
+      </PageLayout>
 
       {/* Error Modal */}
       <ErrorModal

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -14,6 +13,13 @@ import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
 import SuggestionsListSection from "./components/SuggestionsListSection";
 import ActionBar from "@/components/shared/ActionBar";
 import ErrorDisplay from "@/components/shared/ErrorDisplay";
+
+// New shared components
+import PageLayout from "@/components/PageLayout";
+import PageHeader from "@/components/PageHeader";
+import NavigationBar from "@/components/NavigationBar";
+import { getNavigationSteps } from "@/utils/navigation";
+import ContentSection from "@/components/ContentSection";
 
 export default function SuggestionsPage() {
   const t = useTranslations("SuggestionsPage");
@@ -150,48 +156,73 @@ export default function SuggestionsPage() {
     return allSuggestions.find((s) => s.id === selectedSuggestion)?.title;
   }, [allSuggestions, selectedSuggestion]);
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { delayChildren: 0.1, staggerChildren: 0.1 },
-    },
-  };
+  // Get navigation steps for the workflow
+  const navigationSteps = getNavigationSteps("/suggestions");
 
   return (
-    <motion.div
-      className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Image Section */}
-      <ImageDisplaySection generationProgress={generationProgress} />
-
-      {/* Suggestions Section */}
-      <SuggestionsListSection
-        selectedSuggestion={selectedSuggestion}
-        isGenerating={isGenerating}
-        onToggleSuggestion={handleToggleSuggestion}
-        onAddCustomSuggestion={handleAddCustomSuggestion}
-        onEditCustomSuggestion={handleEditCustomSuggestion}
-        onDeleteCustomSuggestion={handleDeleteCustomSuggestion}
+    <>
+      {/* Navigation Bar */}
+      <NavigationBar 
+        currentStep="/suggestions"
+        steps={navigationSteps}
+        showProgress={true}
       />
+      
+      <PageLayout 
+        maxWidth="6xl" 
+        spacing="base" 
+        background="gradient"
+        animation={true}
+      >
+        {/* Page Header */}
+        <PageHeader
+          title={t("title") || "Design-Vorschläge"}
+          subtitle={t("subtitle") || "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln"}
+          showBackButton={true}
+          backHref="/select-mode"
+          align="center"
+          size="base"
+        />
 
-      {/* Action Bar */}
-      <ActionBar
-        selectedItemId={selectedSuggestion}
-        selectedItemTitle={selectedSuggestionTitle}
-        isSubmitting={isSubmitting}
-        isGenerating={isGenerating}
-        onCancel={handleCancelSelection}
-        onApply={handleApplySuggestion}
-        mode="suggestions"
-      />
+        {/* Image Section */}
+        <ContentSection 
+          maxWidth="4xl" 
+          spacing="none" 
+          animation={true}
+        >
+          <ImageDisplaySection generationProgress={generationProgress} />
+        </ContentSection>
 
-      {/* Error Display */}
-      <ErrorDisplay generationError={generationError} />
-    </motion.div>
+        {/* Suggestions Section */}
+        <ContentSection 
+          maxWidth="4xl" 
+          spacing="base" 
+          animation={true}
+        >
+          <SuggestionsListSection
+            selectedSuggestion={selectedSuggestion}
+            isGenerating={isGenerating}
+            onToggleSuggestion={handleToggleSuggestion}
+            onAddCustomSuggestion={handleAddCustomSuggestion}
+            onEditCustomSuggestion={handleEditCustomSuggestion}
+            onDeleteCustomSuggestion={handleDeleteCustomSuggestion}
+          />
+        </ContentSection>
+
+        {/* Action Bar */}
+        <ActionBar
+          selectedItemId={selectedSuggestion}
+          selectedItemTitle={selectedSuggestionTitle}
+          isSubmitting={isSubmitting}
+          isGenerating={isGenerating}
+          onCancel={handleCancelSelection}
+          onApply={handleApplySuggestion}
+          mode="suggestions"
+        />
+
+        {/* Error Display */}
+        <ErrorDisplay generationError={generationError} />
+      </PageLayout>
+    </>
   );
 }

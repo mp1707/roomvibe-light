@@ -52,7 +52,7 @@
     "title": "Lädt...",
     "subtitle": "Einen Moment bitte"
   },
-  "AnalyzePage": {
+  "SelectModePage": {
     "title": "Was möchten Sie tun?",
     "subtitle": "Ihr Bild wurde hochgeladen. Wählen Sie eine Option für die weitere Bearbeitung.",
     "imageUploaded": "Bild erfolgreich hochgeladen",
@@ -145,6 +145,8 @@
     "images": "Bilder"
   },
   "SuggestionsPage": {
+    "title": "Design-Vorschläge",
+    "subtitle": "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln",
     "applyError": "Fehler beim Anwenden des Vorschlags",
     "notEnoughCreditsError": "Nicht genügend Credits! Sie benötigen {credits} Credits um einen Vorschlag anzuwenden.",
     "applySuggestionTitle": "Vorschlag anwenden",

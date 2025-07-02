@@ -220,7 +220,7 @@ export const useFileUpload = () => {
 
         // Navigate to analysis
         setTimeout(() => {
-          router.push("/analyze");
+          router.push("/select-mode");
         }, 500);
       } catch (error) {
         console.error("Upload failed:", error);

@@ -17,6 +17,13 @@ import ActionBar from "@/components/shared/ActionBar";
 import ErrorDisplay from "@/components/shared/ErrorDisplay";
 import { staggerItem } from "@/utils/animations";
 
+// New shared components
+import PageLayout from "@/components/PageLayout";
+import PageHeader from "@/components/PageHeader";
+import NavigationBar from "@/components/NavigationBar";
+import { getNavigationSteps } from "@/utils/navigation";
+import ContentSection from "@/components/ContentSection";
+
 export default function ChangeStylePage() {
   const t = useTranslations("ChangeStylePage");
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
@@ -126,79 +133,88 @@ export default function ChangeStylePage() {
     return getStyleById(selectedStyle || "")?.name;
   }, [selectedStyle]);
 
-  // Animation variants for page transition
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { delayChildren: 0.1, staggerChildren: 0.1 },
-    },
-  };
+  // Get navigation steps for the workflow  
+  const navigationSteps = getNavigationSteps("/change-style");
 
   return (
-    <motion.div
-      className="flex-1 w-full flex flex-col gap-6 sm:gap-8 pb-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Header */}
-      <div className="text-center px-4 sm:px-6 pt-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-base-content mb-4 md:mb-6 antialiased">
-          {t("title")}
-        </h1>
-        <p className="text-lg sm:text-xl text-base-content/70 max-w-3xl mx-auto antialiased">
-          {t("subtitle")}
-        </p>
-      </div>
-
-      {/* Image Section */}
-      <ImageDisplaySection
-        generationProgress={generationProgress}
-        mode="styles"
-        currentImage={imageToDisplay}
+    <>
+      {/* Navigation Bar */}
+      <NavigationBar 
+        currentStep="/change-style"
+        steps={navigationSteps}
+        showProgress={true}
       />
+      
+      <PageLayout 
+        maxWidth="6xl" 
+        spacing="base" 
+        background="gradient"
+        animation={true}
+      >
+        {/* Page Header */}
+        <PageHeader
+          title={t("title")}
+          subtitle={t("subtitle")}
+          showBackButton={true}
+          backHref="/select-mode"
+          align="center"
+          size="base"
+        />
 
-      {/* Style Grid */}
-      <div className="px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-semibold text-base-content mb-6 antialiased">
-            {t("selectStyle")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {interiorStyles.map((style, index) => (
-              <motion.div
-                key={style.id}
-                variants={staggerItem}
-                className="relative"
-              >
-                <StyleCard
-                  style={style}
-                  selected={selectedStyle === style.id}
-                  onToggle={handleToggleStyle}
-                  isApplied={lastAppliedStyleId === style.id}
-                  isGenerating={isGenerating}
-                  delay={index * 0.05}
-                />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
+        {/* Image Section */}
+        <ContentSection 
+          maxWidth="4xl" 
+          spacing="none" 
+          animation={true}
+        >
+          <ImageDisplaySection
+            generationProgress={generationProgress}
+            mode="styles"
+            currentImage={imageToDisplay}
+          />
+        </ContentSection>
 
-      {/* Action Bar */}
-      <ActionBar
-        selectedItemId={selectedStyle}
-        selectedItemTitle={selectedStyleName}
-        isSubmitting={isSubmitting}
-        isGenerating={isGenerating}
-        onCancel={handleCancelSelection}
-        onApply={handleApplyStyle}
-        mode="styles"
-      />
+        {/* Style Grid Section */}
+        <ContentSection 
+          title={t("selectStyle")}
+          maxWidth="6xl" 
+          spacing="base" 
+          layout="grid-4" 
+          gap="base"
+          animation={true}
+        >
+          {interiorStyles.map((style, index) => (
+            <motion.div
+              key={style.id}
+              variants={staggerItem}
+              className="relative"
+            >
+              <StyleCard
+                style={style}
+                selected={selectedStyle === style.id}
+                onToggle={handleToggleStyle}
+                isApplied={lastAppliedStyleId === style.id}
+                isGenerating={isGenerating}
+                delay={index * 0.05}
+              />
+            </motion.div>
+          ))}
+        </ContentSection>
 
-      {/* Error Display */}
-      <ErrorDisplay generationError={generationError} />
-    </motion.div>
+        {/* Action Bar */}
+        <ActionBar
+          selectedItemId={selectedStyle}
+          selectedItemTitle={selectedStyleName}
+          isSubmitting={isSubmitting}
+          isGenerating={isGenerating}
+          onCancel={handleCancelSelection}
+          onApply={handleApplyStyle}
+          mode="styles"
+        />
+
+        {/* Error Display */}
+        <ErrorDisplay generationError={generationError} />
+      </PageLayout>
+    </>
   );
 }
