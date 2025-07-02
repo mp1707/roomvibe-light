@@ -64,13 +64,8 @@ export default async function LocaleLayout({
 
         {/* Main Content Area - Responsive Layout */}
         <div className="flex-1 bg-base-200 lg:bg-base-100 min-h-screen overflow-visible">
-          {/* Mobile/Tablet: Card-like container */}
-          <div className="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 py-8">
-            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300 min-h-[calc(100vh-200px)] overflow-visible">
-              <div className="p-6 md:p-8 overflow-visible">
-                <StateGuard>{children}</StateGuard>
-              </div>
-            </div>
+          <div className="lg:hidden">
+            <StateGuard>{children}</StateGuard>
           </div>
 
           {/* Desktop: Full viewport layout */}
