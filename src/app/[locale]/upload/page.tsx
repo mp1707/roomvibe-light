@@ -9,7 +9,6 @@ import { getNavigationSteps } from "@/utils/navigation";
 
 export default function UploadPage() {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [supabase] = useState(() => createClient());
   const router = useRouter();
 
@@ -30,8 +29,6 @@ export default function UploadPage() {
       } catch (error) {
         console.error("Error getting user:", error);
         router.push("/auth/login");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -45,24 +42,15 @@ export default function UploadPage() {
         router.push("/auth/login");
       } else {
         setUser(session.user);
-        setLoading(false);
       }
     });
 
     return () => subscription.unsubscribe();
   }, [supabase, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-base-100 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  // Only show upload form if user is authenticated
+  // Don't show anything if user is not authenticated (redirect will happen)
   if (!user) {
-    return null; // Will redirect to login
+    return null;
   }
 
   // Get navigation steps for the workflow
