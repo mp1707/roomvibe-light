@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import UploadForm from "@/components/UploadForm";
-import NavigationBar from "@/components/NavigationBar";
-import { getNavigationSteps } from "@/utils/navigation";
 
 export default function UploadPage() {
   const [user, setUser] = useState<any>(null);
@@ -53,18 +51,8 @@ export default function UploadPage() {
     return null;
   }
 
-  // Get navigation steps for the workflow
-  const navigationSteps = getNavigationSteps("/upload");
-
   return (
     <>
-      {/* Navigation Bar */}
-      <NavigationBar 
-        currentStep="/upload"
-        steps={navigationSteps}
-        showProgress={true}
-      />
-      
       <UploadForm />
     </>
   );

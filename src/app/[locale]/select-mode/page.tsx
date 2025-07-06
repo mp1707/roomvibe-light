@@ -16,8 +16,6 @@ import PageLayout from "@/components/PageLayout";
 import PageHeader from "@/components/PageHeader";
 import UnifiedCard from "@/components/UnifiedCard";
 import ContentSection from "@/components/ContentSection";
-import NavigationBar from "@/components/NavigationBar";
-import { getNavigationSteps } from "@/utils/navigation";
 import { buttonVariants, useMotionPreference } from "@/utils/animations";
 
 
@@ -378,18 +376,8 @@ export default function SelectModePage() {
 
   const imageUrl = localImageUrl || hostedImageUrl;
 
-  // Get navigation steps for the workflow
-  const navigationSteps = getNavigationSteps("/select-mode");
-
   return (
     <>
-      {/* Navigation Bar */}
-      <NavigationBar 
-        currentStep="/select-mode"
-        steps={navigationSteps}
-        showProgress={true}
-      />
-      
       <PageLayout 
         maxWidth="4xl" 
         spacing="lg" 

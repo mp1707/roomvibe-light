@@ -20,8 +20,6 @@ import { staggerItem } from "@/utils/animations";
 // New shared components
 import PageLayout from "@/components/PageLayout";
 import PageHeader from "@/components/PageHeader";
-import NavigationBar from "@/components/NavigationBar";
-import { getNavigationSteps } from "@/utils/navigation";
 import ContentSection from "@/components/ContentSection";
 
 export default function ChangeStylePage() {
@@ -133,18 +131,8 @@ export default function ChangeStylePage() {
     return getStyleById(selectedStyle || "")?.name;
   }, [selectedStyle]);
 
-  // Get navigation steps for the workflow
-  const navigationSteps = getNavigationSteps("/change-style");
-
   return (
     <>
-      {/* Navigation Bar */}
-      <NavigationBar
-        currentStep="/change-style"
-        steps={navigationSteps}
-        showProgress={true}
-      />
-
       <PageLayout
         maxWidth="6xl"
         spacing="base"

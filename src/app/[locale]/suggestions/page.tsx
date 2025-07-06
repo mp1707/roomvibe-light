@@ -17,8 +17,6 @@ import ErrorDisplay from "@/components/ErrorDisplay";
 // New shared components
 import PageLayout from "@/components/PageLayout";
 import PageHeader from "@/components/PageHeader";
-import NavigationBar from "@/components/NavigationBar";
-import { getNavigationSteps } from "@/utils/navigation";
 import ContentSection from "@/components/ContentSection";
 
 export default function SuggestionsPage() {
@@ -156,18 +154,8 @@ export default function SuggestionsPage() {
     return allSuggestions.find((s) => s.id === selectedSuggestion)?.title;
   }, [allSuggestions, selectedSuggestion]);
 
-  // Get navigation steps for the workflow
-  const navigationSteps = getNavigationSteps("/suggestions");
-
   return (
     <>
-      {/* Navigation Bar */}
-      <NavigationBar
-        currentStep="/suggestions"
-        steps={navigationSteps}
-        showProgress={true}
-      />
-
       <PageLayout
         maxWidth="6xl"
         spacing="base"
