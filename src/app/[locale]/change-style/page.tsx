@@ -12,9 +12,9 @@ import { useAppState } from "@/utils/store";
 import { interiorStyles, getStyleById } from "@/utils/interiorStyles";
 import { useImageGeneration } from "./hooks/useImageGeneration";
 import StyleCard from "./components/StyleCard";
-import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
-import ActionBar from "@/components/shared/ActionBar";
-import ErrorDisplay from "@/components/shared/ErrorDisplay";
+import ImageDisplaySection from "@/components/ImageDisplaySection";
+import ActionBar from "@/components/ActionBar";
+import ErrorDisplay from "@/components/ErrorDisplay";
 import { staggerItem } from "@/utils/animations";
 
 // New shared components
@@ -133,21 +133,21 @@ export default function ChangeStylePage() {
     return getStyleById(selectedStyle || "")?.name;
   }, [selectedStyle]);
 
-  // Get navigation steps for the workflow  
+  // Get navigation steps for the workflow
   const navigationSteps = getNavigationSteps("/change-style");
 
   return (
     <>
       {/* Navigation Bar */}
-      <NavigationBar 
+      <NavigationBar
         currentStep="/change-style"
         steps={navigationSteps}
         showProgress={true}
       />
-      
-      <PageLayout 
-        maxWidth="6xl" 
-        spacing="base" 
+
+      <PageLayout
+        maxWidth="6xl"
+        spacing="base"
         background="gradient"
         animation={true}
       >
@@ -162,11 +162,7 @@ export default function ChangeStylePage() {
         />
 
         {/* Image Section */}
-        <ContentSection 
-          maxWidth="4xl" 
-          spacing="none" 
-          animation={true}
-        >
+        <ContentSection maxWidth="4xl" spacing="none" animation={true}>
           <ImageDisplaySection
             generationProgress={generationProgress}
             mode="styles"
@@ -175,11 +171,11 @@ export default function ChangeStylePage() {
         </ContentSection>
 
         {/* Style Grid Section */}
-        <ContentSection 
+        <ContentSection
           title={t("selectStyle")}
-          maxWidth="6xl" 
-          spacing="base" 
-          layout="grid-4" 
+          maxWidth="6xl"
+          spacing="base"
+          layout="grid-4"
           gap="base"
           animation={true}
         >

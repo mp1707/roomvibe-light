@@ -9,10 +9,10 @@ import { useConfirmationModalStore } from "@/utils/useConfirmationModalStore";
 import { CREDIT_COSTS } from "@/types/credits";
 import { useAppState } from "@/utils/store";
 import { useImageGeneration } from "./hooks/useImageGeneration";
-import ImageDisplaySection from "@/components/shared/ImageDisplaySection";
+import ImageDisplaySection from "@/components/ImageDisplaySection";
 import SuggestionsListSection from "./components/SuggestionsListSection";
-import ActionBar from "@/components/shared/ActionBar";
-import ErrorDisplay from "@/components/shared/ErrorDisplay";
+import ActionBar from "@/components/ActionBar";
+import ErrorDisplay from "@/components/ErrorDisplay";
 
 // New shared components
 import PageLayout from "@/components/PageLayout";
@@ -162,22 +162,25 @@ export default function SuggestionsPage() {
   return (
     <>
       {/* Navigation Bar */}
-      <NavigationBar 
+      <NavigationBar
         currentStep="/suggestions"
         steps={navigationSteps}
         showProgress={true}
       />
-      
-      <PageLayout 
-        maxWidth="6xl" 
-        spacing="base" 
+
+      <PageLayout
+        maxWidth="6xl"
+        spacing="base"
         background="gradient"
         animation={true}
       >
         {/* Page Header */}
         <PageHeader
           title={t("title") || "Design-Vorschläge"}
-          subtitle={t("subtitle") || "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln"}
+          subtitle={
+            t("subtitle") ||
+            "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln"
+          }
           showBackButton={true}
           backHref="/select-mode"
           align="center"
@@ -185,20 +188,12 @@ export default function SuggestionsPage() {
         />
 
         {/* Image Section */}
-        <ContentSection 
-          maxWidth="4xl" 
-          spacing="none" 
-          animation={true}
-        >
+        <ContentSection maxWidth="4xl" spacing="none" animation={true}>
           <ImageDisplaySection generationProgress={generationProgress} />
         </ContentSection>
 
         {/* Suggestions Section */}
-        <ContentSection 
-          maxWidth="4xl" 
-          spacing="base" 
-          animation={true}
-        >
+        <ContentSection maxWidth="4xl" spacing="base" animation={true}>
           <SuggestionsListSection
             selectedSuggestion={selectedSuggestion}
             isGenerating={isGenerating}
