@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Suggestion, InteriorStyle } from "@/types/suggestions";
+import { Suggestion } from "@/types/suggestions";
 
 interface AppState {
   // Image management

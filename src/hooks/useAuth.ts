@@ -10,6 +10,9 @@ export interface UseAuthReturn {
   isAuthenticated: boolean;
 }
 
+const DEBUG = process.env.NODE_ENV === 'development';
+const debugLog = DEBUG ? console.log : () => {};
+
 export const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,7 @@ export const useAuth = (): UseAuthReturn => {
 
   // Debug when user state changes
   useEffect(() => {
-    console.log(
+    debugLog(
       "👤 User state changed:",
       user?.id || "null",
       "isAuthenticated:",
@@ -27,7 +30,7 @@ export const useAuth = (): UseAuthReturn => {
   }, [user]);
 
   const refreshUser = useCallback(async () => {
-    console.log("🔄 refreshUser called");
+    debugLog("🔄 refreshUser called");
     try {
       setError(null);
 
@@ -46,12 +49,12 @@ export const useAuth = (): UseAuthReturn => {
 
       // If no session, user is logged out (this is normal, not an error)
       if (!session) {
-        console.log("🚫 No session found - user logged out");
+        debugLog("🚫 No session found - user logged out");
         setUser(null);
         return;
       }
 
-      console.log(
+      debugLog(
         "✅ Session found, getting user details for:",
         session.user?.id
       );
@@ -67,7 +70,7 @@ export const useAuth = (): UseAuthReturn => {
         setError(authError.message);
         setUser(null);
       } else {
-        console.log("✅ User data retrieved:", user?.id);
+        debugLog("✅ User data retrieved:", user?.id);
         setUser(user);
       }
     } catch (err) {
@@ -82,15 +85,15 @@ export const useAuth = (): UseAuthReturn => {
   }, [supabase]);
 
   useEffect(() => {
-    console.log("🚀 useAuth hook initializing");
+    debugLog("🚀 useAuth hook initializing");
 
     // Check if there's already a session (important after login redirects)
     const checkInitialSession = async () => {
-      console.log("🔍 Checking for existing session on mount");
+      debugLog("🔍 Checking for existing session on mount");
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log(
+      debugLog(
         "📋 Initial session check:",
         session?.user?.id || "no session"
       );
@@ -102,11 +105,11 @@ export const useAuth = (): UseAuthReturn => {
     refreshUser();
 
     // Listen for auth state changes
-    console.log("👂 Setting up auth state listener");
+    debugLog("👂 Setting up auth state listener");
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(
+      debugLog(
         "🔐 Auth state changed:",
         event,
         "User ID:",
@@ -119,24 +122,24 @@ export const useAuth = (): UseAuthReturn => {
       switch (event) {
         case "SIGNED_IN":
         case "TOKEN_REFRESHED":
-          console.log("✅ Setting user from session:", session?.user?.id);
+          debugLog("✅ Setting user from session:", session?.user?.id);
           setUser(session?.user ?? null);
           setError(null);
           setLoading(false);
           break;
         case "SIGNED_OUT":
-          console.log("🚪 User signed out, clearing user state");
+          debugLog("🚪 User signed out, clearing user state");
           setUser(null);
           setError(null);
           setLoading(false);
           break;
         case "PASSWORD_RECOVERY":
         case "USER_UPDATED":
-          console.log("🔄 Refreshing user data for event:", event);
+          debugLog("🔄 Refreshing user data for event:", event);
           await refreshUser();
           break;
         default:
-          console.log("📝 Default case - setting user:", session?.user?.id);
+          debugLog("📝 Default case - setting user:", session?.user?.id);
           setUser(session?.user ?? null);
           setError(null);
           setLoading(false);
@@ -144,7 +147,7 @@ export const useAuth = (): UseAuthReturn => {
     });
 
     return () => {
-      console.log("🧹 Cleaning up auth subscription");
+      debugLog("🧹 Cleaning up auth subscription");
       subscription.unsubscribe();
     };
   }, [supabase, refreshUser]);
