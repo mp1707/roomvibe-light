@@ -68,15 +68,6 @@ const SuggestionsListSection = ({
         variants={staggerItem}
         className="w-full max-w-4xl mx-auto px-4 sm:px-6"
       >
-        <div className="text-center mb-6">
-          <h3 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
-            {t("designSuggestions")}
-          </h3>
-          <p className="text-base-content/60 max-w-2xl mx-auto">
-            {t("suggestionInstructions")}
-          </p>
-        </div>
-
         <div className="text-center py-8">
           <p className="text-base-content/50 mb-6">
             {t("noSuggestionsAvailable")}
@@ -92,15 +83,6 @@ const SuggestionsListSection = ({
       variants={staggerItem}
       className="w-full max-w-4xl mx-auto px-4 sm:px-6"
     >
-      <div className="text-center mb-6">
-        <h3 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
-          {t("designSuggestions")}
-        </h3>
-        <p className="text-base-content/60 max-w-2xl mx-auto">
-          {t("suggestionInstructions")}
-        </p>
-      </div>
-
       <motion.div
         variants={staggerContainer}
         className="space-y-5 sm:space-y-4 pt-3"

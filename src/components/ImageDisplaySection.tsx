@@ -78,11 +78,8 @@ const ImageDisplaySection = ({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4"
+        className="flex flex-col items-center justify-center min-h-[40vh] text-center px-4"
       >
-        <h2 className="text-2xl font-semibold text-base-content/60 mb-4">
-          {t("noImageFound")}
-        </h2>
         <p className="text-base-content/50 mb-6">{t("pleaseUploadImage")}</p>
         <Link
           href="/"
@@ -115,20 +112,6 @@ const ImageDisplaySection = ({
     ];
   };
 
-  const getLoadingTitle = () => {
-    if (mode === "styles") {
-      return t("applyStyleTitle");
-    }
-    return t("applySuggestionTitle");
-  };
-
-  const getLoadingSubtitle = () => {
-    if (mode === "styles") {
-      return t("applyStyleSubtitle");
-    }
-    return t("applySuggestionSubtitle");
-  };
-
   return (
     <motion.div variants={imageVariants} className="w-full max-w-4xl mx-auto">
       <AnimatePresence mode="wait">
@@ -143,8 +126,6 @@ const ImageDisplaySection = ({
             <AILoadingScreen
               progress={generationProgress}
               steps={getLoadingSteps()}
-              title={getLoadingTitle()}
-              subtitle={getLoadingSubtitle()}
               hint={t("generationHint")}
               mode="generate"
               currentGeneratedImage={displayImage}
@@ -160,9 +141,6 @@ const ImageDisplaySection = ({
             className="w-full"
           >
             <div className="text-center mb-4">
-              <h2 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">
-                {t("transformationTitle")}
-              </h2>
               <p className="text-base-content/60">{t("sliderInstruction")}</p>
             </div>
 
@@ -237,9 +215,6 @@ const ImageDisplaySection = ({
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="w-full text-center"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-base-content mb-4">
-              {t("originalImageTitle")}
-            </h2>
             <button
               type="button"
               className="cursor-pointer relative rounded-2xl shadow-xl overflow-hidden w-full max-w-2xl mx-auto"

@@ -42,6 +42,31 @@ export default function ChangeStylePage() {
     generationError,
   } = useAppState();
 
+  // Determine the image to display
+  const imageToDisplay = useMemo(() => {
+    if (selectedStyle) {
+      return appliedStyles.get(selectedStyle) || null;
+    }
+    return currentGeneratedImage;
+  }, [selectedStyle, appliedStyles, currentGeneratedImage]);
+
+  // Dynamic subtitle based on current state
+  const pageSubtitle = useMemo(() => {
+    if (isGenerating) {
+      return t("generatingSubtitle") || "Ihr Stil wird gerade angewendet...";
+    }
+    if (imageToDisplay) {
+      return (
+        t("resultSubtitle") ||
+        "Bewegen Sie den Regler, um die Veränderungen zu sehen"
+      );
+    }
+    return (
+      t("subtitle") ||
+      "Wählen Sie einen Stil aus, um Ihr Zimmer zu transformieren"
+    );
+  }, [isGenerating, imageToDisplay, t]);
+
   // Early redirect if no images available
   useEffect(() => {
     if (!localImageUrl && !hostedImageUrl) {
@@ -53,14 +78,6 @@ export default function ChangeStylePage() {
   useEffect(() => {
     fetchCredits();
   }, [fetchCredits]);
-
-  // Determine the image to display
-  const imageToDisplay = useMemo(() => {
-    if (selectedStyle) {
-      return appliedStyles.get(selectedStyle) || null;
-    }
-    return currentGeneratedImage;
-  }, [selectedStyle, appliedStyles, currentGeneratedImage]);
 
   const handleToggleStyle = useCallback(
     (styleId: string) => {
@@ -142,7 +159,7 @@ export default function ChangeStylePage() {
         {/* Page Header */}
         <PageHeader
           title={t("title")}
-          subtitle={t("subtitle")}
+          subtitle={pageSubtitle}
           showBackButton={true}
           backHref="/select-mode"
           align="center"

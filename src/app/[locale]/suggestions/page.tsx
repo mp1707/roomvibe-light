@@ -37,6 +37,7 @@ export default function SuggestionsPage() {
     generationError,
     suggestions,
     customSuggestions,
+    currentGeneratedImage,
     addCustomSuggestion,
     editCustomSuggestion,
     removeCustomSuggestion,
@@ -47,6 +48,23 @@ export default function SuggestionsPage() {
     () => [...suggestions, ...customSuggestions],
     [suggestions, customSuggestions]
   );
+
+  // Dynamic subtitle based on current state
+  const pageSubtitle = useMemo(() => {
+    if (isGenerating) {
+      return t("generatingSubtitle") || "Ihr Raum wird gerade verwandelt...";
+    }
+    if (currentGeneratedImage) {
+      return (
+        t("resultSubtitle") ||
+        "Bewegen Sie den Regler, um die Veränderungen zu sehen"
+      );
+    }
+    return (
+      t("subtitle") ||
+      "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln"
+    );
+  }, [isGenerating, currentGeneratedImage, t]);
 
   // Early redirect if no images available
   useEffect(() => {
@@ -89,7 +107,7 @@ export default function SuggestionsPage() {
       console.error("Failed to apply suggestion:", error);
       toast.error(t("applyError"));
     }
-  }, [selectedSuggestion, isSubmitting, isGenerating, generateImage]);
+  }, [selectedSuggestion, isSubmitting, isGenerating, generateImage, t]);
 
   const handleApplySuggestion = useCallback(() => {
     if (!selectedSuggestion || isSubmitting || isGenerating) {
@@ -126,6 +144,7 @@ export default function SuggestionsPage() {
     canApplySuggestion,
     openConfirmationModal,
     confirmAndApplySuggestion,
+    t,
   ]);
 
   const handleAddCustomSuggestion = useCallback(
@@ -165,10 +184,7 @@ export default function SuggestionsPage() {
         {/* Page Header */}
         <PageHeader
           title={t("title") || "Design-Vorschläge"}
-          subtitle={
-            t("subtitle") ||
-            "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln"
-          }
+          subtitle={pageSubtitle}
           showBackButton={true}
           backHref="/select-mode"
           align="center"

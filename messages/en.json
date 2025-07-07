@@ -147,6 +147,8 @@
   "SuggestionsPage": {
     "title": "Design Suggestions",
     "subtitle": "Choose a suggestion to transform your room",
+    "generatingSubtitle": "Your room is being transformed...",
+    "resultSubtitle": "Move the slider to see the changes",
     "applyError": "Error applying suggestion",
     "notEnoughCreditsError": "Not enough credits! You need {credits} credits to apply a suggestion.",
     "applySuggestionTitle": "Apply Suggestion",
@@ -157,6 +159,8 @@
   "ChangeStylePage": {
     "title": "Change Interior Style",
     "subtitle": "Select a style from our gallery and transform your room with just one click.",
+    "generatingSubtitle": "Your style is being applied...",
+    "resultSubtitle": "Move the slider to see the changes",
     "selectStyle": "Select Style",
     "applyError": "Error applying style",
     "notEnoughCreditsError": "Not enough credits! You need {credits} credits to apply a style.",

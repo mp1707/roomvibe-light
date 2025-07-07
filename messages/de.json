@@ -147,6 +147,8 @@
   "SuggestionsPage": {
     "title": "Design-Vorschläge",
     "subtitle": "Wählen Sie einen Vorschlag aus, um Ihr Zimmer zu verwandeln",
+    "generatingSubtitle": "Ihr Raum wird gerade verwandelt...",
+    "resultSubtitle": "Bewegen Sie den Regler, um die Veränderungen zu sehen",
     "applyError": "Fehler beim Anwenden des Vorschlags",
     "notEnoughCreditsError": "Nicht genügend Credits! Sie benötigen {credits} Credits um einen Vorschlag anzuwenden.",
     "applySuggestionTitle": "Vorschlag anwenden",
@@ -157,6 +159,8 @@
   "ChangeStylePage": {
     "title": "Einrichtungsstil ändern",
     "subtitle": "Wählen Sie einen Stil aus unserer Galerie und verwandeln Sie Ihren Raum mit nur einem Klick.",
+    "generatingSubtitle": "Ihr Stil wird gerade angewendet...",
+    "resultSubtitle": "Bewegen Sie den Regler, um die Veränderungen zu sehen",
     "selectStyle": "Stil auswählen",
     "applyError": "Fehler beim Anwenden des Stils",
     "notEnoughCreditsError": "Nicht genügend Credits! Sie benötigen {credits} Credits um einen Stil anzuwenden.",

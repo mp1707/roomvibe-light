@@ -10,8 +10,8 @@ import { useTranslations } from "next-intl";
 interface AILoadingScreenProps {
   progress: number;
   steps: string[];
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   hint?: string;
   mode: "analyze" | "generate";
   currentGeneratedImage?: string | null;
@@ -389,15 +389,19 @@ export default function AILoadingScreen({
       transition={{ duration: 0.5 }}
       className="w-full max-w-2xl mx-auto text-center"
     >
-      {/* Header */}
-      <div className="mb-8 md:mb-12">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
-          {title}
-        </h1>
-        <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
-          {subtitle}
-        </p>
-      </div>
+      {/* Header - only show if title is provided */}
+      {title && (
+        <div className="mb-8 md:mb-12">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-base-content mb-3 md:mb-4">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto">
+              {subtitle}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Image with AI effects */}
       <div className="mb-8">
