@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavigationLink } from "./NavigationLink";
 import { useTranslations } from "next-intl";
-import type { User } from "../hooks/useAuth";
+import type { User } from "@supabase/supabase-js";
 
 interface NavigationSectionProps {
   user: User | null;

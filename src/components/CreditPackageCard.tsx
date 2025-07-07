@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CreditPackage } from "@/types/credits";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui";
 
 interface CreditPackageCardProps {
   package: CreditPackage;
@@ -40,11 +41,10 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
         pkg.popular
           ? "border-primary bg-primary/5"
           : "border-base-300 bg-base-100 hover:border-primary/30"
-      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+      } ${disabled ? "opacity-50" : ""}`}
       whileHover={disabled ? {} : { scale: 1.02, y: -4 }}
       whileTap={disabled ? {} : { scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
-      onClick={!disabled ? handlePurchase : undefined}
     >
       {/* Popular Badge */}
       {pkg.popular && (
@@ -129,26 +129,16 @@ const CreditPackageCard: React.FC<CreditPackageCardProps> = ({
         </motion.div>
 
         {/* Purchase Button */}
-        <motion.button
-          className={`w-full py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
-            pkg.popular
-              ? "bg-primary text-primary-content hover:bg-primary-focus"
-              : "bg-base-200 text-base-content hover:bg-base-300"
-          } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
-          disabled={disabled || isLoading}
-          whileHover={disabled ? {} : { scale: 1.05 }}
-          whileTap={disabled ? {} : { scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        <Button
+          onClick={handlePurchase}
+          variant={pkg.popular ? "primary" : "secondary"}
+          size="base"
+          fullWidth
+          disabled={disabled}
+          loading={isLoading}
         >
-          {isLoading ? (
-            <div className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
-              <span>{t("processing")}</span>
-            </div>
-          ) : (
-            t("buyCredits")
-          )}
-        </motion.button>
+          {isLoading ? t("processing") : t("buyCredits")}
+        </Button>
 
         {/* Features/Benefits */}
         <div className="space-y-2 pt-2">

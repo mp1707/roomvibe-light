@@ -1,6 +1,6 @@
 import React from "react";
 import CreditsDisplay from "../../CreditsDisplay";
-import type { User } from "../hooks/useAuth";
+import type { User } from "@supabase/supabase-js";
 import { getUserDisplayName, getUserInitial } from "../utils/userHelpers";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";

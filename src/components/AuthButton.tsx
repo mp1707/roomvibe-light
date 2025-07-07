@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/utils/supabase/client";
 import { signOut } from "@/app/[locale]/auth/login/actions";
+import { Button } from "@/components/ui";
 
 export default function AuthButton() {
   const t = useTranslations("Components.AuthButton");
@@ -71,13 +72,14 @@ export default function AuthButton() {
     };
 
     return (
-      <button
+      <Button
         onClick={handleSignIn}
-        className="btn btn-primary h-9 px-4 min-h-0 rounded-xl font-medium text-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
+        variant="primary"
+        size="sm"
         aria-label="Sign in to your account"
       >
         {t("signIn")}
-      </button>
+      </Button>
     );
   }
 

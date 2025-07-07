@@ -22,7 +22,8 @@ export default async function LoginPage() {
             <form className="mb-6">
               <button
                 formAction={signInWithGoogle}
-                className="btn w-full bg-base-100 hover:bg-base-200 border-2 border-base-300 hover:border-primary/30 text-base-content font-medium h-14 rounded-xl transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
+                type="submit"
+                className="inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 w-full px-8 py-4 text-lg rounded-2xl h-14 min-h-0 bg-base-200 hover:bg-base-300 text-base-content border-base-300"
                 aria-label={t("continueWithGoogle")}
               >
                 <svg
@@ -106,13 +107,15 @@ export default async function LoginPage() {
               <div className="space-y-3 pt-4">
                 <button
                   formAction={login}
-                  className="btn btn-primary w-full h-14 rounded-xl font-medium text-base hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 w-full px-8 py-4 text-lg rounded-2xl h-14 min-h-0 bg-primary hover:bg-primary-focus text-primary-content border-primary"
                 >
                   {t("signIn")}
                 </button>
                 <button
                   formAction={signup}
-                  className="btn btn-outline btn-primary w-full h-14 rounded-xl font-medium text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100"
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-100 w-full px-8 py-4 text-lg rounded-2xl h-14 min-h-0 border-2 border-primary text-primary hover:bg-primary/10 bg-transparent"
                 >
                   {t("createAccount")}
                 </button>

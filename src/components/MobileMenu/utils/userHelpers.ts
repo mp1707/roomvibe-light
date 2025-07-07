@@ -1,4 +1,4 @@
-import type { User } from "../hooks/useAuth";
+import type { User } from "@supabase/supabase-js";
 
 export const getUserDisplayName = (user: User): string => {
   return (

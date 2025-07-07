@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useConfirmationModalStore } from "@/utils/useConfirmationModalStore";
+import { Button } from "@/components/ui";
 
 const WarningIcon = () => (
   <svg
@@ -114,24 +115,22 @@ export const ConfirmationModal = () => {
 
             {/* Actions */}
             <div className="flex gap-3 justify-end">
-              <motion.button
+              <Button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 text-sm font-medium text-base-content/60 hover:text-base-content bg-base-200 hover:bg-base-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-base-300 focus:ring-offset-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                variant="secondary"
+                size="sm"
               >
                 {cancelText}
-              </motion.button>
-              <motion.button
+              </Button>
+              <Button
                 type="button"
                 onClick={handleConfirm}
-                className="px-4 py-2 text-sm font-medium text-primary-content bg-primary hover:bg-primary-focus rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                variant="primary"
+                size="sm"
               >
                 {confirmText}
-              </motion.button>
+              </Button>
             </div>
           </motion.div>
         </motion.dialog>
