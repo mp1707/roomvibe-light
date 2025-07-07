@@ -19,7 +19,7 @@ interface AppState {
   styleGenerationProgress: number;
 
   // Generation state
-  prediction: any | null;
+  prediction: unknown;
   isGenerating: boolean;
   generationError: string | null;
 
@@ -48,7 +48,7 @@ interface AppState {
   setStyleGenerationProgress: (progress: number) => void;
 
   // Generation setters
-  setPrediction: (prediction: any | null) => void;
+  setPrediction: (prediction: unknown) => void;
   setIsGenerating: (isGenerating: boolean) => void;
   setGenerationError: (error: string | null) => void;
 
@@ -193,22 +193,26 @@ export const useAppState = create<AppState>((set, get) => ({
     // Extract the current image from prediction output
     let currentImage: string | null = null;
 
-    if (prediction?.output) {
-      if (Array.isArray(prediction.output)) {
-        currentImage = prediction.output[0] || null;
-      } else if (typeof prediction.output === "string") {
-        currentImage = prediction.output;
+    // Type guard to check if prediction has the expected structure
+    if (prediction && typeof prediction === 'object' && 'output' in prediction) {
+      const output = (prediction as { output?: unknown }).output;
+      if (Array.isArray(output)) {
+        currentImage = output[0] || null;
+      } else if (typeof output === "string") {
+        currentImage = output;
       }
     }
 
     const currentState = get();
 
+    const predictionObj = prediction && typeof prediction === 'object' ? prediction as Record<string, unknown> : {};
+
     set({
       prediction,
       isGenerating:
-        prediction?.status === "starting" ||
-        prediction?.status === "processing",
-      generationError: prediction?.error ? prediction.error : null,
+        predictionObj.status === "starting" ||
+        predictionObj.status === "processing",
+      generationError: predictionObj.error ? String(predictionObj.error) : null,
       // Only update currentGeneratedImage if we have a new image, otherwise preserve the existing one
       currentGeneratedImage: currentImage || currentState.currentGeneratedImage,
     });

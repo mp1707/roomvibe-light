@@ -84,7 +84,7 @@ class UnusedTranslationFinder {
       try {
         const matchedFiles = await glob(globPattern, {
           ignore: this.excludePatterns.map(p => path.join(this.sourceDir, p, '**'))
-        });
+        } as any);
         if (Array.isArray(matchedFiles)) {
           files.push(...matchedFiles);
         }

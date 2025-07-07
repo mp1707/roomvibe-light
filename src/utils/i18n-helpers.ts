@@ -106,8 +106,8 @@ export function isValidTranslationKey(key: string): key is TranslationKey {
 export function buildTranslationKey<T extends keyof IntlMessages>(
   namespace: T,
   key: keyof IntlMessages[T]
-): `${T}.${keyof IntlMessages[T] & string}` {
-  return `${namespace}.${key as string}` as const;
+): string {
+  return `${namespace}.${key as string}`;
 }
 
 // Interpolation helper with type safety
@@ -239,8 +239,7 @@ export class TranslationError extends Error {
 // Development-only validation
 export function validateTranslationInDev(
   key: string,
-  namespace: string,
-  locale: string
+  namespace: string
 ): void {
   if (process.env.NODE_ENV === 'development') {
     // This would be enhanced with runtime validation

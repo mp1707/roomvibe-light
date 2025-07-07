@@ -547,8 +547,7 @@ const UnifiedCard = ({
             {actionButtons.map((action, index) => (
               <Button
                 key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={() => {
                   action.onClick();
                 }}
                 variant={action.variant === "delete" ? "error" : "ghost"}

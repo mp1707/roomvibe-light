@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-07-07T21:15:44.441Z
+// Generated at: 2025-07-07T22:29:44.129Z
 // Base locale: de
 
 declare namespace Intl {

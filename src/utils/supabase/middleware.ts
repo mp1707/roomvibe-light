@@ -32,7 +32,7 @@ export async function updateSession(request: NextRequest) {
   // refreshing the auth token
   try {
     await supabase.auth.getUser();
-  } catch (error) {
+  } catch {
     // Gracefully handle auth errors without disrupting navigation
   }
 

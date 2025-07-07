@@ -123,7 +123,7 @@ export default function ChangeStylePage() {
     if (!style) return;
     if (!canApplySuggestion()) {
       toast.error(
-        t("notEnoughCreditsError", { credits: CREDIT_COSTS.APPLY_SUGGESTION })
+        t("notEnoughCreditsError", { credits: CREDIT_COSTS.APPLY_SUGGESTION.toString() })
       );
       return;
     }

@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { loadStripe } from "@stripe/stripe-js";
+import type { Stripe as StripeJs } from "@stripe/stripe-js";
 
 // Server-side Stripe instance
 let stripeInstance: Stripe | null = null;
@@ -23,9 +24,9 @@ export const getStripe = (): Stripe => {
 };
 
 // Client-side Stripe instance
-let stripePromise: Promise<any> | null = null;
+let stripePromise: Promise<StripeJs | null> | null = null;
 
-export const getStripeClient = () => {
+export const getStripeClient = (): Promise<StripeJs | null> => {
   if (!stripePromise) {
     const publishableKey =
       process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY_TEST ||

@@ -14,10 +14,10 @@ async function getLocaleFromHeaders(): Promise<string> {
     const pathSegments = url.pathname.split("/").filter(Boolean);
     const locale = pathSegments[0];
 
-    if (locale && routing.locales.includes(locale as any)) {
+    if (locale && routing.locales.includes(locale as "en" | "de")) {
       return locale;
     }
-  } catch (error) {
+  } catch {
     // If referer parsing fails, fall back to default
   }
 

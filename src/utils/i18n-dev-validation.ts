@@ -315,7 +315,7 @@ export function measureTranslationPerformance<T>(
 }
 
 // Development helper: List all available keys for a namespace
-export function getAvailableKeys(namespace: string): string[] {
+export function getAvailableKeys(): string[] {
   if (process.env.NODE_ENV !== 'development') return [];
   
   // This would be populated from the validation report
