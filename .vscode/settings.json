@@ -1,0 +1,53 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.includeCompletionsForModuleExports": true,
+  "typescript.suggest.includeCompletionsForImportStatements": true,
+  
+  // Enhanced i18n support
+  "i18n-ally.localesPaths": ["messages"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.defaultNamespace": "Common",
+  "i18n-ally.displayLanguage": "en",
+  "i18n-ally.sourceLanguage": "de",
+  "i18n-ally.enabledFrameworks": ["next-intl"],
+  "i18n-ally.extract.keygenStyle": "camelCase",
+  "i18n-ally.extract.keyMaxLength": 50,
+  
+  // TypeScript path mapping
+  "typescript.preferences.resolveJsonModule": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.paths": true,
+  
+  // JSON schema for translation files
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "messages/*.json"
+      ],
+      "url": "./src/types/i18n/translation-schema.json"
+    }
+  ],
+  
+  // File associations
+  "files.associations": {
+    "*.json": "jsonc"
+  },
+  
+  // Code snippets and suggestions
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  
+  // Validation
+  "typescript.validate.enable": true,
+  "typescript.check.npmIsInstalled": true,
+  
+  // Formatting
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  }
+}

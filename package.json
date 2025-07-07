@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
-    "build": "next build",
+    "build": "npm run i18n:generate && next build",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "dev:fast": "next dev --experimental-https",
-    "clean": "rm -rf .next && rm -rf out"
+    "clean": "rm -rf .next && rm -rf out",
+    "i18n:generate": "npx tsx scripts/generate-i18n-types.ts",
+    "i18n:check": "npx tsx scripts/validate-translations.ts",
+    "i18n:unused": "npx tsx scripts/find-unused-translations.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -33,6 +36,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@tailwindcss/postcss": "^4",
+    "@types/glob": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -41,7 +45,9 @@
     "daisyui": "^5.0.43",
     "eslint": "^9.30.0",
     "eslint-config-next": "^15.3.4",
+    "json-schema-to-typescript": "^15.0.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-json-schema": "^0.65.1"
   }
 }
